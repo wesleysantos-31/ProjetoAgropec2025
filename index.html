@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGROPEC 2025 - Event App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Visualization & Content Choices:
+        - Login Page: Goal: User access. Presentation: HTML form. Interaction: Navigate to Início. Justification: Standard login flow. Library: HTML/Tailwind.
+        - Início (Dashboard): Goal: Event overview. Presentation: Cards for "Próxima Palestra", "Notícias", static banner. Interaction: Navigational links. Justification: Quick summary. Library: HTML/Tailwind.
+        - Agenda: Goal: Show schedule. Presentation: List of events, Bar Chart (Chart.js) for "Eventos por Dia". Interaction: Mock filters. Justification: Visualizing event distribution. Library: Chart.js, HTML/Tailwind.
+        - Expositores: Goal: List exhibitors. Presentation: Cards for exhibitors, Pie Chart (Chart.js) for "Expositores por Categoria". Interaction: Mock search. Justification: Categorical overview of exhibitors. Library: Chart.js, HTML/Tailwind.
+        - Mapa: Goal: Event layout. Presentation: Placeholder for map. Interaction: None. Justification: Basic map provision. Library: HTML/Tailwind.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F5; /* Cinza Claro */
+            color: #424242; /* Cinza Escuro */
+        }
+        .sidebar {
+            background-color: #388E3C; /* Verde Secundário */
+            color: #FFFFFF; /* Branco */
+        }
+        .sidebar a {
+            color: #FFFFFF;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #4CAF50; /* Verde Principal */
+        }
+        .main-content section {
+            display: none;
+        }
+        .main-content section.active {
+            display: block;
+        }
+        .btn-primary {
+            background-color: #4CAF50; /* Verde Principal */
+            color: #FFFFFF;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #388E3C; /* Verde Secundário */
+        }
+        .btn-accent {
+            background-color: #FFC107; /* Dourado/Amarelo */
+            color: #424242;
+            transition: background-color 0.3s ease;
+        }
+        .btn-accent:hover {
+            background-color: #FFA000; /* Dourado/Amarelo mais escuro */
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width for charts */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px; /* Max height */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+        .agropec-logo-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #4CAF50;
+            padding: 0.5rem 1rem;
+            border: 2px solid #4CAF50;
+            border-radius: 0.25rem;
+            display: inline-block;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F5F5; /* Cinza Claro */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4CAF50; /* Verde Principal */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #388E3C; /* Verde Secundário */
+        }
+
+        /* Nova classe para esconder a sidebar inicialmente e ao deslogar */
+        .sidebar-initial-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="sidebar w-16 md:w-64 space-y-6 py-7 px-2 md:px-4 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out">
+        <div class="px-4 py-2 flex items-center justify-center md:justify-start">
+            <img src="https://placehold.co/40x40/FFFFFF/388E3C?text=A&font=Inter" alt="AGROPEC Logo Icon" class="h-10 w-10 md:hidden">
+            <span class="agropec-logo-text hidden md:block">AGROPEC</span>
+        </div>
+
+        <nav class="mt-10">
+            <a href="#login" onclick="showSection('login', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1"></path></svg>
+                <span class="hidden md:inline">Login</span>
+            </a>
+            <a href="#inicio" onclick="showSection('inicio', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="hidden md:inline">Início</span>
+            </a>
+            <a href="#agenda" onclick="showSection('agenda', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span class="hidden md:inline">Agenda</span>
+            </a>
+            <a href="#expositores" onclick="showSection('expositores', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                <span class="hidden md:inline">Expositores</span>
+            </a>
+            <a href="#mapa" onclick="showSection('mapa', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 13v-6m0 6l-6-3"></path></svg>
+                <span class="hidden md:inline">Mapa</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white shadow-md p-4 flex items-center justify-between">
+            <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 hover:text-green-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <h1 id="currentSectionTitle" class="text-2xl font-semibold text-gray-700">Login</h1>
+            <div class="flex items-center">
+                <div id="user-id-display" class="text-sm text-gray-500 hidden md:block mr-4"></div>
+                <button id="logout-button" class="btn-accent text-sm py-1 px-3 rounded-md hidden">Sair</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 main-content">
+            <section id="login" class="p-6 active">
+                <div class="max-w-md mx-auto card p-8">
+                    <div class="flex justify-center mb-8">
+                         <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="AGROPEC 2025 Logo" class="h-auto">
+                    </div>
+                    <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Bem-vindo!</h2>
+                    <p class="text-center text-gray-600 mb-8">Acesse sua conta para explorar o evento AGROPEC.</p>
+                    <form>
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                            <input type="password" id="password" name="password" placeholder="********" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <button type="button" id="login-button" class="w-full btn-primary font-semibold py-2 px-4 rounded-md text-lg">Entrar</button>
+                        <div class="text-center mt-4">
+                            <a href="#" class="text-sm text-green-600 hover:underline">Esqueceu a senha?</a>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="text-sm text-gray-600">Não tem uma conta? </span><a href="#" id="register-link" class="text-sm text-green-600 hover:underline">Crie uma aqui.</a>
+                        </div>
+                        <div id="login-message" class="text-center mt-4 text-sm font-medium"></div>
+                    </form>
+                </div>
+            </section>
+
+            <section id="inicio" class="p-6">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
+                    <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">🐄 Próxima Palestra Imperdível</h3>
+                        <p class="text-gray-600 mb-1"><span class="font-medium">Título:</span> Inovações na Pecuária Sustentável</p>
+                        <p class="text-gray-600 mb-1"><span class="font-medium">Palestrante:</span> Dr. João Silva</p>
+                        <p class="text-gray-600 mb-3"><span class="font-medium">Horário:</span> Hoje, 14:00 - Auditório Principal</p>
+                        <button class="btn-accent text-sm py-2 px-3 rounded-md">Ver Detalhes</button>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">📰 Notícias Recentes</h3>
+                        <p class="text-gray-600 mb-1">AGROPEC 2025 bate recorde de expositores.</p>
+                        <p class="text-gray-600 mb-3">Novas tecnologias agrícolas em demonstração.</p>
+                        <button class="btn-accent text-sm py-2 px-3 rounded-md">Ler Mais</button>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">⭐ Meus Favoritos</h3>
+                        <p class="text-gray-600">Você ainda não marcou nenhum favorito.</p>
+                        <p class="text-gray-600 mb-3">Navegue pela agenda e expositores para adicionar.</p>
+                         <button onclick="showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-accent text-sm py-2 px-3 rounded-md">Ver Agenda</button>
+                    </div>
+                </div>
+
+                <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">📢 Banner Principal</h3>
+                    <div class="bg-green-600 text-white p-8 rounded-lg text-center">
+                        <h4 class="text-2xl font-bold mb-2">AGROPEC 2025 - O Futuro do Campo é Agora!</h4>
+                        <p class="text-lg">Participe da maior exposição de produtos do campo. Inovação, tecnologia e negócios em um só lugar.</p>
+                    </div>
+                </div>
+                 <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">Acesso Rápido</h3>
+                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Ver Agenda Completa</button>
+                        <button onclick="showSection('expositores', document.querySelector('a[href=\'#expositores\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Encontrar Expositores</button>
+                        <button onclick="showSection('mapa', document.querySelector('a[href=\'#mapa\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Explorar o Mapa</button>
+                         <button class="btn-primary py-3 px-4 rounded-md text-center">Fale Conosco</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="agenda" class="p-6">
+                 <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
+                </div>
+
+                <div class="mb-6 card p-4">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">Filtrar Eventos</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="eventDate" class="block text-sm font-medium text-gray-700">Data:</label>
+                            <input type="date" id="eventDate" name="eventDate" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="eventType" class="block text-sm font-medium text-gray-700">Tipo:</label>
+                            <select id="eventType" name="eventType" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                                <option>Todos</option>
+                                <option>Palestras</option>
+                                <option>Workshops</option>
+                                <option>Demonstrações</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button class="btn-primary w-full py-2 px-4 rounded-md">Aplicar Filtros</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="agenda-events-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="card p-6">
+                        <h4 class="font-semibold text-lg mb-1 text-green-600">Carregando Eventos...</h4>
+                        <p class="text-sm text-gray-500 mb-2">Aguarde enquanto os dados são carregados do Firebase.</p>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Eventos por Dia</h3>
+                    <div class="chart-container">
+                        <canvas id="agendaChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="expositores" class="p-6">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Conheça as empresas e instituições que estão apresentando suas novidades e soluções para o agronegócio.</p>
+                </div>
+
+                <div class="mb-6 card p-4">
+                    <label for="searchExpositor" class="block text-sm font-medium text-gray-700">Buscar Expositor:</label>
+                    <input type="text" id="searchExpositor" name="searchExpositor" placeholder="Nome do expositor ou produto..." class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                </div>
+
+                <div id="expositores-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="card p-6 text-center">
+                        <img src="https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter" alt="Logo Expositor Simulado" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+                        <h4 class="font-semibold text-lg text-green-600">Carregando Expositores...</h4>
+                        <p class="text-sm text-gray-500 mb-2">Aguarde enquanto os dados são carregados do Firebase.</p>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Expositores por Categoria</h3>
+                     <div class="chart-container">
+                        <canvas id="expositoresChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mapa" class="p-6">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Mapa do Evento AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. (Funcionalidade em desenvolvimento)</p>
+                </div>
+                <div class="card p-6">
+                    <img src="https://placehold.co/800x500/E0E0E0/B0B0B0?text=Mapa+Interativo+do+Evento+(Em+Breve)&font=Inter" alt="Mapa do Evento AGROPEC" class="w-full h-auto rounded-md">
+                    <p class="text-center mt-4 text-gray-500">O mapa interativo estará disponível em breve. Por enquanto, consulte os guias impressos no local.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module">
+        // Importações do Firebase SDK (usando as versões do seu CDN)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+        // Sua configuração do Firebase (fornecida por você)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4",
+            authDomain: "agropec-2025-app.firebaseapp.com",
+            projectId: "agropec-2025-app",
+            storageBucket: "agropec-2025-app.firebasestorage.app",
+            messagingSenderId: "203743696437",
+            appId: "1:203743696437:web:0332c09896cc34eb14437c",
+            measurementId: "G-40JHQ2RPEQ"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUserId = null;
+        const userIdDisplay = document.getElementById('user-id-display');
+        const sidebar = document.querySelector('.sidebar'); // Referência à sidebar
+        const logoutButton = document.getElementById('logout-button'); // Referência ao botão de sair
+
+        // Funções de carregamento de dados do Firestore
+        async function loadPublicEvents() {
+            if (!currentUserId) {
+                console.log("Aguardando autenticação para carregar eventos.");
+                return;
+            }
+            const eventsCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/public/data/events`);
+            onSnapshot(eventsCollectionRef, (snapshot) => {
+                const events = [];
+                snapshot.forEach((doc) => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                console.log("Eventos carregados:", events);
+
+                const agendaEventsContainer = document.getElementById('agenda-events-container');
+                if (agendaEventsContainer) {
+                    agendaEventsContainer.innerHTML = '';
+                    if (events.length === 0) {
+                        agendaEventsContainer.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento disponível no momento.</p>';
+                    } else {
+                        events.forEach(event => {
+                            const eventCard = `
+                                <div class="card p-6">
+                                    <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'Título Indisponível'}</h4>
+                                    <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Horário'} | ${event.location || 'Local'}</p>
+                                    <p class="text-gray-700 mb-3">${event.description || 'Nenhuma descrição disponível.'}</p>
+                                    <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
+                                </div>
+                            `;
+                            agendaEventsContainer.innerHTML += eventCard;
+                        });
+                    }
+                }
+                updateAgendaChart(events);
+
+            }, (error) => {
+                console.error("Erro ao carregar eventos:", error);
+                const agendaEventsContainer = document.getElementById('agenda-events-container');
+                if (agendaEventsContainer) {
+                    agendaEventsContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar eventos. Verifique suas regras de segurança.</p>';
+                }
+            });
+        }
+
+        async function loadPublicExpositores() {
+            if (!currentUserId) {
+                console.log("Aguardando autenticação para carregar expositores.");
+                return;
+            }
+            const expositoresCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
+            onSnapshot(expositoresCollectionRef, (snapshot) => {
+                const expositores = [];
+                snapshot.forEach((doc) => {
+                    expositores.push({ id: doc.id, ...doc.data() });
+                });
+                console.log("Expositores carregados:", expositores);
+
+                const expositoresContainer = document.getElementById('expositores-container');
+                if (expositoresContainer) {
+                    expositoresContainer.innerHTML = '';
+                    if (expositores.length === 0) {
+                         expositoresContainer.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum expositor disponível no momento.</p>';
+                    } else {
+                        expositores.forEach(expositor => {
+                            const expositorCard = `
+                                <div class="card p-6 text-center">
+                                    <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="Logo Expositor" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+                                    <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'Nome Indisponível'}</h4>
+                                    <p class="text-sm text-gray-500 mb-2">${expositor.category || 'Categoria Indisponível'}</p>
+                                    <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Nenhuma descrição disponível.'}</p>
+                                    <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                                </div>
+                            `;
+                            expositoresContainer.innerHTML += expositorCard;
+                        });
+                    }
+                }
+                updateExpositoresChart(expositores);
+
+            }, (error) => {
+                console.error("Erro ao carregar expositores:", error);
+                const expositoresContainer = document.getElementById('expositores-container');
+                if (expositoresContainer) {
+                    expositoresContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar expositores. Verifique suas regras de segurança.</p>';
+                }
+            });
+        }
+
+        async function addNewExpositor(expositorData) {
+            if (!currentUserId) {
+                console.log("Usuário não autenticado para adicionar expositor.");
+                return;
+            }
+            try {
+                const userExpositoresCollectionRef = collection(db, `artifacts/${firebaseConfig.appId}/users/${currentUserId}/myExpositores`);
+                await addDoc(userExpositoresCollectionRef, expositorData);
+                console.log("Expositor adicionado com sucesso aos dados do usuário!");
+            } catch (error) {
+                console.error("Erro ao adicionar expositor:", error);
+            }
+        }
+
+        async function handleRegister() {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginMessageDiv = document.getElementById('login-message');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            loginMessageDiv.textContent = '';
+
+            if (!email || !password) {
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Por favor, preencha o e-mail e a senha para criar a conta.";
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                const userProfileDocRef = doc(db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`);
+                await setDoc(userProfileDocRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    createdAt: new Date().toISOString()
+                });
+
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Conta criada com sucesso! Você já pode entrar.";
+                    loginMessageDiv.classList.remove('text-red-500');
+                    loginMessageDiv.classList.add('text-green-600');
+                }
+                emailInput.value = '';
+                passwordInput.value = '';
+            } catch (error) {
+                console.error("Erro ao criar conta:", error);
+                let errorMessage = "Erro ao criar conta.";
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "Este e-mail já está em uso. Tente fazer login ou use outro e-mail.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "A senha é muito fraca. Ela deve ter pelo menos 6 caracteres.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O formato do e-mail é inválido.";
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = "O registro com e-mail/senha não está habilitado. Por favor, habilite-o no console do Firebase (Authentication -> Sign-in method).";
+                }
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = errorMessage;
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+            }
+        }
+
+        async function handleLogin() {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginMessageDiv = document.getElementById('login-message');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            loginMessageDiv.textContent = '';
+
+            if (!email || !password) {
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Por favor, preencha o e-mail e a senha para fazer login.";
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Login realizado com sucesso!";
+                    loginMessageDiv.classList.remove('text-red-500');
+                    loginMessageDiv.classList.add('text-green-600');
+                }
+                window.showSection('inicio', document.querySelector('a[href=\'#inicio\']'));
+            } catch (error) {
+                console.error("Erro ao fazer login:", error);
+                let errorMessage = "Erro ao fazer login. Verifique seu e-mail e senha.";
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMessage = "E-mail ou senha inválidos.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O formato do e-mail é inválido.";
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = "O login com e-mail/senha não está habilitado. Por favor, habilite-o no console do Firebase (Authentication -> Sign-in method).";
+                }
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = errorMessage;
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+            }
+        }
+
+        // Função para lidar com o logout
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                console.log("Usuário desconectado.");
+                // onAuthStateChanged irá lidar com a ocultação da sidebar e botão de sair
+            } catch (error) {
+                console.error("Erro ao desconectar:", error);
+            }
+        }
+
+        // Listener de estado de autenticação
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                console.log("Usuário autenticado:", currentUserId);
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = `User ID: ${currentUserId}`;
+                    userIdDisplay.classList.remove('hidden');
+                }
+                // Mostra a sidebar e o botão de sair
+                sidebar.classList.remove('sidebar-initial-hidden'); // Remove a classe que esconde
+                sidebar.classList.remove('-translate-x-full'); // Garante que não está fora da tela (mobile)
+                sidebar.classList.add('flex'); // Garante que a sidebar use flexbox para layout
+                logoutButton.classList.remove('hidden');
+
+                loadPublicEvents();
+                loadPublicExpositores();
+                // Redireciona para a seção "Início" se não estiver nela
+                if (window.location.hash !== '#inicio') {
+                    window.showSection('inicio', document.querySelector('a[href=\'#inicio\']'));
+                }
+            } else {
+                currentUserId = null;
+                console.log("Nenhum usuário autenticado.");
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = '';
+                    userIdDisplay.classList.add('hidden');
+                }
+                // Oculta a sidebar e o botão de sair
+                sidebar.classList.add('sidebar-initial-hidden'); // Adiciona a classe que esconde
+                sidebar.classList.add('-translate-x-full'); // Garante que está fora da tela (mobile)
+                sidebar.classList.remove('flex');
+                logoutButton.classList.add('hidden');
+                // Garante que a tela de login seja exibida se não estiver autenticado
+                window.showSection('login', document.querySelector('a[href=\'#login\']'));
+            }
+        });
+
+        // --- SCRIPT JAVASCRIPT ORIGINAL DO SPA ---
+        const sections = document.querySelectorAll('.main-content section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const currentSectionTitle = document.getElementById('currentSectionTitle');
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+
+        // Torna showSection globalmente acessível
+        window.showSection = function(sectionId, clickedLink) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                    let title = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+                    if (sectionId === 'inicio') title = 'Painel Principal';
+                    currentSectionTitle.textContent = title;
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                link.classList.remove('bg-green-500'); // Tailwind active class
+            });
+            if (clickedLink) {
+                clickedLink.classList.add('active');
+                clickedLink.classList.add('bg-green-500'); // Tailwind active class
+            }
+            // Fecha a sidebar móvel após a navegação
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+        
+        // Fecha a sidebar ao clicar fora em dispositivos móveis
+        document.addEventListener('click', function(event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMenuButton = mobileMenuButton.contains(event.target);
+
+            if (!isClickInsideSidebar && !isClickOnMenuButton && window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+
+        // Adiciona event listeners para os botões de login e registro
+        document.addEventListener('DOMContentLoaded', () => {
+            const registerLink = document.getElementById('register-link');
+            if (registerLink) {
+                registerLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    handleRegister();
+                });
+            }
+
+            const loginButton = document.getElementById('login-button');
+            if (loginButton) {
+                loginButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    handleLogin();
+                });
+            }
+
+            // Adiciona listener para o botão de sair
+            if (logoutButton) {
+                logoutButton.addEventListener('click', handleLogout);
+            }
+
+            // A seção inicial será definida pelo onAuthStateChanged
+            // Removido: const initialSection = window.location.hash ? window.location.hash.substring(1) : 'login';
+            // Removido: const initialLink = document.querySelector(`.nav-link[href="#${initialSection}"]`);
+            // Removido: window.showSection(initialSection, initialLink);
+            
+            // Atualiza o link ativo na mudança de hash (ex: botões de voltar/avançar do navegador)
+            window.addEventListener('hashchange', () => {
+                const newSection = window.location.hash ? window.location.hash.substring(1) : 'login';
+                const newLink = document.querySelector(`.nav-link[href="#${newSection}"]`);
+                window.showSection(newSection, newLink);
+            });
+        });
+
+
+        // Implementações Chart.js
+        let agendaChartInstance = null;
+        let expositoresChartInstance = null;
+
+        function updateAgendaChart(events) {
+            const days = {};
+            const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
+
+            events.forEach(event => {
+                const date = event.date || 'Data Desconhecida';
+                const type = event.type || 'Outros';
+                if (!days[date]) {
+                    days[date] = {};
+                    eventTypes.forEach(t => days[date][t] = 0);
+                }
+                if (days[date][type] !== undefined) {
+                    days[date][type]++;
+                } else {
+                    days[date]['Outros']++;
+                }
+            });
+
+            const sortedDates = Object.keys(days).sort((a, b) => {
+                const [dayA, monthA, yearA] = a.split('/').map(Number);
+                const [dayB, monthB, yearB] = b.split('/').map(Number);
+                const dateA = new Date(yearA, monthA - 1, dayA);
+                const dateB = new Date(yearB, monthB - 1, dayB);
+                return dateA - dateB;
+            });
+
+            const datasets = eventTypes.map(type => {
+                let backgroundColor;
+                let borderColor;
+                if (type === 'Palestras') {
+                    backgroundColor = 'rgba(76, 175, 80, 0.7)';
+                    borderColor = 'rgba(76, 175, 80, 1)';
+                } else if (type === 'Workshops') {
+                    backgroundColor = 'rgba(255, 193, 7, 0.7)';
+                    borderColor = 'rgba(255, 193, 7, 1)';
+                } else if (type === 'Demonstrações') {
+                    backgroundColor = 'rgba(66, 66, 66, 0.7)';
+                    borderColor = 'rgba(66, 66, 66, 1)';
+                } else {
+                    backgroundColor = 'rgba(158, 158, 158, 0.7)';
+                    borderColor = 'rgba(158, 158, 158, 1)';
+                }
+
+                return {
+                    label: type,
+                    data: sortedDates.map(date => days[date][type] || 0),
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 1
+                };
+            });
+
+            const agendaCtx = document.getElementById('agendaChart').getContext('2d');
+            if (agendaCtx) {
+                if (agendaChartInstance) {
+                    agendaChartInstance.destroy();
+                }
+                agendaChartInstance = new Chart(agendaCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedDates,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#424242' }
+                            },
+                            x: {
+                                ticks: { color: '#424242' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: '#424242' }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + ' eventos';
+                                        }
+                                        const maxLabelWidth = 16;
+                                        if (label.length > maxLabelWidth) {
+                                            const words = label.split(' ');
+                                            let currentLine = '';
+                                            const lines = [];
+                                            for (const word of words) {
+                                                if ((currentLine + word).length > maxLabelWidth) {
+                                                    lines.push(currentLine.trim());
+                                                    currentLine = '';
+                                                }
+                                                currentLine += word + ' ';
+                                            }
+                                            lines.push(currentLine.trim());
+                                            return lines;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateExpositoresChart(expositores) {
+            const categories = {};
+            expositores.forEach(expositor => {
+                const category = expositor.category || 'Outros';
+                categories[category] = (categories[category] || 0) + 1;
+            });
+
+            const labels = Object.keys(categories);
+            const data = labels.map(label => categories[label]);
+
+            const expositoresCtx = document.getElementById('expositoresChart').getContext('2d');
+            if (expositoresCtx) {
+                if (expositoresChartInstance) {
+                    expositoresChartInstance.destroy();
+                }
+                expositoresChartInstance = new Chart(expositoresCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Expositores por Categoria',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(76, 175, 80, 0.8)',
+                                'rgba(56, 142, 60, 0.8)',
+                                'rgba(255, 193, 7, 0.8)',
+                                'rgba(255, 160, 0, 0.8)',
+                                'rgba(158, 158, 158, 0.8)',
+                                'rgba(189, 189, 189, 0.8)'
+                            ],
+                            borderColor: '#FFFFFF',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                         plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { color: '#424242' }
+                            },
+                            tooltip: {
+                                 callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            const total = context.dataset.data.reduce((acc, value) => acc + value, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1) + '%';
+                                            label += percentage;
+                                        }
+                                        const maxLabelWidth = 16;
+                                        if (label.length > maxLabelWidth) {
+                                            const words = label.split(' ');
+                                            let currentLine = '';
+                                            const lines = [];
+                                            for (const word of words) {
+                                                if ((currentLine + word).length > maxLabelWidth) {
+                                                    lines.push(currentLine.trim());
+                                                    currentLine = '';
+                                                }
+                                                currentLine += word + ' ';
+                                            }
+                                            lines.push(currentLine.trim());
+                                            return lines;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+    </script>
+</body>
+</html>
