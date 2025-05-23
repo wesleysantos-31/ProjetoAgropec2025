@@ -1,1 +1,1 @@
-Projeto da criação do APP para o evento Agropec 2025, que ocorrerá em Paragominas/PA.
+Projeto agropec 2025 app
