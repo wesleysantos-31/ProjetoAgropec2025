@@ -55,11 +55,11 @@
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px; /* Max width for charts */
+            max-width: 600px; /* Largura máxima para gráficos */
             margin-left: auto;
             margin-right: auto;
-            height: 300px; /* Base height */
-            max-height: 400px; /* Max height */
+            height: 300px; /* Altura base */
+            max-height: 400px; /* Altura máxima */
         }
         @media (min-width: 768px) {
             .chart-container {
@@ -80,7 +80,7 @@
             border-radius: 0.25rem;
             display: inline-block;
         }
-        /* Custom scrollbar for webkit browsers */
+        /* Barra de rolagem personalizada para navegadores webkit */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -97,17 +97,17 @@
             background: #388E3C; /* Verde Secundário */
         }
 
-        /* Nova classe para esconder a sidebar inicialmente e ao deslogar */
+        /* Classe para esconder a barra lateral inicialmente e ao deslogar */
         .sidebar-initial-hidden {
             display: none;
         }
 
         /* Estilos para o canvas do mapa */
-        .map-canvas { /* Classe geral para ambos os mapas */
+        .map-canvas {
             border: 1px solid #ccc;
-            /* REMOVIDO: background-color: #e0ffe0; */
+            background-color: #f0f0f0; /* Fundo claro para o mapa fictício */
             cursor: crosshair;
-            width: 100%; /* Garante que o canvas seja responsivo */
+            width: 100%;
             height: 400px; /* Altura fixa para o mapa */
             display: block;
             margin-bottom: 1.5rem;
@@ -115,15 +115,15 @@
         }
         /* Estilos para o modal de QR Code */
         .qr-modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
+            display: none; /* Escondido por padrão */
+            position: fixed; /* Fica no lugar */
+            z-index: 1000; /* Fica no topo */
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%; /* Largura total */
+            height: 100%; /* Altura total */
+            overflow: auto; /* Habilita rolagem se necessário */
+            background-color: rgba(0,0,0,0.4); /* Preto com opacidade */
             justify-content: center;
             align-items: center;
         }
@@ -202,9 +202,7 @@
             </div>
         </header>
 
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6 main-content">
-            <section id="welcome-role-selection" class="p-6 active">
-                <div class="max-w-md mx-auto card p-8 text-center">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-2 main-content"> <section id="welcome-role-selection" class="p-2 active"> <div class="max-w-md mx-auto card p-8 text-center">
                     <div class="flex justify-center mb-8">
                          <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="AGROPEC 2025 Logo" class="h-auto">
                     </div>
@@ -215,8 +213,7 @@
                 </div>
             </section>
 
-            <section id="login" class="p-6">
-                <div class="max-w-md mx-auto card p-8">
+            <section id="login" class="p-2"> <div class="max-w-md mx-auto card p-8">
                     <div class="flex justify-center mb-8">
                          <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="AGROPEC 2025 Logo" class="h-auto">
                     </div>
@@ -243,8 +240,7 @@
                 </div>
             </section>
 
-            <section id="inicio" class="p-6">
-                <div class="mb-6">
+            <section id="inicio" class="p-2"> <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
                     <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
                 </div>
@@ -289,8 +285,7 @@
                 </div>
             </section>
 
-            <section id="agenda" class="p-6">
-                 <div class="mb-6">
+            <section id="agenda" class="p-2"> <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
                 </div>
@@ -332,8 +327,7 @@
                 </div>
             </section>
 
-            <section id="expositores" class="p-6">
-                <div class="mb-6">
+            <section id="expositores" class="p-2"> <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Conheça as empresas e instituições que estão apresentando suas novidades e soluções para o agronegócio.</p>
                 </div>
@@ -359,8 +353,7 @@
                 </div>
             </section>
 
-            <section id="mapa" class="p-6">
-                <div class="mb-6">
+            <section id="mapa" class="p-2"> <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Mapa do Evento AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
                 </div>
@@ -370,8 +363,7 @@
                 </div>
             </section>
 
-            <section id="admin-dashboard" class="p-6">
-                <div class="mb-6">
+            <section id="admin-dashboard" class="p-2"> <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Painel Administrativo</h2>
                     <p class="mt-2 text-gray-600">Gerencie as informações da feira e monitore as localizações dos estandes.</p>
                     <p id="admin-user-role-display" class="text-sm text-gray-500 mt-2"></p> </div>
@@ -400,7 +392,8 @@
                     <div class="card p-6">
                         <h3 class="text-xl font-semibold mb-4 text-green-700">Adicionar Localização de Estante</h3>
                         <p class="text-gray-600 mb-4">Clique no mapa abaixo para selecionar as coordenadas da estande.</p>
-                        <canvas id="adminMapCanvas" class="map-canvas"></canvas> <form id="location-form" class="space-y-4">
+                        <canvas id="adminMapCanvas" class="map-canvas"></canvas>
+                        <form id="location-form" class="space-y-4">
                             <div>
                                 <label for="standId" class="block text-sm font-medium text-gray-700">ID do Estante</label>
                                 <input type="text" id="standId" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: A-01, Setor B" required>
@@ -429,8 +422,7 @@
                 </div>
             </section>
 
-            <section id="stand-details" class="p-6">
-                <div class="mb-6">
+            <section id="stand-details" class="p-2"> <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Detalhes da Estande</h2>
                     <p class="mt-2 text-gray-600">Informações detalhadas sobre a estande.</p>
                 </div>
@@ -446,7 +438,7 @@
 
     <div id="qrCodeModal" class="qr-modal flex">
         <div class="qr-modal-content">
-            <span class="qr-modal-close">&times;</span>
+            <span class="qr-modal-close">×</span>
             <div id="qrcode" class="flex justify-center mb-4"></div>
             </div>
     </div>
@@ -467,7 +459,7 @@
             apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4",
             authDomain: "agropec-2025-app.firebaseapp.com",
             projectId: "agropec-2025-app",
-            storageBucket: "agropec-2025-app.firebasestorage.app",
+            storageBucket: "agropec-2025-app.firebaseapp.com",
             messagingSenderId: "203743696437",
             appId: "1:203743696437:web:0332c09896cc34eb14437c",
             measurementId: "G-40JHQ2RPEQ"
@@ -483,17 +475,19 @@
         const adminUserRoleDisplay = document.getElementById('admin-user-role-display'); 
         const firebaseErrorMessage = document.getElementById('firebase-error-message');
         const firebaseErrorDetails = document.getElementById('firebase-error-details');
+        const mobileMenuButton = document.getElementById('mobileMenuButton'); // Adicionado para o botão do menu
 
-        // Variáveis do Mapa
+        // Variáveis do Mapa Canvas
         let fairMapCanvas;
         let fairMapCtx;
         let adminMapCanvas;
         let adminMapCtx;
         let stands = []; // Array para armazenar as estandes cadastradas
+        let adminMapTemporaryMarker = null; // Para o ponto de clique no mapa do admin
 
         // Função para exibir/ocultar seções (tornada explicitamente global)
         window.showSection = function(sectionId, clickedLink) {
-            console.log(`Attempting to show section: ${sectionId}`);
+            console.log(`Tentando mostrar seção: ${sectionId}`);
             const sections = document.querySelectorAll('.main-content section');
             const navLinks = document.querySelectorAll('.nav-link');
             const currentSectionTitle = document.getElementById('currentSectionTitle');
@@ -512,13 +506,13 @@
             });
             navLinks.forEach(link => {
                 link.classList.remove('active');
-                link.classList.remove('bg-green-500'); // Tailwind active class
+                link.classList.remove('bg-green-500'); // Remove a classe ativa do Tailwind
             });
             if (clickedLink) {
                 clickedLink.classList.add('active');
-                clickedLink.classList.add('bg-green-500'); // Tailwind active class
+                clickedLink.classList.add('bg-green-500'); // Adiciona a classe ativa do Tailwind
             }
-            // Close mobile sidebar after navigation
+            // Fecha a barra lateral móvel após a navegação
             if (window.innerWidth < 768) {
                 sidebar.classList.add('-translate-x-full');
             }
@@ -575,114 +569,70 @@
             }
         }
 
-        // Função para desenhar o mapa e as estandes em um contexto específico
+        // Função para desenhar o mapa fictício e as estandes em um contexto específico
         function drawMap(canvasId, ctx) {
-            console.log(`[drawMap] Starting for canvasId: ${canvasId}`);
             const canvas = document.getElementById(canvasId);
-            if (!canvas) {
-                console.error(`[drawMap] Canvas element with ID '${canvasId}' not found.`);
+            if (!canvas || !ctx) {
+                console.error(`[drawMap] Canvas ou contexto não encontrado para ${canvasId}.`);
                 return;
             }
 
-            // Garante que as dimensões do canvas estejam corretas
             canvas.width = canvas.offsetWidth;
-            canvas.height = 400; // Altura fixa conforme requisito
-            console.log(`[drawMap] Canvas ${canvasId} offsetWidth: ${canvas.offsetWidth}, offsetHeight: ${canvas.offsetHeight}`);
+            canvas.height = 400;
 
-            if (!ctx) {
-                console.error(`[drawMap] Context for ${canvasId} is null or undefined.`);
-                return;
-            }
-
-            // Limpa o canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            console.log(`[drawMap] Canvas ${canvasId} cleared. Dimensions: ${canvas.width}x${canvas.height}`);
 
-            // Fundo do mapa - Usando uma cor bem visível para depuração
-            ctx.fillStyle = '#FF00FF'; // Magenta para depuração
+            // Fundo geral do evento
+            ctx.fillStyle = '#F0F0F0'; // Cinza claro para o chão do evento
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            console.log(`[drawMap] Canvas ${canvasId} filled with background color.`);
 
-            // Desenha um retângulo de teste proeminente
-            ctx.fillStyle = '#FF0000'; // Vermelho
-            ctx.fillRect(50, 50, 100, 100);
-            console.log(`[drawMap] Test red rectangle drawn for ${canvasId}.`);
+            // Desenha as ruas principais
+            ctx.fillStyle = '#A0A0A0'; // Cinza escuro para as ruas
+            ctx.fillRect(50, 0, 80, canvas.height); // Rua vertical esquerda
+            ctx.fillRect(canvas.width - 130, 0, 80, canvas.height); // Rua vertical direita
+            ctx.fillRect(0, 80, canvas.width, 60); // Rua horizontal superior
+            ctx.fillRect(0, canvas.height - 140, canvas.width, 60); // Rua horizontal inferior
 
-            // Desenha estradas (cinza escuro)
-            ctx.fillStyle = '#616161'; // Cinza escuro para estradas
-            const mainStreetWidth = 80;
-            const mainStreetX = canvas.width / 2 - mainStreetWidth / 2;
-            ctx.fillRect(mainStreetX, 0, mainStreetWidth, canvas.height);
-            const crossStreetHeight = 60;
-            const crossStreetY = canvas.height / 2 - crossStreetHeight / 2;
-            ctx.fillRect(0, crossStreetY, canvas.width, crossStreetHeight);
-            console.log(`[drawMap] Roads drawn for ${canvasId}.`);
+            // Áreas verdes (gramado, jardins)
+            ctx.fillStyle = '#8BC34A'; // Verde para áreas verdes
+            ctx.fillRect(10, 10, 30, 60); // Canto superior esquerdo
+            ctx.fillRect(140, 10, canvas.width - 270, 60); // Área verde superior central
+            ctx.fillRect(10, canvas.height - 70, 30, 60); // Canto inferior esquerdo
+            ctx.fillRect(canvas.width - 40, canvas.height - 70, 30, 60); // Canto inferior direito
+            ctx.fillRect(canvas.width / 2 - 50, canvas.height / 2 - 50, 100, 100); // Parque central
 
-            // Linhas tracejadas para estradas (branco)
-            ctx.strokeStyle = '#FFFFFF';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([10, 10]); // Padrão de linha tracejada
+            // Edifícios (auditórios, praça de alimentação, etc.)
+            ctx.fillStyle = '#B0BEC5'; // Cinza azulado para edifícios
+            ctx.fillRect(10, 150, 40, 100); // Edifício 1 (Auditório A)
+            ctx.fillRect(canvas.width - 50, 150, 40, 100); // Edifício 2 (Praça de Alimentação)
+            ctx.fillRect(140, canvas.height - 200, 100, 50); // Edifício 3 (Centro de Boas-Vindas)
+            ctx.fillRect(canvas.width - 240, 20, 100, 50); // Edifício 4 (Administração)
 
-            // Linhas tracejadas da estrada vertical principal
-            ctx.beginPath();
-            ctx.moveTo(mainStreetX + mainStreetWidth / 4, 0);
-            ctx.lineTo(mainStreetX + mainStreetWidth / 4, canvas.height);
-            ctx.stroke();
+            // Áreas de estandes (blocos)
+            ctx.fillStyle = '#E0E0E0'; // Cinza muito claro para blocos de estandes
+            ctx.fillRect(140, 150, canvas.width - 270, 100); // Bloco central superior
+            ctx.fillRect(140, canvas.height - 200, canvas.width - 270, 50); // Bloco central inferior
 
-            ctx.beginPath();
-            ctx.moveTo(mainStreetX + mainStreetWidth * 3 / 4, 0);
-            ctx.lineTo(mainStreetX + mainStreetWidth * 3 / 4, canvas.height);
-            ctx.stroke();
-
-            // Linhas tracejadas da estrada horizontal
-            ctx.beginPath();
-            ctx.moveTo(0, crossStreetY + crossStreetHeight / 4);
-            ctx.lineTo(canvas.width, crossStreetY + crossStreetHeight / 4);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(0, crossStreetY + crossStreetHeight * 3 / 4);
-            ctx.lineTo(canvas.width, crossStreetY + crossStreetHeight * 3 / 4);
-            ctx.stroke();
-
-            ctx.setLineDash([]); // Resetar padrão de linha
-            console.log(`[drawMap] Dashed lines drawn for ${canvasId}.`);
-
-            // Desenha áreas verdes (parques/campos)
-            ctx.fillStyle = '#8BC34A'; // Verde para parques
-            ctx.fillRect(20, 20, 120, 100); // Parque 1 (superior-esquerdo)
-            ctx.fillRect(canvas.width - 140, canvas.height - 120, 120, 100); // Parque 2 (inferior-direito)
-            ctx.fillRect(20, canvas.height - 120, 120, 100); // Parque 3 (inferior-esquerdo)
-            ctx.fillRect(canvas.width - 140, 20, 120, 100); // Parque 4 (superior-direito)
-            console.log(`[drawMap] Green areas drawn for ${canvasId}.`);
-
-            // Desenha áreas de construção (cinza claro/marrom) - Posições ajustadas para evitar estradas
-            ctx.fillStyle = '#B0BEC5'; // Cinza claro para construções
-            ctx.fillRect(160, 30, 80, 70); // Construção 1 (superior-esquerda, perto da estrada vertical)
-            ctx.fillRect(canvas.width - 240, 100, 90, 70); // Construção 2 (superior-direita)
-            ctx.fillStyle = '#D7CCC8'; // Marrom claro para outras construções
-            ctx.fillRect(50, canvas.height - 170, 70, 60); // Construção 3 (inferior-esquerda)
-            ctx.fillRect(canvas.width - 100, 240, 60, 50); // Construção 4 (inferior-direita)
-            console.log(`[drawMap] Buildings drawn for ${canvasId}.`);
-
-            // Desenha um grid fictício (opcional, pode ser removido para um visual mais limpo)
-            ctx.strokeStyle = '#E0E0E0'; // Cor do grid mais clara
+            // Linhas de divisão de estandes (grid sutil)
+            ctx.strokeStyle = '#CCCCCC';
             ctx.lineWidth = 0.5;
-            const gridSize = 50; // Tamanho de cada célula do grid
+            const standBlockPadding = 10;
+            const standWidth = 70;
+            const standHeight = 40;
 
-            for (let x = 0; x < canvas.width; x += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
-                ctx.stroke();
+            // Bloco central superior
+            for (let x = 140 + standBlockPadding; x < canvas.width - 130 - standWidth; x += standWidth + standBlockPadding) {
+                for (let y = 150 + standBlockPadding; y < 150 + 100 - standHeight; y += standHeight + standBlockPadding) {
+                    ctx.strokeRect(x, y, standWidth, standHeight);
+                }
             }
-            for (let y = 0; y < canvas.height; y += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y); // CORRIGIDO: Era ctx.lineTo(0, canvas.width);
-                ctx.stroke();
+
+            // Bloco central inferior
+            for (let x = 140 + standBlockPadding; x < canvas.width - 130 - standWidth; x += standWidth + standBlockPadding) {
+                for (let y = canvas.height - 200 + standBlockPadding; y < canvas.height - 200 + 50 - standHeight; y += standHeight + standBlockPadding) {
+                    ctx.strokeRect(x, y, standWidth, standHeight);
+                }
             }
-            console.log(`[drawMap] Grid drawn for ${canvasId}.`);
 
             // Desenha as estandes
             stands.forEach(stand => {
@@ -711,7 +661,14 @@
                     ctx.fillText(stand.occupant, stand.x, stand.y + halfSize + 8);
                 }
             });
-            console.log(`[drawMap] Stands drawn for ${canvasId}. Total stands: ${stands.length}`);
+
+            // Desenha o marcador temporário do admin, se houver
+            if (canvasId === 'adminMapCanvas' && adminMapTemporaryMarker) {
+                ctx.fillStyle = 'red';
+                ctx.beginPath();
+                ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
         // Função para lidar com o clique no mapa (apenas para o mapa do admin)
@@ -726,12 +683,8 @@
                 document.getElementById('standY').value = Math.round(y);
                 document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
 
-                // Opcional: Desenhar um ponto temporário no clique para feedback visual no mapa do admin
-                drawMap('adminMapCanvas', adminMapCtx); // Redesenha para limpar o ponto anterior
-                adminMapCtx.fillStyle = 'red';
-                adminMapCtx.beginPath();
-                adminMapCtx.arc(x, y, 5, 0, Math.PI * 2);
-                adminMapCtx.fill();
+                adminMapTemporaryMarker = { x: Math.round(x), y: Math.round(y) };
+                drawMap('adminMapCanvas', adminMapCtx); // Redesenha para mostrar o marcador temporário
             }
         }
 
@@ -759,7 +712,7 @@
                 // Adiciona listeners para os botões de QR Code
                 document.querySelectorAll('.generate-qr-btn').forEach(button => {
                     button.addEventListener('click', (event) => {
-                        console.log("Gerar QR Code button clicked!"); // Log para depuração
+                        console.log("Botão Gerar QR Code clicado!"); // Log para depuração
                         const standDocId = event.target.dataset.standDocId;
                         const stand = stands.find(s => s.docId === standDocId); // Encontra a estande pelo docId
                         if (stand) {
@@ -800,14 +753,14 @@
 
         // Fecha o modal do QR Code
         document.querySelector('.qr-modal-close').addEventListener('click', () => {
-            console.log("QR Code modal close button clicked!"); // Log para depuração
+            console.log("Botão fechar modal QR Code clicado!"); // Log para depuração
             document.getElementById('qrCodeModal').style.display = 'none';
         });
 
         window.addEventListener('click', (event) => {
             const qrCodeModal = document.getElementById('qrCodeModal');
             if (event.target === qrCodeModal) {
-                console.log("Clicked outside QR Code modal!"); // Log para depuração
+                console.log("Clicado fora do modal QR Code!"); // Log para depuração
                 qrCodeModal.style.display = 'none';
             }
         });
@@ -1141,11 +1094,12 @@
 
             if (existingDocs.empty) {
                 console.log("Adicionando dados fictícios ao mapa...");
-                await addDoc(locationsCollectionRef, { id: 'A1', occupant: 'AgroTech Solutions', x: 100, y: 150, description: 'Soluções inovadoras para agricultura de precisão.' });
-                await addDoc(locationsCollectionRef, { id: 'B3', occupant: 'Pecuária Moderna', x: 300, y: 250, description: 'Tecnologias avançadas para manejo de rebanhos.' });
-                await addDoc(locationsCollectionRef, { id: 'C2', occupant: 'Máquinas Agrícolas XYZ', x: 500, y: 100, description: 'Demonstração de tratores e equipamentos de última geração.' });
-                await addDoc(locationsCollectionRef, { id: 'D4', occupant: 'Hortaliças Orgânicas', x: 200, y: 350, description: 'Cultivo sustentável e produtos frescos da horta.' });
-                await addDoc(locationsCollectionRef, { id: 'E5', occupant: 'Tecnologia Rural', x: 450, y: 300, description: 'Drones e sensores para otimização de lavouras.' });
+                // Coordenadas fictícias em pixels para o mapa canvas
+                await addDoc(locationsCollectionRef, { id: 'A1', occupant: 'AgroTech Solutions', x: 180, y: 180, description: 'Soluções inovadoras para agricultura de precisão.' });
+                await addDoc(locationsCollectionRef, { id: 'B3', occupant: 'Pecuária Moderna', x: 350, y: 200, description: 'Tecnologias avançadas para manejo de rebanhos.' });
+                await addDoc(locationsCollectionRef, { id: 'C2', occupant: 'Máquinas Agrícolas XYZ', x: 500, y: 170, description: 'Demonstração de tratores e equipamentos de última geração.' });
+                await addDoc(locationsCollectionRef, { id: 'D4', occupant: 'Hortaliças Orgânicas', x: 200, y: 300, description: 'Cultivo sustentável e produtos frescos da horta.' });
+                await addDoc(locationsCollectionRef, { id: 'E5', occupant: 'Tecnologia Rural', x: 450, y: 320, description: 'Drones e sensores para otimização de lavouras.' });
             }
         }
 
@@ -1198,6 +1152,7 @@
                 document.getElementById('standCoordinatesDisplay').value = ''; // Limpa o display
                 document.getElementById('standX').value = '';
                 document.getElementById('standY').value = '';
+                adminMapTemporaryMarker = null; // Limpa o marcador temporário
                 // drawMap() é chamado via onSnapshot em loadPublicLocations()
             } catch (error) {
                 console.error("Erro ao adicionar localização:", error);
@@ -1245,7 +1200,7 @@
 
 
         async function handleRegister() {
-            console.log("Register link clicked!"); // Log para depuração
+            console.log("Link de registro clicado!"); // Log para depuração
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
             const loginMessageDiv = document.getElementById('login-message');
@@ -1310,7 +1265,7 @@
         }
 
         async function handleLogin() {
-            console.log("Login button clicked!"); // Log para depuração
+            console.log("Botão de login clicado!"); // Log para depuração
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
             const loginMessageDiv = document.getElementById('login-message');
@@ -1362,7 +1317,7 @@
         }
 
         async function handleVisitorLogin() {
-            console.log("Visitor button clicked!"); // Log para depuração
+            console.log("Botão de visitante clicado!"); // Log para depuração
             if (!window.auth) {
                 console.error("Firebase Auth não inicializado.");
                 // Pode adicionar uma mensagem de erro na UI aqui se desejar
@@ -1380,7 +1335,7 @@
         }
 
         async function handleLogout() {
-            console.log("Logout button clicked!"); // Log para depuração
+            console.log("Botão de logout clicado!"); // Log para depuração
             if (!window.auth) {
                 console.error("Firebase Auth não inicializado.");
                 return;
@@ -1395,9 +1350,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOMContentLoaded fired.");
+            console.log("DOMContentLoaded disparado.");
 
-            // Ensure the QR code modal is hidden on load
+            // Garante que o modal do QR code esteja oculto ao carregar
             const qrCodeModal = document.getElementById('qrCodeModal');
             if (qrCodeModal) {
                 qrCodeModal.style.display = 'none';
@@ -1406,7 +1361,7 @@
             // Inicializar Firebase (acessando globalmente)
             let app, db, auth, analytics;
             try {
-                console.log("Attempting to initialize Firebase...");
+                console.log("Tentando inicializar o Firebase...");
                 app = initializeApp(firebaseConfig);
                 analytics = getAnalytics(app); // Inicializa analytics se necessário
                 db = getFirestore(app);
@@ -1415,7 +1370,7 @@
                 // Tornar db e auth globais para acesso em outras funções
                 window.db = db;
                 window.auth = auth;
-                console.log("Firebase initialized successfully.");
+                console.log("Firebase inicializado com sucesso.");
                 firebaseErrorMessage.classList.add('hidden'); // Esconde a mensagem de erro se a inicialização for bem-sucedida
             } catch (error) {
                 console.error("Erro ao inicializar Firebase:", error);
@@ -1425,15 +1380,19 @@
                 return; 
             }
 
+            // Inicializa os mapas Canvas assim que o DOM estiver pronto
+            initMap('fairMapCanvas');
+            initMap('adminMapCanvas');
+
             // Listener de autenticação, agora dentro do DOMContentLoaded
             if (window.auth) { // Garante que auth está disponível antes de adicionar o listener
                 onAuthStateChanged(window.auth, async (user) => { // Use onAuthStateChanged do módulo auth
-                    console.log("Auth state changed. User:", user ? user.uid : "null");
+                    console.log("Estado de autenticação alterado. Usuário:", user ? user.uid : "null");
                     if (user) {
                         currentUserId = user.uid;
                         console.log("Usuário autenticado:", currentUserId);
                         if (userIdDisplay) {
-                            userIdDisplay.textContent = `User ID: ${currentUserId}`;
+                            userIdDisplay.textContent = `ID do Usuário: ${currentUserId}`;
                             userIdDisplay.classList.remove('hidden');
                         }
                         
@@ -1445,7 +1404,7 @@
                         if (window.db) {
                             loadPublicEvents();
                             loadPublicExpositores();
-                            // O initMap() já chama loadPublicLocations()
+                            loadPublicLocations(); // Garante que o mapa é atualizado no login/reconexão
                         }
 
                         // Tenta buscar o perfil do usuário para determinar a role
@@ -1455,7 +1414,7 @@
                             try {
                                 const userProfileSnap = await getDoc(userProfileDocRef); // Use getDoc
                                 userRole = userProfileSnap.exists ? userProfileSnap.data().role : 'visitor';
-                                console.log("User role:", userRole);
+                                console.log("Função do usuário:", userRole);
                             } catch (profileError) {
                                 console.error("Erro ao carregar perfil do usuário:", profileError);
                                 // Continua como visitante em caso de erro ao carregar o perfil
@@ -1525,13 +1484,29 @@
                 firebaseErrorMessage.classList.remove('hidden');
             }
 
+            // Listener para o botão do menu móvel
+            mobileMenuButton.addEventListener('click', () => {
+                console.log("Botão de menu móvel clicado!"); // Log para depuração
+                sidebar.classList.toggle('-translate-x-full');
+            });
+
+            // Fechar barra lateral ao clicar fora em mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMenuButton = mobileMenuButton.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnMenuButton && window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+                    console.log("Clicado fora da barra lateral, fechando."); // Log para depuração
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
 
             // Restante dos listeners de evento DOMContentLoaded
             const registerLink = document.getElementById('register-link');
             if (registerLink) {
                 registerLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    console.log("Register link clicked!"); // Log para depuração
+                    console.log("Link de registro clicado!"); // Log para depuração
                     handleRegister();
                 });
             }
@@ -1540,7 +1515,7 @@
             if (loginButton) {
                 loginButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    console.log("Login button clicked!"); // Log para depuração
+                    console.log("Botão de login clicado!"); // Log para depuração
                     handleLogin();
                 });
             }
@@ -1549,7 +1524,7 @@
             if (visitorButton) {
                 visitorButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    console.log("Visitor button clicked!"); // Log para depuração
+                    console.log("Botão de visitante clicado!"); // Log para depuração
                     registrationContext = 'visitor'; // Define o contexto para visitante
                     handleVisitorLogin();
                 });
@@ -1559,7 +1534,7 @@
             if (adminButton) {
                 adminButton.addEventListener('click', (e) => {
                     e.preventDefault();
-                    console.log("Admin button clicked!"); // Log para depuração
+                    console.log("Botão de admin clicado!"); // Log para depuração
                     registrationContext = 'admin'; // Define o contexto para administrador
                     window.showSection('login', document.querySelector('a[href=\'#login\']'));
                 });
@@ -1573,7 +1548,7 @@
             if (tentForm) {
                 tentForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    console.log("Tent form submitted!"); // Log para depuração
+                    console.log("Formulário de tenda enviado!"); // Log para depuração
                     const tentName = document.getElementById('tentName').value;
                     const tentCategory = document.getElementById('tentCategory').value;
                     const tentDescription = document.getElementById('tentDescription').value;
@@ -1585,7 +1560,7 @@
             if (locationForm) {
                 locationForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    console.log("Location form submitted!"); // Log para depuração
+                    console.log("Formulário de localização enviado!"); // Log para depuração
                     const standId = document.getElementById('standId').value;
                     const standOccupant = document.getElementById('standOccupant').value;
                     const standX = parseInt(document.getElementById('standX').value, 10);
@@ -1602,7 +1577,7 @@
             }
 
             window.addEventListener('hashchange', () => {
-                console.log("Hash changed to:", window.location.hash);
+                console.log("Hash alterado para:", window.location.hash);
                 const hash = window.location.hash;
                 if (hash.startsWith('#stand-details?id=')) {
                     const standId = hash.split('id=')[1];
@@ -1628,13 +1603,6 @@
                 window.showSection(initialSectionId, initialNavLink);
             }
         });
-
-        // Inicializa os mapas quando a janela estiver totalmente carregada
-        window.onload = function() {
-            console.log("Window loaded. Initializing maps.");
-            initMap('fairMapCanvas');
-            initMap('adminMapCanvas');
-        };
     </script>
 </body>
 </html>
