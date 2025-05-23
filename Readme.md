@@ -1,2 +1,1 @@
-Olá esse projeto ensina você a usar o Git
-Isso é uma alteração
+Projeto da criação do APP para o evento Agropec 2025, que ocorrerá em Paragominas/PA.
