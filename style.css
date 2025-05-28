@@ -1,0 +1,147 @@
+@charset "UTF-8";
+
+@import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap);
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F5; /* Cinza Claro */
+            color: #424242; /* Cinza Escuro */
+        }
+        .sidebar {
+            background-color: #388E3C; /* Verde Secundário */
+            color: #FFFFFF; /* Branco */
+        }
+        .sidebar a {
+            color: #FFFFFF;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #4CAF50; /* Verde Principal */
+        }
+        .main-content section {
+            display: none;
+        }
+        .main-content section.active {
+            display: block;
+        }
+        .btn-primary {
+            background-color: #4CAF50; /* Verde Principal */
+            color: #FFFFFF;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #388E3C; /* Verde Secundário */
+        }
+        .btn-accent {
+            background-color: #FFC107; /* Dourado/Amarelo */
+            color: #424242;
+            transition: background-color 0.3s ease;
+        }
+        .btn-accent:hover {
+            background-color: #FFA000; /* Dourado/Amarelo mais escuro */
+        }
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Largura máxima para gráficos */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Altura base */
+            max-height: 400px; /* Altura máxima */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        h1, h2, h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+        .agropec-logo-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #4CAF50;
+            padding: 0.5rem 1rem;
+            border: 2px solid #4CAF50;
+            border-radius: 0.25rem;
+            display: inline-block;
+        }
+        /* Barra de rolagem personalizada para navegadores webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F5F5; /* Cinza Claro */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4CAF50; /* Verde Principal */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #388E3C; /* Verde Secundário */
+        }
+
+        /* Classe para esconder a barra lateral inicialmente e ao deslogar */
+        .sidebar-initial-hidden {
+            display: none;
+        }
+
+        /* Estilos para o canvas do mapa */
+        .map-canvas {
+            border: 1px solid #ccc;
+            background-color: #f0f0f0; /* Fundo claro para o mapa fictício */
+            cursor: crosshair;
+            width: 100%;
+            height: 400px; /* Altura fixa para o mapa */
+            display: block;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        /* Estilos para o modal de QR Code */
+        .qr-modal {
+            display: none; /* Escondido por padrão */
+            position: fixed; /* Fica no lugar */
+            z-index: 1000; /* Fica no topo */
+            left: 0;
+            top: 0;
+            width: 100%; /* Largura total */
+            height: 100%; /* Altura total */
+            overflow: auto; /* Habilita rolagem se necessário */
+            background-color: rgba(0,0,0,0.4); /* Preto com opacidade */
+            justify-content: center;
+            align-items: center;
+        }
+        .qr-modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        .qr-modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .qr-modal-close:hover,
+        .qr-modal-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
