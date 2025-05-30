@@ -1,9 +1,8 @@
 // Importa as funções necessárias do SDK do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-// Importa createUserWithEmailAndPassword para registro
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"; // Descomente se for usar
 import { getAuth, signInAnonymously, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
 // Sua configuração do Firebase
 const firebaseConfig = {
@@ -18,681 +17,678 @@ const firebaseConfig = {
 
 let currentUserId = null;
 let registrationContext = 'visitor'; // 'visitor' ou 'admin'
+let globalEventsCache = []; // Cache para eventos, usado para edição
+let globalExpositorsCache = []; // Cache para expositores, usado para edição
 
+// Elementos da UI
 const userIdDisplay = document.getElementById('user-id-display');
 const sidebar = document.querySelector('.sidebar');
+const navLoginLink = document.getElementById('nav-login-link'); // Link de login na sidebar
 const logoutButton = document.getElementById('logout-button');
-const adminDashboardLink = document.getElementById('admin-dashboard-link');
-const adminUserRoleDisplay = document.getElementById('admin-user-role-display'); 
+const adminDashboardLink = document.getElementById('admin-dashboard-link'); // Gerenciar Estandes
+const organizadoresLink = document.getElementById('organizadores-link'); // Gerenciar Conteúdo
+const adminUserRoleDisplayEstandes = document.getElementById('admin-user-role-display-estandes');
+const adminUserRoleDisplayOrganizadores = document.getElementById('admin-user-role-display-organizadores');
 const firebaseErrorMessage = document.getElementById('firebase-error-message');
 const firebaseErrorDetails = document.getElementById('firebase-error-details');
-const mobileMenuButton = document.getElementById('mobileMenuButton'); // Adicionado para o botão do menu
+const mobileMenuButton = document.getElementById('mobileMenuButton');
 
 // Variáveis do Mapa Canvas
-let fairMapCanvas;
-let fairMapCtx;
-let adminMapCanvas;
-let adminMapCtx;
-let stands = []; // Array para armazenar as estandes cadastradas
-let adminMapTemporaryMarker = null; // Para o ponto de clique no mapa do admin
+let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
+let stands = []; 
+let adminMapTemporaryMarker = null;
 
-// Função para exibir/ocultar seções (tornada explicitamente global)
+// Função para exibir/ocultar seções
 window.showSection = function(sectionId, clickedLink) {
-    console.log(`Tentando mostrar seção: ${sectionId}`);
+    console.log(`Exibindo seção: ${sectionId}`);
     const sections = document.querySelectorAll('.main-content section');
     const navLinks = document.querySelectorAll('.nav-link');
     const currentSectionTitle = document.getElementById('currentSectionTitle');
 
-    sections.forEach(section => {
-        section.classList.remove('active');
-        if (section.id === sectionId) {
-            section.classList.add('active');
-            let title = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-            // Mapeamento de IDs de seção para títulos
-            const titleMap = {
-                'inicio': 'Painel Principal',
-                'admin-dashboard': 'Painel Administrativo',
-                'stand-details': 'Detalhes da Estande',
-                'welcome-role-selection': 'Bem-vindo!',
-                'login': 'Acesso ao Evento',
-                'agenda': 'Agenda do Evento',
-                'expositores': 'Lista de Expositores',
-                'mapa': 'Mapa da Feira'
-            };
-            currentSectionTitle.textContent = titleMap[sectionId] || title;
-        }
-    });
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        link.classList.remove('bg-green-500'); // Remove a classe ativa do Tailwind
-        link.classList.remove('text-white');
-         // Ajuste para o tema da sidebar (se texto é branco por padrão e o fundo muda)
-        if (sidebar.contains(link)) { // Se o link está na sidebar
-            link.classList.add('text-white'); // Garante que o texto seja branco
-        }
+    sections.forEach(section => section.classList.remove('active'));
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) activeSection.classList.add('active');
 
+    const titleMap = {
+        'inicio': 'Painel Principal',
+        'admin-dashboard': 'Gerenciar Estandes',
+        'organizadores': 'Gerenciar Conteúdo do Evento',
+        'stand-details': 'Detalhes da Estande',
+        'welcome-role-selection': 'Bem-vindo!',
+        'login': 'Acesso ao Evento',
+        'agenda': 'Agenda do Evento',
+        'expositores': 'Lista de Expositores',
+        'mapa': 'Mapa da Feira'
+    };
+    if(currentSectionTitle) currentSectionTitle.textContent = titleMap[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+
+    navLinks.forEach(link => {
+        link.classList.remove('active', 'bg-green-700', 'text-white'); // Classes mais escuras para ativo na sidebar
+        if (sidebar.contains(link)) {
+            link.classList.add('text-gray-300'); // Cor padrão para links da sidebar
+            link.classList.remove('bg-green-500'); // Tailwind classe que pode ter sido adicionada antes
+        }
     });
+
     if (clickedLink) {
         clickedLink.classList.add('active');
-         if (sidebar.contains(clickedLink)) { // Se o link clicado está na sidebar
-            // Não precisa adicionar text-white aqui, pois já deve ser branco
-            // e o CSS da sidebar cuida do fundo ativo/hover
-        } else {
-            // Para links fora da sidebar, se houver
-            clickedLink.classList.add('bg-green-500');
+        if (sidebar.contains(clickedLink)) {
+            clickedLink.classList.add('bg-green-700'); // Verde mais escuro para ativo na sidebar
             clickedLink.classList.add('text-white');
+        } else {
+            // Para links fora da sidebar, se houver (não é o caso atual)
+            // clickedLink.classList.add('bg-green-500', 'text-white');
         }
     }
-    // Fecha a barra lateral móvel após a navegação
+    
     if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
     }
 }
 
-// Função para inicializar um mapa específico
+// --- Funções do Mapa ---
 function initMap(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (!canvas) {
-        console.error(`Canvas com ID '${canvasId}' não encontrado.`);
-        return;
-    }
-
+    if (!canvas) { console.error(`Canvas '${canvasId}' não encontrado.`); return; }
     const ctx = canvas.getContext('2d');
-    // Ajusta o tamanho do canvas com base no CSS (importante para a densidade de pixels correta)
+    
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    canvas.height = rect.height * dpr; // Usa a altura definida pelo CSS (.map-canvas)
     ctx.scale(dpr, dpr);
-    
-    // Armazena as referências globais
-    if (canvasId === 'fairMapCanvas') {
-        fairMapCanvas = canvas;
-        fairMapCtx = ctx;
-    } else if (canvasId === 'adminMapCanvas') {
-        adminMapCanvas = canvas;
-        adminMapCtx = ctx;
-    }
 
-    // Adiciona o listener de clique apenas para o mapa do admin
+    if (canvasId === 'fairMapCanvas') { fairMapCanvas = canvas; fairMapCtx = ctx; }
+    else if (canvasId === 'adminMapCanvas') { adminMapCanvas = canvas; adminMapCtx = ctx; }
+
     if (canvasId === 'adminMapCanvas') {
-        canvas.removeEventListener('click', handleMapClick); // Remove para evitar múltiplos listeners
+        canvas.removeEventListener('click', handleMapClick);
         canvas.addEventListener('click', handleMapClick);
-    } else {
-        canvas.removeEventListener('click', handleMapClick); // Garante que o mapa do visitante não tenha listener de clique
-        // Adicionar listener de clique para o mapa do visitante (fairMapCanvas) para interagir com estandes
+    } else if (canvasId === 'fairMapCanvas') {
+        canvas.removeEventListener('click', handleFairMapClick);
         canvas.addEventListener('click', handleFairMapClick);
     }
     
-    window.removeEventListener('resize', () => handleMapResize(canvasId));
+    window.removeEventListener('resize', () => handleMapResize(canvasId)); // Evita duplicatas
     window.addEventListener('resize', () => handleMapResize(canvasId));
     
-    drawMap(canvasId, ctx);
-
-    if (window.db) { 
-        loadPublicLocations();
-    }
+    drawMap(canvasId, ctx, canvas.clientWidth, canvas.clientHeight); // Usa clientWidth/Height para dimensões CSS
+    if (window.db) loadPublicLocations();
 }
 
 function handleMapResize(canvasId) {
     const canvas = document.getElementById(canvasId);
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect(); // Usa getBoundingClientRect para obter as dimensões reais conforme o CSS
-        
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr; // A altura do canvas agora vem do CSS
-        
-        ctx.scale(dpr, dpr); // Escala o contexto para o DPR
-        
-        // Redesenha o mapa usando as dimensões CSS (escaladas internamente pelo DPR)
-        drawMap(canvasId, ctx, rect.width, rect.height);
-    }
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    drawMap(canvasId, ctx, rect.width, rect.height); // Passa as dimensões CSS
 }
 
-
-// Função para desenhar o mapa fictício e as estandes em um contexto específico
-// Modificado para aceitar width e height como parâmetros para o resize
 function drawMap(canvasId, ctx, cssWidth, cssHeight) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas || !ctx) {
-        console.error(`[drawMap] Canvas ou contexto não encontrado para ${canvasId}.`);
-        return;
-    }
-
-    // Usa as dimensões CSS fornecidas ou obtém do canvas se não fornecidas (para a chamada inicial)
-    const currentCssWidth = cssWidth || canvas.clientWidth;
-    const currentCssHeight = cssHeight || canvas.clientHeight;
-
-    ctx.clearRect(0, 0, currentCssWidth, currentCssHeight); // Limpa usando as dimensões CSS
-
-    // Fundo geral do evento
+    if (!ctx) return;
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
     ctx.fillStyle = '#F0F0F0'; 
-    ctx.fillRect(0, 0, currentCssWidth, currentCssHeight);
+    ctx.fillRect(0, 0, cssWidth, cssHeight);
 
-    // Desenha as ruas principais (ajustar as proporções se necessário)
-    const streetWidth = Math.max(50, currentCssWidth * 0.1); // Ex: 10% da largura, mínimo 50px
-    const streetHeight = Math.max(40, currentCssHeight * 0.1); // Ex: 10% da altura, mínimo 40px
+    // Desenho simplificado do mapa para focar na funcionalidade das estandes
+    const streetColor = '#A0A0A0';
+    ctx.fillStyle = streetColor;
+    ctx.fillRect(cssWidth * 0.1, 0, cssWidth * 0.08, cssHeight); // Rua vertical 1
+    ctx.fillRect(cssWidth * 0.82, 0, cssWidth * 0.08, cssHeight); // Rua vertical 2
+    ctx.fillRect(0, cssHeight * 0.2, cssWidth, cssHeight * 0.08); // Rua horizontal 1
+    ctx.fillRect(0, cssHeight * 0.72, cssWidth, cssHeight * 0.08); // Rua horizontal 2
 
-    ctx.fillStyle = '#A0A0A0'; 
-    ctx.fillRect(currentCssWidth * 0.1, 0, streetWidth, currentCssHeight); // Rua vertical esquerda
-    ctx.fillRect(currentCssWidth * 0.8 - streetWidth, 0, streetWidth, currentCssHeight); // Rua vertical direita
-    ctx.fillRect(0, currentCssHeight * 0.15, currentCssWidth, streetHeight); // Rua horizontal superior
-    ctx.fillRect(0, currentCssHeight * 0.75 - streetHeight, currentCssWidth, streetHeight); // Rua horizontal inferior
-
-    // Áreas verdes (gramado, jardins)
-    ctx.fillStyle = '#8BC34A'; 
-    ctx.fillRect(10, 10, 30, 60); 
-    // ... (ajustar outras coordenadas para serem relativas ou responsivas se necessário)
-
-    // Edifícios
-    ctx.fillStyle = '#B0BEC5'; 
-    ctx.fillRect(10, currentCssHeight * 0.3, 40, 100); 
-    // ...
-
-    // Desenha as estandes
     stands.forEach(stand => {
-        ctx.fillStyle = '#4CAF50'; 
-        ctx.strokeStyle = '#388E3C'; 
-        ctx.lineWidth = 2;
+        // As coordenadas X, Y são salvas relativas ao tamanho CSS do mapa de admin (400px de altura)
+        // Precisamos escalar para o tamanho atual do mapa de visualização, se diferente.
+        // Para simplificar, vamos assumir que o mapa de admin e visualização têm a mesma proporção de altura
+        // e que as coordenadas são salvas em pixels absolutos para um mapa de altura 400px.
+        const originalMapHeightForCoords = 400; // A altura base para a qual as coords foram salvas
+        const scaleFactor = cssHeight / originalMapHeightForCoords;
 
-        const standSize = Math.min(20, currentCssWidth * 0.03, currentCssHeight * 0.04); // Tamanho adaptável
+        const displayX = stand.x * scaleFactor;
+        const displayY = stand.y * scaleFactor;
+        
+        const standSize = Math.min(20 * scaleFactor, cssWidth * 0.03, cssHeight * 0.04);
         const halfSize = standSize / 2;
 
-        // As coordenadas (stand.x, stand.y) devem ser normalizadas (0-1) ou relativas
-        // Se as coordenadas forem absolutas em pixels para um tamanho de mapa fixo,
-        // elas precisarão ser escaladas para o tamanho atual do canvas.
-        // Exemplo: se stand.x e stand.y foram salvas para um mapa de 800x400
-        // const originalMapWidth = 800;
-        // const originalMapHeight = 400;
-        // const scaledX = (stand.x / originalMapWidth) * currentCssWidth;
-        // const scaledY = (stand.y / originalMapHeight) * currentCssHeight;
-
-        // Por enquanto, vamos assumir que stand.x e stand.y são coordenadas de clique diretas
-        // e podem não escalar perfeitamente sem uma lógica de escalonamento/normalização.
-        const displayX = stand.x; 
-        const displayY = stand.y;
-
+        ctx.fillStyle = '#4CAF50'; 
+        ctx.strokeStyle = '#388E3C'; 
+        ctx.lineWidth = 2 * scaleFactor;
         ctx.fillRect(displayX - halfSize, displayY - halfSize, standSize, standSize);
         ctx.strokeRect(displayX - halfSize, displayY - halfSize, standSize, standSize);
 
         ctx.fillStyle = '#FFFFFF'; 
-        ctx.font = `bold ${Math.max(8, standSize * 0.4)}px Inter`; // Fonte adaptável
+        ctx.font = `bold ${Math.max(8, standSize * 0.4)}px Inter`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(stand.id, displayX, displayY);
 
         if (stand.occupant) {
             ctx.fillStyle = '#424242'; 
-            ctx.font = `${Math.max(7, standSize * 0.35)}px Inter`; // Fonte adaptável
+            ctx.font = `${Math.max(7, standSize * 0.35)}px Inter`;
             ctx.fillText(stand.occupant, displayX, displayY + halfSize + Math.max(7, standSize * 0.35));
         }
     });
 
-    // Desenha o marcador temporário do admin, se houver
     if (canvasId === 'adminMapCanvas' && adminMapTemporaryMarker) {
         ctx.fillStyle = 'red';
         ctx.beginPath();
-        // Usa as coordenadas do marcador temporário, que já devem estar corretas para o clique
-        ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 5, 0, Math.PI * 2);
+        ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 5, 0, Math.PI * 2); // Marcador usa coords diretas do clique
         ctx.fill();
     }
 }
 
-// Função para lidar com o clique no mapa (apenas para o mapa do admin)
-function handleMapClick(event) {
+function handleMapClick(event) { // Admin map click
     const currentActiveSection = document.querySelector('.main-content section.active');
-    if (currentActiveSection && currentActiveSection.id === 'admin-dashboard') {
-        const rect = adminMapCanvas.getBoundingClientRect(); // Coordenadas relativas ao viewport
-        const scaleX = adminMapCanvas.width / (rect.width * window.devicePixelRatio); // Fator de escala se o canvas for maior que o CSS
-        const scaleY = adminMapCanvas.height / (rect.height * window.devicePixelRatio);
+    if (!adminMapCanvas || (currentActiveSection && currentActiveSection.id !== 'admin-dashboard')) return;
 
-        // Coordenadas do clique relativas ao elemento canvas
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+    const rect = adminMapCanvas.getBoundingClientRect();
+    const x = event.clientX - rect.left; // Coordenada X relativa ao elemento canvas CSS
+    const y = event.clientY - rect.top; // Coordenada Y relativa ao elemento canvas CSS
 
-        // Ajusta para a escala interna do canvas, se houver (para desenho)
-        // Para salvar, você pode querer as coordenadas relativas ao tamanho CSS
-        const canvasX = x * scaleX * window.devicePixelRatio;
-        const canvasY = y * scaleY * window.devicePixelRatio;
+    document.getElementById('standX').value = Math.round(x);
+    document.getElementById('standY').value = Math.round(y);
+    document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
 
-
-        document.getElementById('standX').value = Math.round(x); // Salva coordenadas relativas ao CSS
-        document.getElementById('standY').value = Math.round(y);
-        document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
-
-        adminMapTemporaryMarker = { x: x, y: y }; // Usa coordenadas relativas ao CSS para o marcador
-        drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
-    }
+    adminMapTemporaryMarker = { x, y };
+    drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
 }
 
-// Nova função para clique no mapa do visitante
-function handleFairMapClick(event) {
-    if (!fairMapCanvas || !fairMapCtx || stands.length === 0) return;
-
+function handleFairMapClick(event) { // Visitor map click
+    if (!fairMapCanvas || stands.length === 0) return;
     const rect = fairMapCanvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
 
-    // Verificar se o clique foi em alguma estande
-    // Lógica similar à de desenho, mas para detecção de colisão
-    const standSize = 20; // Ou o tamanho dinâmico usado no drawMap
-    const halfSize = standSize / 2;
+    const originalMapHeightForCoords = 400;
+    const scaleFactor = fairMapCanvas.clientHeight / originalMapHeightForCoords;
 
     let clickedStand = null;
     for (const stand of stands) {
-        // Supondo que stand.x e stand.y são as coordenadas CSS salvas
-        const standRect = {
-            left: stand.x - halfSize,
-            top: stand.y - halfSize,
-            right: stand.x + halfSize,
-            bottom: stand.y + halfSize
-        };
-        if (x >= standRect.left && x <= standRect.right && y >= standRect.top && y <= standRect.bottom) {
+        const displayX = stand.x * scaleFactor;
+        const displayY = stand.y * scaleFactor;
+        const standSize = Math.min(20 * scaleFactor, fairMapCanvas.clientWidth * 0.03, fairMapCanvas.clientHeight * 0.04);
+        const halfSize = standSize / 2;
+
+        if (clickX >= displayX - halfSize && clickX <= displayX + halfSize &&
+            clickY >= displayY - halfSize && clickY <= displayY + halfSize) {
             clickedStand = stand;
             break;
         }
     }
-
-    if (clickedStand) {
-        console.log("Estande clicada:", clickedStand);
-        // Redireciona para a página de detalhes da estande
-        window.location.hash = `#stand-details?id=${clickedStand.id}`;
-    }
+    if (clickedStand) window.location.hash = `#stand-details?id=${clickedStand.id}`;
 }
 
-
-// Função para exibir dados coletados (agora mostra as estandes do array 'stands')
-function displayCollectedData() {
-    const displayArea = document.getElementById('registered-stands-display');
-    if (!displayArea) return;
-
-    displayArea.innerHTML = ''; // Limpa a área
-    if (stands.length === 0) {
-        displayArea.innerHTML = '<p class="text-gray-500">Nenhuma estande cadastrada ainda.</p>';
-    } else {
-        const ul = document.createElement('ul');
-        ul.className = 'divide-y divide-gray-200'; // Tailwind classes
-        stands.forEach(stand => {
-            const li = document.createElement('li');
-            li.classList.add('flex', 'items-center', 'justify-between', 'py-3');
-            li.innerHTML = `
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-green-700 truncate">ID: ${stand.id || 'N/A'}</p>
-                    <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
-                    <p class="text-xs text-gray-500 truncate">Coords: (${stand.x || 'N/A'}, ${stand.y || 'N/A'})</p>
-                </div>
-                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Gerar QR</button>
-            `;
-            ul.appendChild(li);
-        });
-        displayArea.appendChild(ul);
-
-        document.querySelectorAll('.generate-qr-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                console.log("Botão Gerar QR Code clicado!"); 
-                const standDocId = event.target.dataset.standDocId;
-                const stand = stands.find(s => s.docId === standDocId); 
-                if (stand) {
-                    generateAndShowQrCode(stand);
-                } else {
-                    console.error("Estande não encontrada para gerar QR Code.");
-                }
-            });
-        });
-    }
-}
-
-// Função para gerar e exibir o QR Code em um modal
-function generateAndShowQrCode(stand) {
-    const qrCodeModal = document.getElementById('qrCodeModal');
-    const qrcodeDiv = document.getElementById('qrcode');
-
-    qrcodeDiv.innerHTML = ''; // Limpa qualquer QR Code anterior
-
-    // Usa window.location.origin para garantir que a URL seja correta
-    const standDetailsUrl = `${window.location.origin}${window.location.pathname}#stand-details?id=${stand.id}`;
-
-    console.log("Gerando QR Code para URL:", standDetailsUrl);
-
+// --- Funções de Gerenciamento de Conteúdo (Organizadores) ---
+async function addNewNews(newsData) {
+    if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
+    const messageEl = document.getElementById('news-message');
     try {
-        new window.QRCode(qrcodeDiv, { 
-            text: standDetailsUrl,
-            width: 200,
-            height: 200,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : window.QRCode.CorrectLevel.H 
-        });
-        qrCodeModal.style.display = 'flex'; // Mostra o modal
-    } catch (e) {
-        console.error("Erro ao gerar QR Code:", e);
-        qrcodeDiv.innerHTML = "Erro ao gerar QR Code. Verifique se a biblioteca está carregada.";
-        qrCodeModal.style.display = 'flex';
+        const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
+        await addDoc(newsCollectionRef, { ...newsData, publishedAt: serverTimestamp(), authorId: currentUserId });
+        messageEl.textContent = 'Notícia publicada!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        document.getElementById('news-form').reset();
+    } catch (error) {
+        console.error("Erro ao publicar notícia:", error);
+        messageEl.textContent = 'Erro ao publicar.'; messageEl.className = 'text-red-500 text-sm mt-2';
     }
 }
 
-// Fecha o modal do QR Code
-document.querySelector('.qr-modal-close').addEventListener('click', () => {
-    document.getElementById('qrCodeModal').style.display = 'none';
-});
-
-window.addEventListener('click', (event) => {
-    const qrCodeModal = document.getElementById('qrCodeModal');
-    if (event.target === qrCodeModal) { // Se o clique for no fundo do modal
-        qrCodeModal.style.display = 'none';
-    }
-});
-
-// Implementações Chart.js
-let agendaChartInstance = null;
-let expositoresChartInstance = null;
-
-function updateAgendaChart(events) {
-    const agendaCtx = document.getElementById('agendaChart');
-    if (!agendaCtx) return;
-
-    const days = {};
-    const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
-
-    events.forEach(event => {
-        const date = event.date || 'Data Desconhecida';
-        const type = event.type || 'Outros';
-        if (!days[date]) {
-            days[date] = {};
-            eventTypes.forEach(t => days[date][t] = 0);
-        }
-        if (days[date][type] !== undefined) {
-            days[date][type]++;
-        } else {
-            days[date]['Outros']++;
-        }
-    });
-    
-    const sortedDates = Object.keys(days).sort((a, b) => {
-        if (a === 'Data Desconhecida') return 1;
-        if (b === 'Data Desconhecida') return -1;
-        const [dayA, monthA, yearA] = a.split('/').map(Number);
-        const [dayB, monthB, yearB] = b.split('/').map(Number);
-        const dateA = new Date(yearA, monthA - 1, dayA);
-        const dateB = new Date(yearB, monthB - 1, dayB);
-        return dateA - dateB;
-    });
-
-    const datasets = eventTypes.map(type => {
-        let backgroundColor, borderColor;
-        switch(type) {
-            case 'Palestras': backgroundColor = 'rgba(76, 175, 80, 0.7)'; borderColor = 'rgba(76, 175, 80, 1)'; break;
-            case 'Workshops': backgroundColor = 'rgba(255, 193, 7, 0.7)'; borderColor = 'rgba(255, 193, 7, 1)'; break;
-            case 'Demonstrações': backgroundColor = 'rgba(66, 66, 66, 0.7)'; borderColor = 'rgba(66, 66, 66, 1)'; break;
-            default: backgroundColor = 'rgba(158, 158, 158, 0.7)'; borderColor = 'rgba(158, 158, 158, 1)';
-        }
-        return {
-            label: type,
-            data: sortedDates.map(date => days[date][type] || 0),
-            backgroundColor: backgroundColor,
-            borderColor: borderColor,
-            borderWidth: 1
-        };
-    });
-
-    if (agendaChartInstance) {
-        agendaChartInstance.destroy();
-    }
-    agendaChartInstance = new Chart(agendaCtx.getContext('2d'), {
-        type: 'bar',
-        data: { labels: sortedDates, datasets: datasets },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, ticks: { color: '#424242' } }, x: { ticks: { color: '#424242' } } },
-            plugins: { legend: { labels: { color: '#424242' } }, tooltip: { titleFont: { family: 'Inter' }, bodyFont: { family: 'Inter' }} }
-        }
-    });
-}
-
-function updateExpositoresChart(expositores) {
-    const expositoresCtx = document.getElementById('expositoresChart');
-    if(!expositoresCtx) return;
-
-    const categories = {};
-    expositores.forEach(expositor => {
-        const category = expositor.category || 'Outros';
-        categories[category] = (categories[category] || 0) + 1;
-    });
-
-    const labels = Object.keys(categories);
-    const data = labels.map(label => categories[label]);
-
-    if (expositoresChartInstance) {
-        expositoresChartInstance.destroy();
-    }
-    expositoresChartInstance = new Chart(expositoresCtx.getContext('2d'), {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Expositores por Categoria',
-                data: data,
-                backgroundColor: [
-                    'rgba(76, 175, 80, 0.8)','rgba(56, 142, 60, 0.8)','rgba(255, 193, 7, 0.8)',
-                    'rgba(255, 160, 0, 0.8)','rgba(158, 158, 158, 0.8)','rgba(189, 189, 189, 0.8)'
-                ],
-                borderColor: '#FFFFFF',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', labels: { color: '#424242' } }, tooltip: { titleFont: { family: 'Inter' }, bodyFont: { family: 'Inter' }} }
-        }
-    });
-}
-
-async function loadPublicEvents() {
-    if (!currentUserId || !window.db) {
-        console.log("Aguardando autenticação ou Firebase para carregar eventos.");
-        return;
-    }
+async function submitEventForm(eventData, eventIdToUpdate = null) {
+    if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
+    const messageEl = document.getElementById('event-message');
     const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
-    onSnapshot(eventsCollectionRef, (snapshot) => {
-        const events = [];
-        snapshot.forEach((doc) => events.push({ id: doc.id, ...doc.data() }));
-        console.log("Eventos carregados:", events);
-
-        const container = document.getElementById('agenda-events-container');
-        if (container) {
-            container.innerHTML = '';
-            if (events.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento disponível.</p>';
-            } else {
-                events.forEach(event => {
-                    const eventCard = `
-                        <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
-                            <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
-                            <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
-                        </div>`;
-                    container.innerHTML += eventCard;
-                });
-            }
+    
+    try {
+        if (eventIdToUpdate) { // Atualizando evento existente
+            const eventDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`, eventIdToUpdate);
+            await updateDoc(eventDocRef, { ...eventData, updatedAt: serverTimestamp() });
+            messageEl.textContent = 'Evento atualizado!';
+        } else { // Adicionando novo evento
+            await addDoc(eventsCollectionRef, { ...eventData, createdAt: serverTimestamp(), createdBy: currentUserId });
+            messageEl.textContent = 'Evento adicionado!';
         }
-        updateAgendaChart(events);
-    }, (error) => {
-        console.error("Erro ao carregar eventos:", error);
-        const container = document.getElementById('agenda-events-container');
-        if (container) container.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar eventos.</p>';
-    });
-}
-
-async function loadPublicExpositores() {
-    if (!currentUserId || !window.db) {
-        console.log("Aguardando autenticação ou Firebase para carregar expositores.");
-        return;
+        messageEl.className = 'text-green-600 text-sm mt-2';
+        document.getElementById('event-form').reset();
+        document.getElementById('eventIdToUpdate').value = ''; // Limpa ID de edição
+        document.getElementById('event-submit-button').textContent = 'Adicionar Evento';
+        document.getElementById('event-cancel-edit-button').classList.add('hidden');
+    } catch (error) {
+        console.error("Erro ao salvar evento:", error);
+        messageEl.textContent = 'Erro ao salvar evento.'; messageEl.className = 'text-red-500 text-sm mt-2';
     }
-    const expositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
-    onSnapshot(expositoresCollectionRef, (snapshot) => {
-        const expositores = [];
-        snapshot.forEach((doc) => expositores.push({ id: doc.id, ...doc.data() }));
-        console.log("Expositores carregados:", expositores);
-
-        const container = document.getElementById('expositores-container');
-        if (container) {
-            container.innerHTML = '';
-            if (expositores.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum expositor disponível.</p>';
-            } else {
-                expositores.forEach(expositor => {
-                    const expositorCard = `
-                        <div class="card p-6 text-center">
-                            <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="Logo" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
-                            <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
-                            <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
-                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
-                        </div>`;
-                    container.innerHTML += expositorCard;
-                });
-            }
-        }
-        updateExpositoresChart(expositores);
-    }, (error) => {
-        console.error("Erro ao carregar expositores:", error);
-        const container = document.getElementById('expositores-container');
-        if (container) container.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar expositores.</p>';
-    });
 }
 
-async function loadPublicLocations() {
-    if (!currentUserId || !window.db) {
-        console.log("Aguardando autenticação ou Firebase para carregar localizações.");
-        return;
+async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null) {
+    if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
+    const messageEl = document.getElementById('expositor-info-message');
+    const expositorsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
+    
+    try {
+        if (expositorIdToUpdate) {
+            const expositorDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`, expositorIdToUpdate);
+            await updateDoc(expositorDocRef, { ...expositorData, updatedAt: serverTimestamp() });
+            messageEl.textContent = 'Informações do expositor atualizadas!';
+        } else {
+            await addDoc(expositorsCollectionRef, { ...expositorData, createdAt: serverTimestamp(), createdBy: currentUserId });
+            messageEl.textContent = 'Expositor adicionado!';
+        }
+        messageEl.className = 'text-green-600 text-sm mt-2';
+        document.getElementById('expositor-info-form').reset();
+        document.getElementById('expositorIdToUpdate').value = '';
+        document.getElementById('expositor-info-submit-button').textContent = 'Adicionar Expositor';
+        document.getElementById('expositor-info-cancel-edit-button').classList.add('hidden');
+    } catch (error) {
+        console.error("Erro ao salvar expositor:", error);
+        messageEl.textContent = 'Erro ao salvar expositor.'; messageEl.className = 'text-red-500 text-sm mt-2';
     }
-    const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
-    onSnapshot(locationsCollectionRef, (snapshot) => {
-        stands = []; 
-        snapshot.forEach((doc) => {
-            stands.push({ docId: doc.id, ...doc.data() });
-        });
-        console.log("Localizações carregadas:", stands);
-
-        if (fairMapCanvas && fairMapCtx) {
-            drawMap('fairMapCanvas', fairMapCtx, fairMapCanvas.clientWidth, fairMapCanvas.clientHeight);
-        }
-        if (adminMapCanvas && adminMapCtx) {
-            drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
-        }
-        displayCollectedData(); 
-
-        if (stands.length === 0 && firebaseConfig.projectId === "agropec-2025-app") { // Seed only for specific project
-             seedInitialMapData();
-        }
-    }, (error) => {
-        console.error("Erro ao carregar localizações:", error);
-    });
 }
 
-async function seedInitialMapData() {
+
+async function addNewInfo(infoData) {
+    if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
+    const messageEl = document.getElementById('info-message');
+    try {
+        const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
+        await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
+        messageEl.textContent = 'Informação publicada!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        document.getElementById('info-form').reset();
+    } catch (error) {
+        console.error("Erro ao publicar informação:", error);
+        messageEl.textContent = 'Erro ao publicar.'; messageEl.className = 'text-red-500 text-sm mt-2';
+    }
+}
+
+// --- Funções de Carregamento de Dados Públicos ---
+function loadPublicNews() {
     if (!window.db) return;
-    const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
-    const existingDocs = await getDocs(locationsCollectionRef);
-
-    if (existingDocs.empty) {
-        console.log("Adicionando dados fictícios ao mapa...");
-        const initialStands = [
-            { id: 'A1', occupant: 'AgroTech Sol.', x: 180, y: 180, description: 'Soluções inovadoras.' },
-            { id: 'B3', occupant: 'Pecuária Mod.', x: 350, y: 200, description: 'Tecnologias avançadas.' },
-            { id: 'C2', occupant: 'Máquinas XYZ', x: 500, y: 170, description: 'Tratores e equipamentos.' },
-            { id: 'D4', occupant: 'Hortaliças Org.', x: 200, y: 300, description: 'Cultivo sustentável.' },
-            { id: 'E5', occupant: 'Tec Rural', x: 450, y: 320, description: 'Drones e sensores.' }
-        ];
-        for (const stand of initialStands) {
-            await addDoc(locationsCollectionRef, stand);
-        }
-    }
-}
-
-async function addNewExpositor(expositorData) {
-    if (!currentUserId || !window.db) return;
-    try {
-        const userExpositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
-        await addDoc(userExpositoresCollectionRef, expositorData);
-        console.log("Expositor adicionado!");
-        document.getElementById('tent-message').textContent = 'Informações salvas!';
-        document.getElementById('tent-message').className = 'text-green-600 text-sm mt-2';
-        document.getElementById('tent-form').reset();
-    } catch (error) {
-        console.error("Erro ao adicionar expositor:", error);
-        document.getElementById('tent-message').textContent = 'Erro ao salvar.';
-        document.getElementById('tent-message').className = 'text-red-500 text-sm mt-2';
-    }
-}
-
-async function addNewLocation(locationData) {
-    if (!currentUserId || !window.db) return;
-    try {
-        const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
-        const tentName = document.getElementById('standOccupant').value;
-        const expositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
-        const q = query(expositoresCollectionRef, where("name", "==", tentName));
-        const querySnapshot = await getDocs(q);
-        let description = '';
-        if (!querySnapshot.empty) {
-            description = querySnapshot.docs[0].data().description || '';
-        }
-
-        const dataToSave = { ...locationData, description: description };
-        const docRef = await addDoc(locationsCollectionRef, dataToSave);
-        
-        console.log("Localização adicionada com ID:", docRef.id);
-        document.getElementById('location-message').textContent = 'Localização salva!';
-        document.getElementById('location-message').className = 'text-green-600 text-sm mt-2';
-        document.getElementById('location-form').reset();
-        document.getElementById('standCoordinatesDisplay').value = '';
-        document.getElementById('standX').value = '';
-        document.getElementById('standY').value = '';
-        adminMapTemporaryMarker = null;
-    } catch (error) {
-        console.error("Erro ao adicionar localização:", error);
-        document.getElementById('location-message').textContent = 'Erro ao salvar.';
-        document.getElementById('location-message').className = 'text-red-500 text-sm mt-2';
-    }
-}
-
-async function loadStandDetails(standId) {
-    const standDetailsContent = document.getElementById('stand-details-content');
-    if (!standDetailsContent) return;
-    standDetailsContent.innerHTML = '<p class="text-gray-500">Carregando...</p>';
-
-    try {
-        if (!window.db) {
-            standDetailsContent.innerHTML = '<p class="text-red-500">Erro: Firebase não inicializado.</p>';
+    const newsContainer = document.getElementById('public-news-container');
+    if (!newsContainer) return;
+    const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
+    const qNews = query(newsCollectionRef, where("date", "<=", new Date().toISOString().split('T')[0])); // Exemplo de filtro
+    
+    onSnapshot(qNews, (snapshot) => {
+        newsContainer.innerHTML = '';
+        if (snapshot.empty) {
+            newsContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia recente.</p>';
             return;
         }
-        const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
-        const q = query(locationsCollectionRef, where("id", "==", standId));
-        const querySnapshot = await getDocs(q);
+        snapshot.forEach(doc => {
+            const news = doc.data();
+            const newsCard = `
+                <div class="card p-6">
+                    <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
+                    <p class="text-xs text-gray-400 mb-2">Publicado em: ${new Date(news.date).toLocaleDateString('pt-BR')}</p>
+                    <p class="text-gray-600 text-sm">${news.content.substring(0,150)}${news.content.length > 150 ? '...' : ''}</p>
+                    </div>`;
+            newsContainer.innerHTML += newsCard;
+        });
+    }, error => {
+        console.error("Erro ao carregar notícias:", error);
+        newsContainer.innerHTML = '<p class="text-red-500 col-span-full">Erro ao carregar notícias.</p>';
+    });
+}
 
-        if (!querySnapshot.empty) {
-            const standDoc = querySnapshot.docs[0];
-            const standData = standDoc.data();
-            standDetailsContent.innerHTML = `
-                <h4 class="font-semibold text-2xl mb-2 text-green-700">${standData.occupant || 'Estande Sem Nome'} (ID: ${standData.id || 'N/A'})</h4>
-                <p class="text-gray-700 mb-2"><span class="font-medium">Coordenadas:</span> X: ${standData.x || 'N/A'}, Y: ${standData.y || 'N/A'}</p>
-                <p class="text-gray-700 mb-4"><span class="font-medium">Descrição:</span> ${standData.description || 'Nenhuma descrição.'}</p>
-            `;
-        } else {
-            standDetailsContent.innerHTML = '<p class="text-red-500">Estande não encontrada.</p>';
+function loadPublicGeneralInfo() {
+    if (!window.db) return;
+    const infoContainer = document.getElementById('public-info-container');
+    if (!infoContainer) return;
+    const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
+    
+    onSnapshot(infoCollectionRef, (snapshot) => {
+        infoContainer.innerHTML = '';
+        if (snapshot.empty) {
+            infoContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação geral disponível.</p>';
+            return;
         }
-    } catch (error) {
-        console.error("Erro ao carregar detalhes da estande:", error);
-        standDetailsContent.innerHTML = '<p class="text-red-500">Erro ao carregar. Tente novamente.</p>';
+        snapshot.forEach(doc => {
+            const info = doc.data();
+            const infoItem = `
+                <div class="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
+                    <h5 class="font-medium text-md text-green-600">${info.title}</h5>
+                    <p class="text-gray-600 text-sm">${info.content}</p>
+                </div>`;
+            infoContainer.innerHTML += infoItem;
+        });
+    }, error => {
+        console.error("Erro ao carregar informações gerais:", error);
+        infoContainer.innerHTML = '<p class="text-red-500">Erro ao carregar informações.</p>';
+    });
+}
+
+
+// --- Funções de Carregamento e Exibição (Agenda, Expositores, Estandes) ---
+// (loadPublicEvents, loadPublicExpositores, loadPublicLocations, displayCollectedData, etc., adaptadas)
+
+function displayAdminEventsList(events) {
+    const listContainer = document.getElementById('admin-events-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+    if (events.length === 0) {
+        listContainer.innerHTML = '<p class="text-gray-500">Nenhum evento cadastrado.</p>'; return;
+    }
+    events.forEach(event => {
+        const item = document.createElement('div');
+        item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
+        item.innerHTML = `
+            <div>
+                <h4 class="font-semibold text-md text-green-700">${event.title}</h4>
+                <p class="text-sm text-gray-600">${event.date} - ${event.time} @ ${event.location}</p>
+            </div>
+            <div>
+                <button class="text-blue-500 hover:text-blue-700 text-sm mr-2 edit-event-btn" data-event-id="${event.id}">Editar</button>
+                <button class="text-red-500 hover:text-red-700 text-sm delete-event-btn" data-event-id="${event.id}">Excluir</button>
+            </div>`;
+        listContainer.appendChild(item);
+    });
+    // Adicionar listeners para botões de editar/excluir
+    listContainer.querySelectorAll('.edit-event-btn').forEach(btn => btn.addEventListener('click', (e) => populateEventFormForEdit(e.target.dataset.eventId)));
+    listContainer.querySelectorAll('.delete-event-btn').forEach(btn => btn.addEventListener('click', (e) => handleDeleteEvent(e.target.dataset.eventId)));
+}
+
+function populateEventFormForEdit(eventId) {
+    const event = globalEventsCache.find(e => e.id === eventId);
+    if (!event) return;
+    document.getElementById('eventIdToUpdate').value = event.id;
+    document.getElementById('eventTitle').value = event.title;
+    document.getElementById('eventType').value = event.type;
+    document.getElementById('eventDate').value = event.date;
+    document.getElementById('eventTime').value = event.time;
+    document.getElementById('eventLocation').value = event.location;
+    document.getElementById('eventDescription').value = event.description;
+    document.getElementById('event-submit-button').textContent = 'Atualizar Evento';
+    document.getElementById('event-cancel-edit-button').classList.remove('hidden');
+    document.getElementById('event-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function handleDeleteEvent(eventId) {
+    if (!window.db || !eventId) return;
+    // Substituir confirm por um modal customizado no futuro
+    if (window.confirm('Tem certeza que deseja excluir este evento?')) {
+        try {
+            await deleteDoc(doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`, eventId));
+            console.log('Evento excluído:', eventId); // Lista será atualizada pelo onSnapshot
+        } catch (error) { console.error('Erro ao excluir evento:', error); alert('Erro ao excluir.'); }
     }
 }
 
+function displayAdminExpositorsList(expositors) {
+    const listContainer = document.getElementById('admin-expositors-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+    if (expositors.length === 0) {
+        listContainer.innerHTML = '<p class="text-gray-500">Nenhum expositor cadastrado.</p>'; return;
+    }
+    expositors.forEach(expo => {
+        const item = document.createElement('div');
+        item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
+        item.innerHTML = `
+            <div>
+                <h4 class="font-semibold text-md text-green-700">${expo.name}</h4>
+                <p class="text-sm text-gray-600">${expo.category || 'Sem categoria'}</p>
+            </div>
+            <div>
+                <button class="text-blue-500 hover:text-blue-700 text-sm mr-2 edit-expositor-btn" data-expositor-id="${expo.id}">Editar</button>
+                <button class="text-red-500 hover:text-red-700 text-sm delete-expositor-btn" data-expositor-id="${expo.id}">Excluir</button>
+            </div>`;
+        listContainer.appendChild(item);
+    });
+    listContainer.querySelectorAll('.edit-expositor-btn').forEach(btn => btn.addEventListener('click', (e) => populateExpositorFormForEdit(e.target.dataset.expositorId)));
+    listContainer.querySelectorAll('.delete-expositor-btn').forEach(btn => btn.addEventListener('click', (e) => handleDeleteExpositor(e.target.dataset.expositorId)));
+}
+
+function populateExpositorFormForEdit(expositorId) {
+    const expo = globalExpositorsCache.find(e => e.id === expositorId);
+    if (!expo) return;
+    document.getElementById('expositorIdToUpdate').value = expo.id;
+    document.getElementById('expositorName').value = expo.name;
+    document.getElementById('expositorCategory').value = expo.category || '';
+    document.getElementById('expositorDescription').value = expo.description || '';
+    document.getElementById('expositorLogoUrl').value = expo.logoUrl || '';
+    document.getElementById('expositor-info-submit-button').textContent = 'Atualizar Expositor';
+    document.getElementById('expositor-info-cancel-edit-button').classList.remove('hidden');
+    document.getElementById('expositor-info-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function handleDeleteExpositor(expositorId) {
+    if (!window.db || !expositorId) return;
+    if (window.confirm('Tem certeza que deseja excluir este expositor?')) {
+        try {
+            await deleteDoc(doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`, expositorId));
+            console.log('Expositor excluído:', expositorId);
+        } catch (error) { console.error('Erro ao excluir expositor:', error); alert('Erro ao excluir.'); }
+    }
+}
+
+
+// --- Funções de Autenticação ---
+// (handleRegister, handleLogin, handleVisitorLogin, handleLogout - adaptadas)
+
+// --- Inicialização e Listeners Globais ---
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM carregado. App Agropec inicializando...");
+
+    const qrCodeModal = document.getElementById('qrCodeModal');
+    if (qrCodeModal) qrCodeModal.style.display = 'none';
+
+    let app, db, auth; // analytics;
+    try {
+        app = initializeApp(firebaseConfig);
+        // analytics = getAnalytics(app);
+        db = getFirestore(app);
+        auth = getAuth(app);
+        window.db = db; window.auth = auth;
+        console.log("Firebase inicializado.");
+        if(firebaseErrorMessage) firebaseErrorMessage.classList.add('hidden');
+    } catch (error) {
+        console.error("Erro CRUCIAL ao inicializar Firebase:", error);
+        if(firebaseErrorDetails) firebaseErrorDetails.textContent = error.message;
+        if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
+        return; 
+    }
+    
+    initMap('fairMapCanvas');
+    initMap('adminMapCanvas');
+
+    if (window.auth) {
+        onAuthStateChanged(window.auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                if (userIdDisplay) {
+                    userIdDisplay.textContent = user.isAnonymous ? `Visitante` : (user.email || 'Usuário');
+                    userIdDisplay.classList.remove('hidden');
+                }
+                if(navLoginLink) navLoginLink.classList.add('hidden'); // Esconde link de login
+                if(sidebar) { sidebar.classList.remove('sidebar-initial-hidden', '-translate-x-full'); }
+                if(logoutButton) logoutButton.classList.remove('hidden');
+
+                loadPublicEvents(); loadPublicExpositores(); loadPublicLocations();
+                loadPublicNews(); loadPublicGeneralInfo(); // Carrega novo conteúdo
+
+                let userRole = 'visitor';
+                if (!user.isAnonymous) {
+                    const userProfileDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`);
+                    try {
+                        const userProfileSnap = await getDoc(userProfileDocRef);
+                        if(userProfileSnap.exists()) userRole = userProfileSnap.data().role || 'visitor';
+                    } catch (e) { console.error("Erro perfil:", e); }
+                }
+                
+                const isAdmin = userRole === 'admin';
+                if(adminDashboardLink) adminDashboardLink.classList.toggle('hidden', !isAdmin);
+                if(organizadoresLink) organizadoresLink.classList.toggle('hidden', !isAdmin);
+                
+                const adminRoleText = `Logado como: Administrador (${user.email || 'N/A'})`;
+                if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = isAdmin ? adminRoleText : '';
+                if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = isAdmin ? adminRoleText : '';
+
+                const hash = window.location.hash;
+                if (hash.startsWith('#stand-details?id=')) {
+                    window.showSection('stand-details', null); loadStandDetails(hash.split('id=')[1]);
+                } else if (isAdmin && (hash === '' || hash === '#login' || hash === '#welcome-role-selection')) {
+                    window.showSection('organizadores', document.querySelector('a[href="#organizadores"]'));
+                } else if (!isAdmin && (hash === '' || hash === '#login' || hash === '#welcome-role-selection' || hash === '#admin-dashboard' || hash === '#organizadores')) {
+                    window.showSection('inicio', document.querySelector('a[href="#inicio"]'));
+                } else if (hash) {
+                    const sectionIdFromHash = hash.substring(1).split('?')[0];
+                    const linkForHash = document.querySelector(`.nav-link[href="#${sectionIdFromHash}"]`);
+                    if (linkForHash && (!linkForHash.classList.contains('hidden') || isAdmin)) { // Admins podem ver seções ocultas se o link existir
+                         window.showSection(sectionIdFromHash, linkForHash);
+                    } else {
+                         window.showSection(isAdmin ? 'organizadores' : 'inicio', document.querySelector(isAdmin ? 'a[href="#organizadores"]' : 'a[href="#inicio"]'));
+                    }
+                } else {
+                     window.showSection(isAdmin ? 'organizadores' : 'inicio', document.querySelector(isAdmin ? 'a[href="#organizadores"]' : 'a[href="#inicio"]'));
+                }
+
+            } else { // Usuário deslogado
+                currentUserId = null;
+                if (userIdDisplay) { userIdDisplay.textContent = ''; userIdDisplay.classList.add('hidden'); }
+                if(navLoginLink) navLoginLink.classList.remove('hidden'); // Mostra link de login
+                if(sidebar) { sidebar.classList.add('-translate-x-full'); } // Esconde sidebar (não usar sidebar-initial-hidden aqui para permitir animação)
+                if(logoutButton) logoutButton.classList.add('hidden');
+                if(adminDashboardLink) adminDashboardLink.classList.add('hidden');
+                if(organizadoresLink) organizadoresLink.classList.add('hidden');
+                if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = '';
+                if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = '';
+                
+                const hash = window.location.hash;
+                if (hash.startsWith('#stand-details?id=')) {
+                    window.showSection('stand-details', null); loadStandDetails(hash.split('id=')[1]);
+                } else {
+                    window.showSection('welcome-role-selection', null);
+                }
+            }
+        });
+    }
+
+    // --- Listeners de Formulários de Conteúdo (Organizadores) ---
+    const newsForm = document.getElementById('news-form');
+    if (newsForm) newsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await addNewNews({ title: document.getElementById('newsTitle').value, content: document.getElementById('newsContent').value, date: document.getElementById('newsDate').value });
+    });
+
+    const eventForm = document.getElementById('event-form');
+    if (eventForm) eventForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const eventIdToUpdate = document.getElementById('eventIdToUpdate').value;
+        await submitEventForm({
+            title: document.getElementById('eventTitle').value, type: document.getElementById('eventType').value,
+            date: document.getElementById('eventDate').value, time: document.getElementById('eventTime').value,
+            location: document.getElementById('eventLocation').value, description: document.getElementById('eventDescription').value
+        }, eventIdToUpdate || null);
+    });
+    const eventCancelEditBtn = document.getElementById('event-cancel-edit-button');
+    if(eventCancelEditBtn) eventCancelEditBtn.addEventListener('click', () => {
+        document.getElementById('event-form').reset();
+        document.getElementById('eventIdToUpdate').value = '';
+        document.getElementById('event-submit-button').textContent = 'Adicionar Evento';
+        eventCancelEditBtn.classList.add('hidden');
+    });
+
+
+    const expositorInfoForm = document.getElementById('expositor-info-form');
+    if (expositorInfoForm) expositorInfoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const expositorIdToUpdate = document.getElementById('expositorIdToUpdate').value;
+        await submitExpositorInfoForm({
+            name: document.getElementById('expositorName').value,
+            category: document.getElementById('expositorCategory').value,
+            description: document.getElementById('expositorDescription').value,
+            logoUrl: document.getElementById('expositorLogoUrl').value
+        }, expositorIdToUpdate || null);
+    });
+    const expositorCancelEditBtn = document.getElementById('expositor-info-cancel-edit-button');
+    if(expositorCancelEditBtn) expositorCancelEditBtn.addEventListener('click', () => {
+        document.getElementById('expositor-info-form').reset();
+        document.getElementById('expositorIdToUpdate').value = '';
+        document.getElementById('expositor-info-submit-button').textContent = 'Adicionar Expositor';
+        expositorCancelEditBtn.classList.add('hidden');
+    });
+
+
+    const infoForm = document.getElementById('info-form');
+    if (infoForm) infoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await addNewInfo({ title: document.getElementById('infoTitle').value, content: document.getElementById('infoContent').value });
+    });
+    
+    // Outros Listeners (login, logout, forms de estande, etc.)
+    // ... (código de listeners de handleRegister, handleLogin, etc. do seu script original) ...
+    // Adaptei alguns para melhor clareza e consistência.
+
+    if(mobileMenuButton && sidebar) {
+        mobileMenuButton.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
+    }
+    document.addEventListener('click', function(event) {
+        if(sidebar && mobileMenuButton && window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+            if (!sidebar.contains(event.target) && !mobileMenuButton.contains(event.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+    });
+
+    const registerLink = document.getElementById('register-link');
+    if (registerLink) registerLink.addEventListener('click', (e) => { e.preventDefault(); handleRegister(); });
+    const loginButtonEl = document.getElementById('login-button');
+    if (loginButtonEl) loginButtonEl.addEventListener('click', (e) => { e.preventDefault(); handleLogin(); });
+    const visitorButton = document.getElementById('visitor-button');
+    if (visitorButton) visitorButton.addEventListener('click', (e) => { e.preventDefault(); registrationContext = 'visitor'; handleVisitorLogin(); });
+    const adminButton = document.getElementById('admin-button');
+    if (adminButton) adminButton.addEventListener('click', (e) => { e.preventDefault(); registrationContext = 'admin'; window.showSection('login', document.querySelector('a[href="#login"]')); });
+    if (logoutButton) logoutButton.addEventListener('click', handleLogout);
+
+    const locationForm = document.getElementById('location-form');
+    if (locationForm) locationForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const standX = parseInt(document.getElementById('standX').value, 10);
+        const standY = parseInt(document.getElementById('standY').value, 10);
+        const messageEl = document.getElementById('location-message');
+        if (isNaN(standX) || isNaN(standY)) {
+            messageEl.textContent = 'Clique no mapa para coords.'; messageEl.className = 'text-red-500 text-sm mt-2'; return;
+        }
+        await addNewLocation({ 
+            id: document.getElementById('standId').value, 
+            occupant: document.getElementById('standOccupant').value, 
+            x: standX, y: standY 
+        });
+    });
+    
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash;
+        console.log("Hash alterado para:", hash);
+        const user = window.auth ? window.auth.currentUser : null; // Verifica se auth está definido
+        const isAdminUser = user && !user.isAnonymous && user.role === 'admin'; // Supondo que user.role é setado
+
+        if (hash.startsWith('#stand-details?id=')) {
+            window.showSection('stand-details', null); loadStandDetails(hash.split('id=')[1]);
+        } else if (user) {
+            const sectionIdFromHash = hash ? hash.substring(1).split('?')[0] : (isAdminUser ? 'organizadores' : 'inicio');
+            const linkForHash = document.querySelector(`.nav-link[href="#${sectionIdFromHash}"]`);
+             if (linkForHash && (!linkForHash.classList.contains('hidden') || isAdminUser )) {
+                 window.showSection(sectionIdFromHash, linkForHash);
+             } else { // Fallback se o link estiver oculto ou não existir
+                 window.showSection(isAdminUser ? 'organizadores' : 'inicio', document.querySelector(isAdminUser ? 'a[href="#organizadores"]' : 'a[href="#inicio"]'));
+             }
+        } else { // Usuário deslogado
+            window.showSection('welcome-role-selection', null);
+        }
+    });
+    // Dispara manualmente o hashchange na carga para garantir que a seção correta seja exibida
+    // Isso é melhor tratado dentro do onAuthStateChanged para garantir que o estado do usuário seja conhecido
+    // window.dispatchEvent(new HashChangeEvent("hashchange")); // Removido, pois onAuthStateChanged lida com a navegação inicial
+});
+
+
+// Funções de autenticação (adaptadas do seu script original)
 async function handleRegister() {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
@@ -713,9 +709,10 @@ async function handleRegister() {
     try {
         const userCredential = await createUserWithEmailAndPassword(window.auth, email, password);
         const user = userCredential.user;
+        // Salva o perfil do usuário com a role definida por registrationContext
         const userProfileDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`);
         await setDoc(userProfileDocRef, {
-            uid: user.uid, email: user.email, createdAt: new Date().toISOString(), role: registrationContext
+            uid: user.uid, email: user.email, createdAt: serverTimestamp(), role: registrationContext // Usa registrationContext
         });
         loginMessageDiv.textContent = "Conta criada! Você já pode entrar.";
         loginMessageDiv.className = 'text-green-600 text-center mt-4 text-sm font-medium';
@@ -750,8 +747,9 @@ async function handleLogin() {
 
     try {
         await signInWithEmailAndPassword(window.auth, email, password);
-        loginMessageDiv.textContent = "Login realizado com sucesso!";
-        loginMessageDiv.className = 'text-green-600 text-center mt-4 text-sm font-medium';
+        // Mensagem de sucesso não é mais necessária aqui, onAuthStateChanged cuidará do redirecionamento
+        // loginMessageDiv.textContent = "Login realizado com sucesso!";
+        // loginMessageDiv.className = 'text-green-600 text-center mt-4 text-sm font-medium';
     } catch (error) {
         console.error("Erro ao fazer login:", error);
         let msg = "Erro ao fazer login.";
@@ -767,9 +765,11 @@ async function handleVisitorLogin() {
     try {
         await signInAnonymously(window.auth);
         console.log("Login de visitante (anônimo) realizado.");
-        registrationContext = 'visitor';
+        registrationContext = 'visitor'; // Garante o contexto correto
+        // onAuthStateChanged cuidará do redirecionamento e UI update
     } catch (error) {
         console.error("Erro ao fazer login de visitante:", error);
+        // Adicionar feedback de erro na UI se necessário
     }
 }
 
@@ -778,210 +778,322 @@ async function handleLogout() {
     try {
         await window.auth.signOut();
         console.log("Usuário desconectado.");
-        registrationContext = 'visitor';
+        registrationContext = 'visitor'; // Reseta o contexto
+        // onAuthStateChanged cuidará do redirecionamento para 'welcome-role-selection' e UI update
     } catch (error) {
         console.error("Erro ao desconectar:", error);
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM carregado. Inicializando Firebase e App...");
+// Funções de carregamento de dados (adaptadas do seu script original)
+// (loadPublicEvents, loadPublicExpositores, loadPublicLocations, etc.)
+// Certifique-se que elas usam `globalEventsCache` e `globalExpositorsCache` se necessário para edição.
 
+function loadPublicEvents() {
+    if (!window.db) return;
+    const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
+    onSnapshot(eventsCollectionRef, (snapshot) => {
+        globalEventsCache = []; // Limpa cache
+        snapshot.forEach((doc) => globalEventsCache.push({ id: doc.id, ...doc.data() }));
+        console.log("Eventos carregados/atualizados:", globalEventsCache);
+
+        const container = document.getElementById('agenda-events-container');
+        if (container) {
+            container.innerHTML = '';
+            if (globalEventsCache.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento disponível.</p>';
+            } else {
+                globalEventsCache.forEach(event => { // Usa o cache global
+                    const eventCard = `
+                        <div class="card p-6">
+                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
+                            <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
+                            <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
+                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
+                        </div>`;
+                    container.innerHTML += eventCard;
+                });
+            }
+        }
+        updateAgendaChart(globalEventsCache); // Usa o cache global
+        displayAdminEventsList(globalEventsCache); // Atualiza lista no painel de organizadores
+    }, (error) => {
+        console.error("Erro ao carregar eventos:", error);
+        const container = document.getElementById('agenda-events-container');
+        if (container) container.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar eventos.</p>';
+    });
+}
+
+function loadPublicExpositores() {
+    if (!window.db) return;
+    const expositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
+    onSnapshot(expositoresCollectionRef, (snapshot) => {
+        globalExpositorsCache = []; // Limpa cache
+        snapshot.forEach((doc) => globalExpositorsCache.push({ id: doc.id, ...doc.data() }));
+        console.log("Expositores carregados/atualizados:", globalExpositorsCache);
+
+        const container = document.getElementById('expositores-container');
+        if (container) {
+            container.innerHTML = '';
+            if (globalExpositorsCache.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum expositor disponível.</p>';
+            } else {
+                globalExpositorsCache.forEach(expositor => { // Usa o cache global
+                    const expositorCard = `
+                        <div class="card p-6 text-center">
+                            <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="[Logo do Expositor]" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+                            <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
+                            <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
+                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
+                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                        </div>`;
+                    container.innerHTML += expositorCard;
+                });
+            }
+        }
+        updateExpositoresChart(globalExpositorsCache); // Usa o cache global
+        displayAdminExpositorsList(globalExpositorsCache); // Atualiza lista no painel de organizadores
+    }, (error) => {
+        console.error("Erro ao carregar expositores:", error);
+        const container = document.getElementById('expositores-container');
+        if (container) container.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar expositores.</p>';
+    });
+}
+
+async function loadPublicLocations() {
+    if (!window.db) return;
+    const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+    onSnapshot(locationsCollectionRef, (snapshot) => {
+        stands = []; 
+        snapshot.forEach((doc) => stands.push({ docId: doc.id, ...doc.data() }));
+        console.log("Localizações carregadas:", stands);
+
+        if (fairMapCanvas && fairMapCtx) drawMap('fairMapCanvas', fairMapCtx, fairMapCanvas.clientWidth, fairMapCanvas.clientHeight);
+        if (adminMapCanvas && adminMapCtx) drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
+        displayCollectedData(); 
+
+        if (stands.length === 0 && firebaseConfig.projectId === "agropec-2025-app") {
+             // seedInitialMapData(); // Descomente para popular dados iniciais se necessário
+        }
+    }, (error) => console.error("Erro ao carregar localizações:", error));
+}
+
+function displayCollectedData() { // Estandes cadastradas no painel admin
+    const displayArea = document.getElementById('registered-stands-display');
+    if (!displayArea) return;
+    displayArea.innerHTML = '';
+    if (stands.length === 0) {
+        displayArea.innerHTML = '<p class="text-gray-500">Nenhuma estande cadastrada.</p>';
+    } else {
+        const ul = document.createElement('ul');
+        ul.className = 'divide-y divide-gray-200';
+        stands.forEach(stand => {
+            const li = document.createElement('li');
+            li.className = 'py-3 flex justify-between items-center';
+            li.innerHTML = `
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-green-700 truncate">ID: ${stand.id || 'N/A'}</p>
+                    <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
+                    <p class="text-xs text-gray-500 truncate">Coords: (X:${stand.x || 'N/A'}, Y:${stand.y || 'N/A'})</p>
+                </div>
+                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Gerar QR</button>
+            `;
+            ul.appendChild(li);
+        });
+        displayArea.appendChild(ul);
+        document.querySelectorAll('.generate-qr-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const stand = stands.find(s => s.docId === event.target.dataset.standDocId);
+                if (stand) generateAndShowQrCode(stand);
+            });
+        });
+    }
+}
+
+async function addNewLocation(locationData) { // Para o form de admin-dashboard (estandes)
+    if (!currentUserId || !window.db) return;
+    const messageEl = document.getElementById('location-message');
+    try {
+        const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+        // Busca descrição do expositor associado, se houver
+        let description = '';
+        if (locationData.occupant) {
+            const qExpo = query(collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`), where("name", "==", locationData.occupant));
+            const expoSnapshot = await getDocs(qExpo);
+            if (!expoSnapshot.empty) description = expoSnapshot.docs[0].data().description || '';
+        }
+        
+        await addDoc(locationsCollectionRef, { ...locationData, description });
+        messageEl.textContent = 'Localização salva!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        document.getElementById('location-form').reset();
+        document.getElementById('standCoordinatesDisplay').value = '';
+        adminMapTemporaryMarker = null;
+        drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight); // Redesenha para limpar marcador
+    } catch (error) {
+        console.error("Erro ao adicionar localização:", error);
+        messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
+    }
+}
+
+// Funções de QR Code, Gráficos (Chart.js), Detalhes da Estande (sem grandes alterações, mas revisadas para consistência)
+// (generateAndShowQrCode, updateAgendaChart, updateExpositoresChart, loadStandDetails - adaptadas do seu script original)
+function generateAndShowQrCode(stand) {
+    const qrCodeModal = document.getElementById('qrCodeModal');
+    const qrcodeDiv = document.getElementById('qrcode');
+    if (!qrCodeModal || !qrcodeDiv) return;
+
+    qrcodeDiv.innerHTML = ''; 
+    const standDetailsUrl = `${window.location.origin}${window.location.pathname}#stand-details?id=${stand.id}`;
+    console.log("Gerando QR para URL:", standDetailsUrl);
+
+    try {
+        new window.QRCode(qrcodeDiv, { 
+            text: standDetailsUrl, width: 200, height: 200,
+            colorDark : "#000000", colorLight : "#ffffff",
+            correctLevel : window.QRCode.CorrectLevel.H 
+        });
+        qrCodeModal.style.display = 'flex';
+    } catch (e) {
+        console.error("Erro ao gerar QR Code:", e);
+        qrcodeDiv.innerHTML = "Erro ao gerar QR Code.";
+        qrCodeModal.style.display = 'flex';
+    }
+}
+document.querySelector('.qr-modal-close').addEventListener('click', () => {
     const qrCodeModal = document.getElementById('qrCodeModal');
     if (qrCodeModal) qrCodeModal.style.display = 'none';
-
-    let app, db, auth, analytics;
-    try {
-        app = initializeApp(firebaseConfig);
-        // analytics = getAnalytics(app); // Descomente se for usar Analytics
-        db = getFirestore(app);
-        auth = getAuth(app);
-        window.db = db; window.auth = auth;
-        console.log("Firebase inicializado com sucesso.");
-        if(firebaseErrorMessage) firebaseErrorMessage.classList.add('hidden');
-    } catch (error) {
-        console.error("Erro crucial ao inicializar Firebase:", error);
-        if(firebaseErrorDetails) firebaseErrorDetails.textContent = error.message;
-        if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
-        return; 
-    }
-    
-    // Inicializa mapas após Firebase e DOM prontos
-    initMap('fairMapCanvas');
-    initMap('adminMapCanvas');
-
-
-    if (window.auth) {
-        onAuthStateChanged(window.auth, async (user) => {
-            console.log("Estado de autenticação:", user ? user.uid : "Deslogado");
-            if (user) {
-                currentUserId = user.uid;
-                if (userIdDisplay) {
-                    userIdDisplay.textContent = user.isAnonymous ? `Visitante` : (user.email || 'Usuário');
-                    userIdDisplay.classList.remove('hidden');
-                }
-                if(sidebar) {
-                    sidebar.classList.remove('sidebar-initial-hidden'); // Remove display:none
-                    sidebar.classList.remove('-translate-x-full'); // Mostra sidebar
-                }
-                if(logoutButton) logoutButton.classList.remove('hidden');
-
-                if (window.db) {
-                    loadPublicEvents(); loadPublicExpositores(); loadPublicLocations();
-                }
-
-                let userRole = 'visitor';
-                if (!user.isAnonymous && window.db) {
-                    const userProfileDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`);
-                    try {
-                        const userProfileSnap = await getDoc(userProfileDocRef);
-                        if(userProfileSnap.exists()) userRole = userProfileSnap.data().role || 'visitor';
-                        console.log("Função do usuário:", userRole);
-                    } catch (profileError) { console.error("Erro ao carregar perfil:", profileError); }
-                } else if (user.isAnonymous) {
-                    userRole = 'visitor'; // Usuários anônimos são sempre visitantes
-                }
-
-
-                if (userRole === 'admin') {
-                    if(adminDashboardLink) adminDashboardLink.classList.remove('hidden');
-                    window.showSection('admin-dashboard', document.querySelector('a[href="#admin-dashboard"]'));
-                    if (adminUserRoleDisplay) adminUserRoleDisplay.textContent = `Logado como: Administrador (${user.email || 'N/A'})`;
-                } else {
-                    if(adminDashboardLink) adminDashboardLink.classList.add('hidden');
-                    const hash = window.location.hash;
-                    if (hash.startsWith('#stand-details?id=')) {
-                        const standId = hash.split('id=')[1];
-                        window.showSection('stand-details', null);
-                        loadStandDetails(standId);
-                    } else if (hash === '' || hash === '#login' || hash === '#welcome-role-selection' || hash === '#admin-dashboard') {
-                        window.showSection('inicio', document.querySelector('a[href="#inicio"]'));
-                    } else {
-                        const currentHashSection = hash.substring(1);
-                        const currentNavLink = document.querySelector(`a.nav-link[href="#${currentHashSection}"]`);
-                        window.showSection(currentHashSection, currentNavLink || document.querySelector('a[href="#inicio"]'));
-                    }
-                    if (adminUserRoleDisplay) adminUserRoleDisplay.textContent = '';
-                }
-
-            } else { // Usuário deslogado
-                currentUserId = null;
-                if (userIdDisplay) { userIdDisplay.textContent = ''; userIdDisplay.classList.add('hidden'); }
-                
-                if(sidebar) {
-                    sidebar.classList.add('sidebar-initial-hidden'); // Adiciona display:none
-                    sidebar.classList.add('-translate-x-full'); // Esconde sidebar
-                }
-                if(logoutButton) logoutButton.classList.add('hidden');
-                if(adminDashboardLink) adminDashboardLink.classList.add('hidden');
-                if (adminUserRoleDisplay) adminUserRoleDisplay.textContent = '';
-
-                const hash = window.location.hash;
-                if (hash.startsWith('#stand-details?id=')) {
-                    const standId = hash.split('id=')[1];
-                    window.showSection('stand-details', null);
-                    loadStandDetails(standId); // Permitir ver detalhes da estande mesmo deslogado
-                } else {
-                    window.showSection('welcome-role-selection', null);
-                }
-            }
-        });
-    } else {
-        console.error("Firebase Auth não inicializado, onAuthStateChanged não será anexado.");
-        if(firebaseErrorDetails) firebaseErrorDetails.textContent = "Firebase Auth não pôde ser inicializado.";
-        if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
-    }
-
-    if(mobileMenuButton && sidebar) {
-        mobileMenuButton.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebar.classList.toggle('sidebar-initial-hidden'); // Alterna display se estiver usando
-        });
-    }
-    
-    document.addEventListener('click', function(event) {
-        if(sidebar && mobileMenuButton) {
-            const isClickInsideSidebar = sidebar.contains(event.target);
-            const isClickOnMenuButton = mobileMenuButton.contains(event.target);
-            if (!isClickInsideSidebar && !isClickOnMenuButton && window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        }
-    });
-
-    const registerLink = document.getElementById('register-link');
-    if (registerLink) registerLink.addEventListener('click', (e) => { e.preventDefault(); handleRegister(); });
-
-    const loginButtonEl = document.getElementById('login-button'); // Renomeado para evitar conflito
-    if (loginButtonEl) loginButtonEl.addEventListener('click', (e) => { e.preventDefault(); handleLogin(); });
-    
-    const visitorButton = document.getElementById('visitor-button');
-    if (visitorButton) visitorButton.addEventListener('click', (e) => { e.preventDefault(); registrationContext = 'visitor'; handleVisitorLogin(); });
-
-    const adminButton = document.getElementById('admin-button');
-    if (adminButton) adminButton.addEventListener('click', (e) => { e.preventDefault(); registrationContext = 'admin'; window.showSection('login', document.querySelector('a[href="#login"]')); });
-
-    if (logoutButton) logoutButton.addEventListener('click', handleLogout);
-
-    const tentForm = document.getElementById('tent-form');
-    if (tentForm) {
-        tentForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tentName = document.getElementById('tentName').value;
-            const tentCategory = document.getElementById('tentCategory').value;
-            const tentDescription = document.getElementById('tentDescription').value;
-            await addNewExpositor({ name: tentName, category: tentCategory, description: tentDescription, logoUrl: '' /* Adicionar campo para logoUrl se necessário */ });
-        });
-    }
-
-    const locationForm = document.getElementById('location-form');
-    if (locationForm) {
-        locationForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const standId = document.getElementById('standId').value;
-            const standOccupant = document.getElementById('standOccupant').value;
-            const standX = parseInt(document.getElementById('standX').value, 10);
-            const standY = parseInt(document.getElementById('standY').value, 10);
-            const messageEl = document.getElementById('location-message');
-
-            if (isNaN(standX) || isNaN(standY)) {
-                messageEl.textContent = 'Clique no mapa para selecionar as coordenadas.';
-                messageEl.className = 'text-red-500 text-sm mt-2'; return;
-            }
-            await addNewLocation({ id: standId, occupant: standOccupant, x: standX, y: standY });
-        });
-    }
-
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash;
-        console.log("Hash alterado para:", hash);
-        if (hash.startsWith('#stand-details?id=')) {
-            const standId = hash.split('id=')[1];
-            window.showSection('stand-details', null);
-            loadStandDetails(standId);
-        } else if (currentUserId) { // Se logado, navega normalmente
-            const newSection = hash ? hash.substring(1) : 'inicio';
-            const newLink = document.querySelector(`.nav-link[href="#${newSection}"]`);
-            window.showSection(newSection, newLink || document.querySelector('a[href="#inicio"]'));
-        } else { // Se deslogado e não for stand-details, volta para welcome
-             window.showSection('welcome-role-selection', null);
-        }
-    });
-
-    // Verifica hash na carga inicial, após onAuthStateChanged ter potencialmente rodado
-    // A lógica inicial de navegação agora está mais integrada com onAuthStateChanged
-    const initialHash = window.location.hash;
-    if (initialHash.startsWith('#stand-details?id=')) {
-        const standId = initialHash.split('id=')[1];
-        window.showSection('stand-details', null);
-        loadStandDetails(standId);
-    } else if (!currentUserId) { // Se não tem hash de detalhes e está deslogado
-        window.showSection('welcome-role-selection', null);
-    } else if (currentUserId && (initialHash === '' || initialHash === '#login' || initialHash === '#welcome-role-selection')) {
-         // Se logado e hash é de login/welcome, redireciona para inicio ou admin-dashboard (tratado por onAuthStateChanged)
-    } else if (currentUserId) {
-        const sectionIdFromHash = initialHash.substring(1);
-        const linkForHash = document.querySelector(`.nav-link[href="${initialHash}"]`);
-        window.showSection(sectionIdFromHash, linkForHash || document.querySelector('a[href="#inicio"]'));
+});
+window.addEventListener('click', (event) => {
+    const qrCodeModal = document.getElementById('qrCodeModal');
+    if (qrCodeModal && event.target === qrCodeModal) {
+        qrCodeModal.style.display = 'none';
     }
 });
+
+let agendaChartInstance = null;
+let expositoresChartInstance = null;
+
+function updateAgendaChart(events) {
+    const agendaCtxEl = document.getElementById('agendaChart');
+    if (!agendaCtxEl) return;
+    const agendaCtx = agendaCtxEl.getContext('2d');
+
+    const days = {};
+    const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
+    events.forEach(event => {
+        const date = event.date || 'Data Desconhecida';
+        const type = eventTypes.includes(event.type) ? event.type : 'Outros';
+        if (!days[date]) {
+            days[date] = {}; eventTypes.forEach(t => days[date][t] = 0);
+        }
+        days[date][type]++;
+    });
+    
+    const sortedDates = Object.keys(days).sort((a, b) => {
+        if (a === 'Data Desconhecida') return 1; if (b === 'Data Desconhecida') return -1;
+        const [dayA, monthA, yearA] = a.split('/').map(Number);
+        const [dayB, monthB, yearB] = b.split('/').map(Number);
+        return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+    });
+
+    const datasets = eventTypes.map(type => {
+        let bgColor, brdColor;
+        switch(type) {
+            case 'Palestras': bgColor = 'rgba(76, 175, 80, 0.7)'; brdColor = 'rgba(76, 175, 80, 1)'; break;
+            case 'Workshops': bgColor = 'rgba(255, 193, 7, 0.7)'; brdColor = 'rgba(255, 193, 7, 1)'; break;
+            case 'Demonstrações': bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)'; break; // Azul para demonstrações
+            default: bgColor = 'rgba(158, 158, 158, 0.7)'; brdColor = 'rgba(158, 158, 158, 1)';
+        }
+        return { label: type, data: sortedDates.map(date => days[date][type] || 0), backgroundColor: bgColor, borderColor: brdColor, borderWidth: 1 };
+    });
+
+    if (agendaChartInstance) agendaChartInstance.destroy();
+    agendaChartInstance = new Chart(agendaCtx, {
+        type: 'bar', data: { labels: sortedDates, datasets: datasets },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+    });
+}
+
+function updateExpositoresChart(expositores) {
+    const expositoresCtxEl = document.getElementById('expositoresChart');
+    if(!expositoresCtxEl) return;
+    const expositoresCtx = expositoresCtxEl.getContext('2d');
+
+    const categories = {};
+    expositores.forEach(expositor => {
+        const category = expositor.category || 'Outros';
+        categories[category] = (categories[category] || 0) + 1;
+    });
+    const labels = Object.keys(categories);
+    const data = labels.map(label => categories[label]);
+
+    if (expositoresChartInstance) expositoresChartInstance.destroy();
+    expositoresChartInstance = new Chart(expositoresCtx, {
+        type: 'pie',
+        data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#9E9E9E', '#795548', '#FF5722'], borderWidth: 1 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+}
+
+async function loadStandDetails(standId) {
+    const contentEl = document.getElementById('stand-details-content');
+    if (!contentEl) return;
+    contentEl.innerHTML = '<p class="text-gray-500">Carregando...</p>';
+    if (!window.db) { contentEl.innerHTML = '<p class="text-red-500">Erro: DB não disp.</p>'; return; }
+
+    try {
+        const q = query(collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`), where("id", "==", standId));
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+            const data = snapshot.docs[0].data();
+            contentEl.innerHTML = `
+                <h4 class="font-semibold text-2xl mb-2 text-green-700">${data.occupant || 'Estande Sem Nome'} (ID: ${data.id || 'N/A'})</h4>
+                <p class="text-gray-700 mb-1"><span class="font-medium">Localização no Mapa:</span> X: ${data.x || 'N/A'}, Y: ${data.y || 'N/A'}</p>
+                <p class="text-gray-700 mb-4"><span class="font-medium">Descrição:</span> ${data.description || 'Nenhuma descrição disponível.'}</p>
+                `;
+        } else { contentEl.innerHTML = '<p class="text-red-500">Estande não encontrada.</p>'; }
+    } catch (e) { console.error("Erro detalhes estande:", e); contentEl.innerHTML = '<p class="text-red-500">Erro ao carregar.</p>'; }
+}
+
+// Filtro de Eventos na Agenda
+const applyEventFiltersButton = document.getElementById('applyEventFilters');
+if (applyEventFiltersButton) {
+    applyEventFiltersButton.addEventListener('click', () => {
+        const dateFilter = document.getElementById('filterEventDate').value;
+        const typeFilter = document.getElementById('filterEventType').value;
+        
+        let filteredEvents = globalEventsCache;
+
+        if (dateFilter) {
+            // Formata a data do filtro para DD/MM/AAAA para corresponder ao formato dos dados, se necessário
+            // Ou converte ambas as datas para objetos Date para comparação
+            const [year, month, day] = dateFilter.split('-');
+            const formattedDateFilter = `${day}/${month}/${year}`;
+            filteredEvents = filteredEvents.filter(event => event.date === formattedDateFilter);
+        }
+        if (typeFilter) {
+            filteredEvents = filteredEvents.filter(event => event.type === typeFilter);
+        }
+
+        // Re-renderiza a lista de eventos e o gráfico com os eventos filtrados
+        const container = document.getElementById('agenda-events-container');
+        if (container) {
+            container.innerHTML = '';
+            if (filteredEvents.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento encontrado com os filtros aplicados.</p>';
+            } else {
+                filteredEvents.forEach(event => {
+                    const eventCard = `
+                        <div class="card p-6">
+                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
+                            <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
+                            <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
+                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
+                        </div>`;
+                    container.innerHTML += eventCard;
+                });
+            }
+        }
+        updateAgendaChart(filteredEvents);
+    });
+}
