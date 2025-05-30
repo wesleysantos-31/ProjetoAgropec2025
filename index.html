@@ -6,12 +6,16 @@
     <title>AGROPEC 2025 - Event App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+=======
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.4.0/qrcode.min.js"></script>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
     <link rel="stylesheet" href="style.css">
     
 </head>
@@ -19,12 +23,20 @@
 
     <aside class="sidebar w-16 md:w-64 space-y-6 py-7 px-2 md:px-4 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out sidebar-initial-hidden">
         <div class="px-4 py-2 flex items-center justify-center md:justify-start">
+<<<<<<< HEAD
             <img src="https://placehold.co/40x40/FFFFFF/388E3C?text=A&font=Inter" alt="[Ícone do Logo AGROPEC]" class="h-10 w-10 md:hidden">
+=======
+            <img src="https://placehold.co/40x40/FFFFFF/388E3C?text=A&font=Inter" alt="AGROPEC Logo Icon" class="h-10 w-10 md:hidden">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
             <span class="agropec-logo-text hidden md:block">AGROPEC</span>
         </div>
 
         <nav class="mt-10">
+<<<<<<< HEAD
             <a href="#login" id="nav-login-link" onclick="window.showSection('login', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+=======
+            <a href="#login" onclick="window.showSection('login', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                 <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1"></path></svg>
                 <span class="hidden md:inline">Login</span>
             </a>
@@ -46,11 +58,15 @@
             </a>
             <a href="#admin-dashboard" id="admin-dashboard-link" onclick="window.showSection('admin-dashboard', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700 hidden">
                 <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.562.344 1.25.513 1.943.513z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+<<<<<<< HEAD
                 <span class="hidden md:inline">Gerenciar Estandes</span>
             </a>
             <a href="#organizadores" id="organizadores-link" onclick="window.showSection('organizadores', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700 hidden">
                 <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                 <span class="hidden md:inline">Gerenciar Conteúdo</span>
+=======
+                <span class="hidden md:inline">Painel Administrativo</span>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
             </a>
         </nav>
     </aside>
@@ -67,15 +83,22 @@
             </div>
         </header>
 
+<<<<<<< HEAD
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-2 main-content">
             <section id="welcome-role-selection" class="p-2 active">
                 <div class="max-w-md mx-auto card p-8 text-center">
                     <div class="flex justify-center mb-8">
                         <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="[Logo AGROPEC 2025]" class="h-auto">
+=======
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-2 main-content"> <section id="welcome-role-selection" class="p-2 active"> <div class="max-w-md mx-auto card p-8 text-center">
+                    <div class="flex justify-center mb-8">
+                         <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="AGROPEC 2025 Logo" class="h-auto">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                     </div>
                     <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Bem-vindo!</h2>
                     <p class="text-center text-gray-600 mb-8">Eu sou</p>
                     <button type="button" id="visitor-button" class="w-full btn-primary font-semibold py-3 px-4 rounded-md text-lg mb-4">Visitante</button>
+<<<<<<< HEAD
                     <button type="button" id="admin-button" class="w-full btn-accent font-semibold py-3 px-4 rounded-md text-lg">Organizador/Admin</button>
                 </div>
             </section>
@@ -84,17 +107,34 @@
                 <div class="max-w-md mx-auto card p-8">
                     <div class="flex justify-center mb-8">
                         <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="[Logo AGROPEC 2025]" class="h-auto">
+=======
+                    <button type="button" id="admin-button" class="w-full btn-accent font-semibold py-3 px-4 rounded-md text-lg">Administrador</button>
+                </div>
+            </section>
+
+            <section id="login" class="p-2"> <div class="max-w-md mx-auto card p-8">
+                    <div class="flex justify-center mb-8">
+                         <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="AGROPEC 2025 Logo" class="h-auto">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                     </div>
                     <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Acesse sua conta</h2>
                     <p class="text-center text-gray-600 mb-8">Para explorar o evento AGROPEC.</p>
                     <form>
                         <div class="mb-4">
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+<<<<<<< HEAD
                             <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" class="input-field">
                         </div>
                         <div class="mb-6">
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
                             <input type="password" id="password" name="password" placeholder="********" class="input-field">
+=======
+                            <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        </div>
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                            <input type="password" id="password" name="password" placeholder="********" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                         </div>
                         <button type="button" id="login-button" class="w-full btn-primary font-semibold py-2 px-4 rounded-md text-lg">Entrar</button>
                         <div class="text-center mt-4">
@@ -108,6 +148,7 @@
                 </div>
             </section>
 
+<<<<<<< HEAD
             <section id="inicio" class="p-2">
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
@@ -119,11 +160,18 @@
                         <p class="text-gray-500 col-span-full">Carregando notícias...</p>
                     </div>
                 </div>
+=======
+            <section id="inicio" class="p-2"> <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
+                    <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
+                </div>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <div class="card p-6">
                         <h3 class="text-xl font-semibold mb-2 text-green-700">🐄 Próxima Palestra Imperdível</h3>
                         <p class="text-gray-600 mb-1"><span class="font-medium">Título:</span> Inovações na Pecuária Sustentável</p>
+<<<<<<< HEAD
                         <p class="text-gray-600 mb-1"><span class="font-medium">Palestrante:</span> Dr. João Silva</p>
                         <p class="text-gray-600 mb-3"><span class="font-medium">Horário:</span> Hoje, 14:00 - Auditório Principal</p>
                         <button class="btn-accent text-sm py-2 px-3 rounded-md">Ver Detalhes</button>
@@ -141,6 +189,26 @@
                         </div>
                     </div>
                 </div>
+=======
+                        <p class="text-600 mb-1"><span class="font-medium">Palestrante:</span> Dr. João Silva</p>
+                        <p class="text-600 mb-3"><span class="font-medium">Horário:</span> Hoje, 14:00 - Auditório Principal</p>
+                        <button class="btn-accent text-sm py-2 px-3 rounded-md">Ver Detalhes</button>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">📰 Notícias Recentes</h3>
+                        <p class="text-gray-600 mb-1">AGROPEC 2025 bate recorde de expositores.</p>
+                        <p class="text-gray-600 mb-3">Novas tecnologias agrícolas em demonstração.</p>
+                        <button class="btn-accent text-sm py-2 px-3 rounded-md">Ler Mais</button>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">⭐ Meus Favoritos</h3>
+                        <p class="text-gray-600">Você ainda não marcou nenhum favorito.</p>
+                        <p class="text-600 mb-3">Navegue pela agenda e expositores para adicionar.</p>
+                         <button onclick="window.showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-accent text-sm py-2 px-3 rounded-md">Ver Agenda</button>
+                    </div>
+                </div>
+
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                 <div class="card p-6 mb-6">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">📢 Banner Principal</h3>
                     <div class="bg-green-600 text-white p-8 rounded-lg text-center">
@@ -148,6 +216,7 @@
                         <p class="text-lg">Participe da maior exposição de produtos do campo. Inovação, tecnologia e negócios em um só lugar.</p>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <div class="card p-6">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">Acesso Rápido</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -155,19 +224,37 @@
                         <button onclick="window.showSection('expositores', document.querySelector('a[href=\'#expositores\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Encontrar Expositores</button>
                         <button onclick="window.showSection('mapa', document.querySelector('a[href=\'#mapa\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Explorar o Mapa</button>
                         <button class="btn-primary py-3 px-4 rounded-md text-center">Fale Conosco</button>
+=======
+                 <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">Acesso Rápido</h3>
+                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="window.showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Ver Agenda Completa</button>
+                        <button onclick="window.showSection('expositores', document.querySelector('a[href=\'#expositores\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Encontrar Expositores</button>
+                        <button onclick="window.showSection('mapa', document.querySelector('a[href=\'#mapa\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Explorar o Mapa</button>
+                         <button class="btn-primary py-3 px-4 rounded-md text-center">Fale Conosco</button>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                     </div>
                 </div>
             </section>
 
+<<<<<<< HEAD
             <section id="agenda" class="p-2">
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
                 </div>
+=======
+            <section id="agenda" class="p-2"> <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
+                </div>
+
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                 <div class="mb-6 card p-4">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">Filtrar Eventos</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
+<<<<<<< HEAD
                             <label for="filterEventDate" class="block text-sm font-medium text-gray-700">Data:</label>
                             <input type="date" id="filterEventDate" name="filterEventDate" class="input-field">
                         </div>
@@ -189,6 +276,33 @@
                 <div id="agenda-events-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <p class="text-gray-500 col-span-full">Carregando eventos...</p>
                 </div>
+=======
+                            <label for="eventDate" class="block text-sm font-medium text-gray-700">Data:</label>
+                            <input type="date" id="eventDate" name="eventDate" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="eventType" class="block text-sm font-medium text-gray-700">Tipo:</label>
+                            <select id="eventType" name="eventType" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                                <option>Todos</option>
+                                <option>Expositores</option>
+                                <option>Workshops</option>
+                                <option>Demonstrações</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button class="btn-primary w-full py-2 px-4 rounded-md">Aplicar Filtros</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="agenda-events-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="card p-6">
+                        <h4 class="font-semibold text-lg mb-1 text-green-600">Carregando Eventos...</h4>
+                        <p class="text-sm text-gray-500 mb-2">Aguarde enquanto os dados são carregados do Firebase.</p>
+                    </div>
+                </div>
+
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                 <div class="card p-6">
                     <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Eventos por Dia</h3>
                     <div class="chart-container">
@@ -197,6 +311,7 @@
                 </div>
             </section>
 
+<<<<<<< HEAD
             <section id="expositores" class="p-2">
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
@@ -212,23 +327,55 @@
                 <div class="card p-6">
                     <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Expositores por Categoria</h3>
                     <div class="chart-container">
+=======
+            <section id="expositores" class="p-2"> <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Conheça as empresas e instituições que estão apresentando suas novidades e soluções para o agronegócio.</p>
+                </div>
+
+                <div class="mb-6 card p-4">
+                    <label for="searchExpositor" class="block text-sm font-medium text-gray-700">Buscar Expositor:</label>
+                    <input type="text" id="searchExpositor" name="searchExpositor" placeholder="Nome do expositor ou produto..." class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                </div>
+
+                <div id="expositores-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="card p-6 text-center">
+                        <img src="https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter" alt="Logo Expositor Simulado" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+                        <h4 class="font-semibold text-lg text-green-600">Carregando Expositores...</h4>
+                        <p class="text-sm text-gray-500 mb-2">Aguarde enquanto os dados são carregados do Firebase.</p>
+                    </div>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Expositores por Categoria</h3>
+                     <div class="chart-container">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                         <canvas id="expositoresChart"></canvas>
                     </div>
                 </div>
             </section>
 
+<<<<<<< HEAD
             <section id="mapa" class="p-2">
                 <div class="mb-6">
+=======
+            <section id="mapa" class="p-2"> <div class="mb-6">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                     <h2 class="text-3xl font-semibold text-gray-800">Mapa do Evento AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
                 </div>
                 <div class="card p-6">
                     <canvas id="fairMapCanvas" class="map-canvas"></canvas>
+<<<<<<< HEAD
                     <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes. Administradores podem adicionar estandes na seção de gerenciamento.</p>
+=======
+                    <p class="text-center mt-4 text-gray-500">Este é o mapa da feira. Administradores podem adicionar estandes clicando neste mapa na seção de administração.</p>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                 </div>
             </section>
 
             <section id="admin-dashboard" class="p-2"> <div class="mb-6">
+<<<<<<< HEAD
                     <h2 class="text-3xl font-semibold text-gray-800">Gerenciar Estandes</h2>
                     <p class="mt-2 text-gray-600">Adicione e gerencie as localizações das estandes no mapa.</p>
                     <p id="admin-user-role-display-estandes" class="text-sm text-gray-500 mt-2"></p>
@@ -250,6 +397,49 @@
                             <div>
                                 <label for="standCoordinatesDisplay" class="block text-sm font-medium text-gray-700">Coordenadas Selecionadas (Clique no mapa)</label>
                                 <input type="text" id="standCoordinatesDisplay" class="input-field bg-gray-100" readonly placeholder="Clique no mapa para selecionar">
+=======
+                    <h2 class="text-3xl font-semibold text-gray-800">Painel Administrativo</h2>
+                    <p class="mt-2 text-gray-600">Gerencie as informações da feira e monitore as localizações dos estandes.</p>
+                    <p id="admin-user-role-display" class="text-sm text-gray-500 mt-2"></p> </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-green-700">Gerenciar Tendas/Expositores</h3>
+                        <form id="tent-form" class="space-y-4">
+                            <div>
+                                <label for="tentName" class="block text-sm font-medium text-gray-700">Nome da Tenda/Expositor</label>
+                                <input type="text" id="tentName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: AgroTech Solutions" required>
+                            </div>
+                            <div>
+                                <label for="tentCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+                                <input type="text" id="tentCategory" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: Pecuária, Agricultura, Máquinas">
+                            </div>
+                            <div>
+                                <label for="tentDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+                                <textarea id="tentDescription" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Breve descrição da tenda e seus produtos/serviços"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary py-2 px-4 rounded-md">Salvar Informações da Tenda</button>
+                            <div id="tent-message" class="text-sm mt-2"></div>
+                        </form>
+                    </div>
+
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-green-700">Adicionar Localização de Estante</h3>
+                        <p class="text-gray-600 mb-4">Clique no mapa abaixo para selecionar as coordenadas da estande.</p>
+                        <canvas id="adminMapCanvas" class="map-canvas"></canvas>
+                        <form id="location-form" class="space-y-4">
+                            <div>
+                                <label for="standId" class="block text-sm font-medium text-gray-700">ID do Estante</label>
+                                <input type="text" id="standId" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Ex: A-01, Setor B" required>
+                            </div>
+                            <div>
+                                <label for="standOccupant" class="block text-sm font-medium text-gray-700">Ocupante do Estante</label>
+                                <input type="text" id="standOccupant" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" placeholder="Nome da Tenda/Expositor">
+                            </div>
+                            <div>
+                                <label for="standCoordinatesDisplay" class="block text-sm font-medium text-gray-700">Coordenadas Selecionadas (Clique no mapa)</label>
+                                <input type="text" id="standCoordinatesDisplay" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50" readonly placeholder="Clique no mapa para selecionar">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                                 <input type="hidden" id="standX">
                                 <input type="hidden" id="standY">
                             </div>
@@ -257,15 +447,25 @@
                             <div id="location-message" class="text-sm mt-2"></div>
                         </form>
                     </div>
+<<<<<<< HEAD
                      <div class="card p-6">
                         <h3 class="text-xl font-semibold mb-3 text-green-700">Estandes Cadastradas</h3>
                         <div id="registered-stands-display" class="space-y-2 text-gray-700 max-h-96 overflow-y-auto">
                             <p>Nenhuma estande cadastrada ainda.</p>
                         </div>
+=======
+                </div>
+
+                <div class="card p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">Estandes Cadastradas</h3>
+                    <div id="registered-stands-display" class="space-y-2 text-gray-700">
+                        <p>Nenhuma estande cadastrada ainda.</p>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                     </div>
                 </div>
             </section>
 
+<<<<<<< HEAD
             <section id="organizadores" class="p-2">
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Painel do Organizador - Conteúdo</h2>
@@ -389,6 +589,9 @@
 
             <section id="stand-details" class="p-2">
                 <div class="mb-6">
+=======
+            <section id="stand-details" class="p-2"> <div class="mb-6">
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
                     <h2 class="text-3xl font-semibold text-gray-800">Detalhes da Estande</h2>
                     <p class="mt-2 text-gray-600">Informações detalhadas sobre a estande.</p>
                 </div>
@@ -402,6 +605,7 @@
         </main>
     </div>
 
+<<<<<<< HEAD
     <div id="qrCodeModal" class="qr-modal"> <div class="qr-modal-content">
             <span class="qr-modal-close">&times;</span>
             <div id="qrcode" class="flex justify-center mb-4"></div>
@@ -413,5 +617,1176 @@
     </div>
 
     <script type="module" src="app.js"></script>
+=======
+    <div id="qrCodeModal" class="qr-modal flex">
+        <div class="qr-modal-content">
+            <span class="qr-modal-close">×</span>
+            <div id="qrcode" class="flex justify-center mb-4"></div>
+            </div>
+    </div>
+    <div id="firebase-error-message" class="fixed bottom-4 right-4 bg-red-500 text-white p-3 rounded-md shadow-lg hidden">
+        Ocorreu um erro ao carregar o Firebase. Por favor, verifique sua conexão ou tente novamente. Detalhes: <span id="firebase-error-details"></span>
+    </div>
+
+    <script src="script.js"></script>
+    <script type="module">
+        // Importa as funções necessárias do SDK do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+        // Importa createUserWithEmailAndPassword para registro
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+        // Sua configuração do Firebase (atualizada com base na sua última mensagem)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4",
+            authDomain: "agropec-2025-app.firebaseapp.com",
+            projectId: "agropec-2025-app",
+            storageBucket: "agropec-2025-app.firebaseapp.com",
+            messagingSenderId: "203743696437",
+            appId: "1:203743696437:web:0332c09896cc34eb14437c",
+            measurementId: "G-40JHQ2RPEQ"
+        };
+
+        let currentUserId = null;
+        let registrationContext = 'visitor'; // 'visitor' ou 'admin'
+
+        const userIdDisplay = document.getElementById('user-id-display');
+        const sidebar = document.querySelector('.sidebar');
+        const logoutButton = document.getElementById('logout-button');
+        const adminDashboardLink = document.getElementById('admin-dashboard-link');
+        const adminUserRoleDisplay = document.getElementById('admin-user-role-display'); 
+        const firebaseErrorMessage = document.getElementById('firebase-error-message');
+        const firebaseErrorDetails = document.getElementById('firebase-error-details');
+        const mobileMenuButton = document.getElementById('mobileMenuButton'); // Adicionado para o botão do menu
+
+        // Variáveis do Mapa Canvas
+        let fairMapCanvas;
+        let fairMapCtx;
+        let adminMapCanvas;
+        let adminMapCtx;
+        let stands = []; // Array para armazenar as estandes cadastradas
+        let adminMapTemporaryMarker = null; // Para o ponto de clique no mapa do admin
+
+        // Função para exibir/ocultar seções (tornada explicitamente global)
+        window.showSection = function(sectionId, clickedLink) {
+            console.log(`Tentando mostrar seção: ${sectionId}`);
+            const sections = document.querySelectorAll('.main-content section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const currentSectionTitle = document.getElementById('currentSectionTitle');
+
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                    let title = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+                    if (sectionId === 'inicio') title = 'Painel Principal';
+                    else if (sectionId === 'admin-dashboard') title = 'Painel Administrativo';
+                    else if (sectionId === 'stand-details') title = 'Detalhes da Estande';
+                    else if (sectionId === 'welcome-role-selection') title = 'Bem-vindo!';
+                    currentSectionTitle.textContent = title;
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                link.classList.remove('bg-green-500'); // Remove a classe ativa do Tailwind
+            });
+            if (clickedLink) {
+                clickedLink.classList.add('active');
+                clickedLink.classList.add('bg-green-500'); // Adiciona a classe ativa do Tailwind
+            }
+            // Fecha a barra lateral móvel após a navegação
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        // Função para inicializar um mapa específico
+        function initMap(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error(`Canvas com ID '${canvasId}' não encontrado.`);
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 400; // Altura fixa para o mapa
+
+            // Armazena as referências globais
+            if (canvasId === 'fairMapCanvas') {
+                fairMapCanvas = canvas;
+                fairMapCtx = ctx;
+            } else if (canvasId === 'adminMapCanvas') {
+                adminMapCanvas = canvas;
+                adminMapCtx = ctx;
+            }
+
+            // Adiciona o listener de clique apenas para o mapa do admin
+            if (canvasId === 'adminMapCanvas') {
+                canvas.removeEventListener('click', handleMapClick); // Remove para evitar múltiplos listeners
+                canvas.addEventListener('click', handleMapClick);
+            } else {
+                canvas.removeEventListener('click', handleMapClick); // Garante que o mapa do visitante não tenha listener de clique
+            }
+
+            // Redesenha o mapa ao redimensionar a janela
+            // Remove listener antigo para evitar duplicação
+            window.removeEventListener('resize', () => handleMapResize(canvasId));
+            window.addEventListener('resize', () => handleMapResize(canvasId));
+
+            // Desenha o mapa inicialmente
+            drawMap(canvasId, ctx);
+
+            // Carrega as localizações existentes (chamado uma vez e atualizado via onSnapshot)
+            if (window.db) { // Verifica se o Firebase Firestore está inicializado
+                loadPublicLocations();
+            }
+        }
+
+        function handleMapResize(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (canvas) {
+                canvas.width = canvas.offsetWidth;
+                drawMap(canvasId, canvas.getContext('2d'));
+            }
+        }
+
+        // Função para desenhar o mapa fictício e as estandes em um contexto específico
+        function drawMap(canvasId, ctx) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas || !ctx) {
+                console.error(`[drawMap] Canvas ou contexto não encontrado para ${canvasId}.`);
+                return;
+            }
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 400;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Fundo geral do evento
+            ctx.fillStyle = '#F0F0F0'; // Cinza claro para o chão do evento
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Desenha as ruas principais
+            ctx.fillStyle = '#A0A0A0'; // Cinza escuro para as ruas
+            ctx.fillRect(50, 0, 80, canvas.height); // Rua vertical esquerda
+            ctx.fillRect(canvas.width - 130, 0, 80, canvas.height); // Rua vertical direita
+            ctx.fillRect(0, 80, canvas.width, 60); // Rua horizontal superior
+            ctx.fillRect(0, canvas.height - 140, canvas.width, 60); // Rua horizontal inferior
+
+            // Áreas verdes (gramado, jardins)
+            ctx.fillStyle = '#8BC34A'; // Verde para áreas verdes
+            ctx.fillRect(10, 10, 30, 60); // Canto superior esquerdo
+            ctx.fillRect(140, 10, canvas.width - 270, 60); // Área verde superior central
+            ctx.fillRect(10, canvas.height - 70, 30, 60); // Canto inferior esquerdo
+            ctx.fillRect(canvas.width - 40, canvas.height - 70, 30, 60); // Canto inferior direito
+            ctx.fillRect(canvas.width / 2 - 50, canvas.height / 2 - 50, 100, 100); // Parque central
+
+            // Edifícios (auditórios, praça de alimentação, etc.)
+            ctx.fillStyle = '#B0BEC5'; // Cinza azulado para edifícios
+            ctx.fillRect(10, 150, 40, 100); // Edifício 1 (Auditório A)
+            ctx.fillRect(canvas.width - 50, 150, 40, 100); // Edifício 2 (Praça de Alimentação)
+            ctx.fillRect(140, canvas.height - 200, 100, 50); // Edifício 3 (Centro de Boas-Vindas)
+            ctx.fillRect(canvas.width - 240, 20, 100, 50); // Edifício 4 (Administração)
+
+            // Áreas de estandes (blocos)
+            ctx.fillStyle = '#E0E0E0'; // Cinza muito claro para blocos de estandes
+            ctx.fillRect(140, 150, canvas.width - 270, 100); // Bloco central superior
+            ctx.fillRect(140, canvas.height - 200, canvas.width - 270, 50); // Bloco central inferior
+
+            // Linhas de divisão de estandes (grid sutil)
+            ctx.strokeStyle = '#CCCCCC';
+            ctx.lineWidth = 0.5;
+            const standBlockPadding = 10;
+            const standWidth = 70;
+            const standHeight = 40;
+
+            // Bloco central superior
+            for (let x = 140 + standBlockPadding; x < canvas.width - 130 - standWidth; x += standWidth + standBlockPadding) {
+                for (let y = 150 + standBlockPadding; y < 150 + 100 - standHeight; y += standHeight + standBlockPadding) {
+                    ctx.strokeRect(x, y, standWidth, standHeight);
+                }
+            }
+
+            // Bloco central inferior
+            for (let x = 140 + standBlockPadding; x < canvas.width - 130 - standWidth; x += standWidth + standBlockPadding) {
+                for (let y = canvas.height - 200 + standBlockPadding; y < canvas.height - 200 + 50 - standHeight; y += standHeight + standBlockPadding) {
+                    ctx.strokeRect(x, y, standWidth, standHeight);
+                }
+            }
+
+            // Desenha as estandes
+            stands.forEach(stand => {
+                ctx.fillStyle = '#4CAF50'; // Cor da estande (verde forte para destaque)
+                ctx.strokeStyle = '#388E3C'; // Borda da estande
+                ctx.lineWidth = 2;
+
+                const standSize = 20; // Tamanho da estande (quadrado)
+                const halfSize = standSize / 2;
+
+                // Desenha o quadrado da estande
+                ctx.fillRect(stand.x - halfSize, stand.y - halfSize, standSize, standSize);
+                ctx.strokeRect(stand.x - halfSize, stand.y - halfSize, standSize, standSize);
+
+                // Desenha o ID da estande
+                ctx.fillStyle = '#FFFFFF'; // Cor do texto
+                ctx.font = 'bold 10px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(stand.id, stand.x, stand.y);
+
+                // Desenha o ocupante (nome da tenda/expositor) abaixo
+                if (stand.occupant) {
+                    ctx.fillStyle = '#424242'; // Cor do texto
+                    ctx.font = '8px Inter';
+                    ctx.fillText(stand.occupant, stand.x, stand.y + halfSize + 8);
+                }
+            });
+
+            // Desenha o marcador temporário do admin, se houver
+            if (canvasId === 'adminMapCanvas' && adminMapTemporaryMarker) {
+                ctx.fillStyle = 'red';
+                ctx.beginPath();
+                ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Função para lidar com o clique no mapa (apenas para o mapa do admin)
+        function handleMapClick(event) {
+            const currentActiveSection = document.querySelector('.main-content section.active');
+            if (currentActiveSection && currentActiveSection.id === 'admin-dashboard') {
+                const rect = adminMapCanvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+
+                document.getElementById('standX').value = Math.round(x);
+                document.getElementById('standY').value = Math.round(y);
+                document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
+
+                adminMapTemporaryMarker = { x: Math.round(x), y: Math.round(y) };
+                drawMap('adminMapCanvas', adminMapCtx); // Redesenha para mostrar o marcador temporário
+            }
+        }
+
+        // Função para exibir dados coletados (agora mostra as estandes do array 'stands')
+        function displayCollectedData() {
+            const displayArea = document.getElementById('registered-stands-display');
+            if (!displayArea) return;
+
+            displayArea.innerHTML = ''; // Limpa a área
+            if (stands.length === 0) {
+                displayArea.innerHTML = '<p class="text-gray-500">Nenhuma estande cadastrada ainda.</p>';
+            } else {
+                const ul = document.createElement('ul');
+                stands.forEach(stand => {
+                    const li = document.createElement('li');
+                    li.classList.add('flex', 'items-center', 'justify-between', 'py-2', 'border-b', 'border-gray-200');
+                    li.innerHTML = `
+                        <span>ID: ${stand.id || 'N/A'}, Ocupante: ${stand.occupant || 'N/A'}, Coords: (${stand.x || 'N/A'}, ${stand.y || 'N/A'})</span>
+                        <button class="btn-accent text-sm py-1 px-2 rounded-md generate-qr-btn" data-stand-doc-id="${stand.docId}">Gerar QR Code</button>
+                    `;
+                    ul.appendChild(li);
+                });
+                displayArea.appendChild(ul);
+
+                // Adiciona listeners para os botões de QR Code
+                document.querySelectorAll('.generate-qr-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        console.log("Botão Gerar QR Code clicado!"); // Log para depuração
+                        const standDocId = event.target.dataset.standDocId;
+                        const stand = stands.find(s => s.docId === standDocId); // Encontra a estande pelo docId
+                        if (stand) {
+                            generateAndShowQrCode(stand);
+                        } else {
+                            console.error("Estande não encontrada para gerar QR Code.");
+                        }
+                    });
+                });
+            }
+        }
+
+        // Função para gerar e exibir o QR Code em um modal
+        function generateAndShowQrCode(stand) {
+            const qrCodeModal = document.getElementById('qrCodeModal');
+            const qrcodeDiv = document.getElementById('qrcode');
+
+            // Limpa qualquer QR Code anterior
+            qrcodeDiv.innerHTML = '';
+
+            // Conteúdo do QR Code será a URL para a página de detalhes da estande
+            // Usamos window.location.origin para garantir que a URL seja correta para o ambiente atual
+            const standDetailsUrl = `${window.location.origin}/#stand-details?id=${stand.id}`; // Usando stand.id para a URL
+
+            // Cria o QR Code
+            const qr = new window.QRCode(qrcodeDiv, { // Alterado para window.QRCode
+                text: standDetailsUrl,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : window.QRCode.CorrectLevel.H // Alterado para window.QRCode.CorrectLevel.H
+            });
+
+            // Exibe o modal
+            qrCodeModal.style.display = 'flex';
+        }
+
+        // Fecha o modal do QR Code
+        document.querySelector('.qr-modal-close').addEventListener('click', () => {
+            console.log("Botão fechar modal QR Code clicado!"); // Log para depuração
+            document.getElementById('qrCodeModal').style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            const qrCodeModal = document.getElementById('qrCodeModal');
+            if (event.target === qrCodeModal) {
+                console.log("Clicado fora do modal QR Code!"); // Log para depuração
+                qrCodeModal.style.display = 'none';
+            }
+        });
+
+        // Implementações Chart.js
+        let agendaChartInstance = null;
+        let expositoresChartInstance = null;
+
+        function updateAgendaChart(events) {
+            const days = {};
+            const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
+
+            events.forEach(event => {
+                const date = event.date || 'Data Desconhecida';
+                const type = event.type || 'Outros';
+                if (!days[date]) {
+                    days[date] = {};
+                    eventTypes.forEach(t => days[date][t] = 0);
+                }
+                if (days[date][type] !== undefined) {
+                    days[date][type]++;
+                } else {
+                    days[date]['Outros']++;
+                }
+            });
+
+            const sortedDates = Object.keys(days).sort((a, b) => {
+                const [dayA, monthA, yearA] = a.split('/').map(Number);
+                const [dayB, monthB, yearB] = b.split('/').map(Number);
+                const dateA = new Date(yearA, monthA - 1, dayA);
+                const dateB = new Date(yearB, monthB - 1, dayB);
+                return dateA - dateB;
+            });
+
+            const datasets = eventTypes.map(type => {
+                let backgroundColor;
+                let borderColor;
+                if (type === 'Palestras') {
+                    backgroundColor = 'rgba(76, 175, 80, 0.7)';
+                    borderColor = 'rgba(76, 175, 80, 1)';
+                } else if (type === 'Workshops') {
+                    backgroundColor = 'rgba(255, 193, 7, 0.7)';
+                    borderColor = 'rgba(255, 193, 7, 1)';
+                } else if (type === 'Demonstrações') {
+                    backgroundColor = 'rgba(66, 66, 66, 0.7)';
+                    borderColor = 'rgba(66, 66, 66, 1)';
+                } else {
+                    backgroundColor = 'rgba(158, 158, 158, 0.7)';
+                    borderColor = 'rgba(158, 158, 158, 1)';
+                }
+
+                return {
+                    label: type,
+                    data: sortedDates.map(date => days[date][type] || 0),
+                    backgroundColor: backgroundColor,
+                    borderColor: borderColor,
+                    borderWidth: 1
+                };
+            });
+
+            const agendaCtx = document.getElementById('agendaChart').getContext('2d');
+            if (agendaCtx) {
+                if (agendaChartInstance) {
+                    agendaChartInstance.destroy();
+                }
+                agendaChartInstance = new Chart(agendaCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedDates,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#424242' }
+                            },
+                            x: {
+                                ticks: { color: '#424242' }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { color: '#424242' }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + ' eventos';
+                                        }
+                                        const maxLabelWidth = 16;
+                                        if (label.length > maxLabelWidth) {
+                                            const words = label.split(' ');
+                                            let currentLine = '';
+                                            const lines = [];
+                                            for (const word of words) {
+                                                if ((currentLine + word).length > maxLabelWidth) {
+                                                    lines.push(currentLine.trim());
+                                                    currentLine = '';
+                                                }
+                                                currentLine += word + ' ';
+                                            }
+                                            lines.push(currentLine.trim());
+                                            return lines;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateExpositoresChart(expositores) {
+            const categories = {};
+            expositores.forEach(expositor => {
+                const category = expositor.category || 'Outros';
+                categories[category] = (categories[category] || 0) + 1;
+            });
+
+            const labels = Object.keys(categories);
+            const data = labels.map(label => categories[label]);
+
+            const expositoresCtx = document.getElementById('expositoresChart').getContext('2d');
+            if (expositoresCtx) {
+                if (expositoresChartInstance) {
+                    expositoresChartInstance.destroy();
+                }
+                expositoresChartInstance = new Chart(expositoresCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Expositores por Categoria',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(76, 175, 80, 0.8)',
+                                'rgba(56, 142, 60, 0.8)',
+                                'rgba(255, 193, 7, 0.8)',
+                                'rgba(255, 160, 0, 0.8)',
+                                'rgba(158, 158, 158, 0.8)',
+                                'rgba(189, 189, 189, 0.8)'
+                            ],
+                            borderColor: '#FFFFFF',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                         plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { color: '#424242' }
+                            },
+                            tooltip: {
+                                 callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            const total = context.dataset.data.reduce((acc, value) => acc + value, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1) + '%';
+                                            label += percentage;
+                                        }
+                                        const maxLabelWidth = 16;
+                                        if (label.length > maxLabelWidth) {
+                                            const words = label.split(' ');
+                                            let currentLine = '';
+                                            const lines = [];
+                                            for (const word of words) {
+                                                if ((currentLine + word).length > maxLabelWidth) {
+                                                    lines.push(currentLine.trim());
+                                                    currentLine = '';
+                                                }
+                                                currentLine += word + ' ';
+                                            }
+                                            lines.push(currentLine.trim());
+                                            return lines;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Funções que interagem com o Firebase, agora fora do escopo do DOMContentLoaded
+        // para serem acessíveis globalmente.
+
+        async function loadPublicEvents() {
+            if (!currentUserId || !window.db) {
+                console.log("Aguardando autenticação ou inicialização do Firebase para carregar eventos.");
+                return;
+            }
+            const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
+            onSnapshot(eventsCollectionRef, (snapshot) => {
+                const events = [];
+                snapshot.forEach((doc) => {
+                    events.push({ id: doc.id, ...doc.data() });
+                });
+                console.log("Eventos carregados:", events);
+
+                const agendaEventsContainer = document.getElementById('agenda-events-container');
+                if (agendaEventsContainer) {
+                    agendaEventsContainer.innerHTML = '';
+                    if (events.length === 0) {
+                        agendaEventsContainer.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento disponível no momento.</p>';
+                    } else {
+                        events.forEach(event => {
+                            const eventCard = `
+                                <div class="card p-6">
+                                    <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'Título Indisponível'}</h4>
+                                    <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Horário'} | ${event.location || 'Local'}</p>
+                                    <p class="text-gray-700 mb-3">${event.description || 'Nenhuma descrição disponível.'}</p>
+                                    <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
+                                </div>
+                            `;
+                            agendaEventsContainer.innerHTML += eventCard;
+                        });
+                    }
+                }
+                updateAgendaChart(events);
+
+            }, (error) => {
+                console.error("Erro ao carregar eventos:", error);
+                const agendaEventsContainer = document.getElementById('agenda-events-container');
+                if (agendaEventsContainer) {
+                    agendaEventsContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar eventos. Verifique suas regras de segurança.</p>';
+                }
+            });
+        }
+
+        async function loadPublicExpositores() {
+            if (!currentUserId || !window.db) {
+                console.log("Aguardando autenticação ou inicialização do Firebase para carregar expositores.");
+                return;
+            }
+            const expositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
+            onSnapshot(expositoresCollectionRef, (snapshot) => {
+                const expositores = [];
+                snapshot.forEach((doc) => {
+                    expositores.push({ id: doc.id, ...doc.data() });
+                });
+                console.log("Expositores carregados:", expositores);
+
+                const expositoresContainer = document.getElementById('expositores-container');
+                if (expositoresContainer) {
+                    expositoresContainer.innerHTML = '';
+                    if (expositores.length === 0) {
+                            expositoresContainer.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum expositor disponível no momento.</p>';
+                    } else {
+                        expositores.forEach(expositor => {
+                            const expositorCard = `
+                                <div class="card p-6 text-center">
+                                    <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="Logo Expositor" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+                                    <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'Nome Indisponível'}</h4>
+                                    <p class="text-sm text-gray-500 mb-2">${expositor.category || 'Categoria Indisponível'}</p>
+                                    <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Nenhuma descrição disponível.'}</p>
+                                    <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                                </div>
+                            `;
+                            expositoresContainer.innerHTML += expositorCard;
+                        });
+                    }
+                }
+                updateExpositoresChart(expositores);
+
+            }, (error) => {
+                console.error("Erro ao carregar expositores:", error);
+                const expositoresContainer = document.getElementById('expositores-container');
+                if (expositoresContainer) {
+                    expositoresContainer.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar expositores. Verifique suas regras de segurança.</p>';
+                }
+            });
+        }
+
+        // Nova função para carregar localizações públicas e atualizar o mapa
+        async function loadPublicLocations() {
+            if (!currentUserId || !window.db) {
+                console.log("Aguardando autenticação ou inicialização do Firebase para carregar localizações.");
+                return;
+            }
+            const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+            onSnapshot(locationsCollectionRef, (snapshot) => {
+                stands = []; // Limpa o array de estandes
+                snapshot.forEach((doc) => {
+                    // Adiciona o doc.id como 'docId' para referência ao gerar o QR Code
+                    stands.push({ docId: doc.id, ...doc.data() });
+                });
+                console.log("Localizações carregadas:", stands);
+
+                // Redesenha ambos os mapas
+                if (fairMapCanvas && fairMapCtx) {
+                    drawMap('fairMapCanvas', fairMapCtx);
+                }
+                if (adminMapCanvas && adminMapCtx) {
+                    drawMap('adminMapCanvas', adminMapCtx);
+                }
+                
+                displayCollectedData(); // Atualiza a lista de dados coletados
+
+                // Se não houver estandes, adicione alguns dados fictícios
+                if (stands.length === 0) {
+                    seedInitialMapData();
+                }
+            }, (error) => {
+                console.error("Erro ao carregar localizações:", error);
+            });
+        }
+
+        // Função para adicionar dados fictícios ao mapa (se estiver vazio)
+        async function seedInitialMapData() {
+            if (!window.db) return; // Garante que db está disponível
+            const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+            const existingDocs = await getDocs(locationsCollectionRef); // Use getDocs para obter todos os documentos
+
+            if (existingDocs.empty) {
+                console.log("Adicionando dados fictícios ao mapa...");
+                // Coordenadas fictícias em pixels para o mapa canvas
+                await addDoc(locationsCollectionRef, { id: 'A1', occupant: 'AgroTech Solutions', x: 180, y: 180, description: 'Soluções inovadoras para agricultura de precisão.' });
+                await addDoc(locationsCollectionRef, { id: 'B3', occupant: 'Pecuária Moderna', x: 350, y: 200, description: 'Tecnologias avançadas para manejo de rebanhos.' });
+                await addDoc(locationsCollectionRef, { id: 'C2', occupant: 'Máquinas Agrícolas XYZ', x: 500, y: 170, description: 'Demonstração de tratores e equipamentos de última geração.' });
+                await addDoc(locationsCollectionRef, { id: 'D4', occupant: 'Hortaliças Orgânicas', x: 200, y: 300, description: 'Cultivo sustentável e produtos frescos da horta.' });
+                await addDoc(locationsCollectionRef, { id: 'E5', occupant: 'Tecnologia Rural', x: 450, y: 320, description: 'Drones e sensores para otimização de lavouras.' });
+            }
+        }
+
+        async function addNewExpositor(expositorData) {
+            if (!currentUserId || !window.db) {
+                console.log("Usuário não autenticado ou Firebase não inicializado para adicionar expositor.");
+                return;
+            }
+            try {
+                const userExpositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`); // Mudado para public/data
+                await addDoc(userExpositoresCollectionRef, expositorData);
+                console.log("Expositor adicionado com sucesso!");
+                document.getElementById('tent-message').textContent = 'Informações da tenda salvas com sucesso!';
+                document.getElementById('tent-message').classList.remove('text-red-500');
+                document.getElementById('tent-message').classList.add('text-green-600');
+                document.getElementById('tent-form').reset();
+            } catch (error) {
+                console.error("Erro ao adicionar expositor:", error);
+                document.getElementById('tent-message').textContent = 'Erro ao salvar informações da tenda.';
+                document.getElementById('tent-message').classList.remove('text-green-600');
+                document.getElementById('tent-message').classList.add('text-red-500');
+            }
+        }
+
+        async function addNewLocation(locationData) {
+            if (!currentUserId || !window.db) {
+                console.log("Usuário não autenticado ou Firebase não inicializado para adicionar localização.");
+                return;
+            }
+            try {
+                const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+                // Adiciona a descrição da tenda ao objeto de localização
+                const tentName = document.getElementById('standOccupant').value; // Usando o ocupante como nome da tenda para buscar a descrição
+                const expositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
+                const q = query(expositoresCollectionRef, where("name", "==", tentName));
+                const querySnapshot = await getDocs(q);
+                let description = '';
+                if (!querySnapshot.empty) {
+                    description = querySnapshot.docs[0].data().description || '';
+                }
+
+                const dataToSave = { ...locationData, description: description };
+                const docRef = await addDoc(locationsCollectionRef, dataToSave);
+                
+                console.log("Localização adicionada com sucesso com ID:", docRef.id);
+                document.getElementById('location-message').textContent = 'Localização salva com sucesso!';
+                document.getElementById('location-message').classList.remove('text-red-500');
+                document.getElementById('location-message').classList.add('text-green-600');
+                document.getElementById('location-form').reset();
+                document.getElementById('standCoordinatesDisplay').value = ''; // Limpa o display
+                document.getElementById('standX').value = '';
+                document.getElementById('standY').value = '';
+                adminMapTemporaryMarker = null; // Limpa o marcador temporário
+                // drawMap() é chamado via onSnapshot em loadPublicLocations()
+            } catch (error) {
+                console.error("Erro ao adicionar localização:", error);
+                document.getElementById('location-message').textContent = 'Erro ao salvar localização.';
+                document.getElementById('location-message').classList.remove('text-green-600');
+                document.getElementById('location-message').classList.add('text-red-500');
+            }
+        }
+
+        // Função para carregar e exibir os detalhes de uma estande na seção #stand-details
+        async function loadStandDetails(standId) {
+            const standDetailsContent = document.getElementById('stand-details-content');
+            if (!standDetailsContent) return;
+
+            standDetailsContent.innerHTML = '<p class="text-gray-500">Carregando detalhes da estande...</p>';
+
+            try {
+                if (!window.db) {
+                    console.log("Firebase não inicializado para carregar detalhes da estande.");
+                    standDetailsContent.innerHTML = '<p class="text-red-500">Erro: Firebase não inicializado.</p>';
+                    return;
+                }
+                const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+                // Precisamos encontrar o documento pelo ID da estande, não pelo docId do Firestore diretamente
+                // Como o 'id' da estande é um campo, faremos uma query
+                const q = query(locationsCollectionRef, where("id", "==", standId));
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    const standDoc = querySnapshot.docs[0];
+                    const standData = standDoc.data();
+                    standDetailsContent.innerHTML = `
+                        <h4 class="font-semibold text-2xl mb-2 text-green-700">${standData.occupant || 'Estande Sem Nome'} (ID: ${standData.id || 'N/A'})</h4>
+                        <p class="text-gray-700 mb-2"><span class="font-medium">Coordenadas:</span> X: ${standData.x || 'N/A'}, Y: ${standData.y || 'N/A'}</p>
+                        <p class="text-gray-700 mb-4"><span class="font-medium">Descrição:</span> ${standData.description || 'Nenhuma descrição disponível para esta estande.'}</p>
+                        `;
+                } else {
+                    standDetailsContent.innerHTML = '<p class="text-red-500">Estande não encontrada.</p>';
+                }
+            } catch (error) {
+                console.error("Erro ao carregar detalhes da estande:", error);
+                standDetailsContent.innerHTML = '<p class="text-red-500">Erro ao carregar detalhes da estande. Tente novamente.</p>';
+            }
+        }
+
+
+        async function handleRegister() {
+            console.log("Link de registro clicado!"); // Log para depuração
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginMessageDiv = document.getElementById('login-message');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value; 
+
+            loginMessageDiv.textContent = '';
+
+            if (!email || !password) {
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Por favor, preencha o e-mail e a senha para criar a conta.";
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+                return;
+            }
+            if (!window.auth || !window.db) {
+                console.error("Firebase Auth ou Firestore não inicializado.");
+                loginMessageDiv.textContent = "Erro: Serviço de autenticação não disponível.";
+                loginMessageDiv.classList.add('text-red-500');
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(window.auth, email, password); 
+                const user = userCredential.user;
+
+                const userProfileDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`); 
+                await setDoc(userProfileDocRef, { 
+                    uid: user.uid,
+                    email: user.email,
+                    createdAt: new Date().toISOString(),
+                    role: registrationContext 
+                });
+
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Conta criada com sucesso! Você já pode entrar.";
+                    loginMessageDiv.classList.remove('text-red-500');
+                    loginMessageDiv.classList.add('text-green-600');
+                }
+                emailInput.value = '';
+                passwordInput.value = '';
+            } catch (error) {
+                console.error("Erro ao criar conta:", error);
+                let errorMessage = "Erro ao criar conta.";
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "Este e-mail já está em uso. Tente fazer login ou use outro e-mail.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "A senha é muito fraca. Ela deve ter pelo menos 6 caracteres.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O formato do e-mail é inválido.";
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = "O registro com e-mail/senha não está habilitado. Por favor, habilite-o no console do Firebase (Authentication -> Sign-in method).";
+                }
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = errorMessage;
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+            }
+        }
+
+        async function handleLogin() {
+            console.log("Botão de login clicado!"); // Log para depuração
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginMessageDiv = document.getElementById('login-message');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value; 
+
+            loginMessageDiv.textContent = '';
+
+            if (!email || !password) {
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Por favor, preencha o e-mail e a senha para fazer login.";
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+                return;
+            }
+            if (!window.auth) {
+                console.error("Firebase Auth não inicializado.");
+                loginMessageDiv.textContent = "Erro: Serviço de autenticação não disponível.";
+                loginMessageDiv.classList.add('text-red-500');
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(window.auth, email, password); 
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = "Login realizado com sucesso!";
+                    loginMessageDiv.classList.remove('text-red-500');
+                    loginMessageDiv.classList.add('text-green-600');
+                }
+                // onAuthStateChanged irá lidar com a exibição da sidebar e redirecionamento
+            } catch (error) {
+                console.error("Erro ao fazer login:", error);
+                let errorMessage = "Erro ao fazer login. Verifique seu e-mail e senha.";
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMessage = "E-mail ou senha inválidos.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "O formato do e-mail é inválido.";
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = "O login com e-mail/senha não está habilitado. Por favor, habilite-o no console do Firebase (Authentication -> Sign-in method).";
+                }
+                if (loginMessageDiv) {
+                    loginMessageDiv.textContent = errorMessage;
+                    loginMessageDiv.classList.remove('text-green-600');
+                    loginMessageDiv.classList.add('text-red-500');
+                }
+            }
+        }
+
+        async function handleVisitorLogin() {
+            console.log("Botão de visitante clicado!"); // Log para depuração
+            if (!window.auth) {
+                console.error("Firebase Auth não inicializado.");
+                // Pode adicionar uma mensagem de erro na UI aqui se desejar
+                return;
+            }
+            try {
+                await signInAnonymously(window.auth); 
+                console.log("Login de visitante (anônimo) realizado.");
+                registrationContext = 'visitor'; // Garante que o contexto seja 'visitor' para login anônimo
+                // onAuthStateChanged irá lidar com a exibição da sidebar e redirecionamento para 'inicio'
+            } catch (error) {
+                console.error("Erro ao fazer login de visitante:", error);
+                // Você pode adicionar uma mensagem de erro na UI se desejar
+            }
+        }
+
+        async function handleLogout() {
+            console.log("Botão de logout clicado!"); // Log para depuração
+            if (!window.auth) {
+                console.error("Firebase Auth não inicializado.");
+                return;
+            }
+            try {
+                await window.auth.signOut();
+                console.log("Usuário desconectado.");
+                registrationContext = 'visitor'; // Reseta o contexto ao deslogar
+            } catch (error) {
+                console.error("Erro ao desconectar:", error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOMContentLoaded disparado.");
+
+            // Garante que o modal do QR code esteja oculto ao carregar
+            const qrCodeModal = document.getElementById('qrCodeModal');
+            if (qrCodeModal) {
+                qrCodeModal.style.display = 'none';
+            }
+
+            // Inicializar Firebase (acessando globalmente)
+            let app, db, auth, analytics;
+            try {
+                console.log("Tentando inicializar o Firebase...");
+                app = initializeApp(firebaseConfig);
+                analytics = getAnalytics(app); // Inicializa analytics se necessário
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Tornar db e auth globais para acesso em outras funções
+                window.db = db;
+                window.auth = auth;
+                console.log("Firebase inicializado com sucesso.");
+                firebaseErrorMessage.classList.add('hidden'); // Esconde a mensagem de erro se a inicialização for bem-sucedida
+            } catch (error) {
+                console.error("Erro ao inicializar Firebase:", error);
+                firebaseErrorDetails.textContent = error.message; // Exibe a mensagem de erro específica
+                firebaseErrorMessage.classList.remove('hidden'); // Mostra a mensagem de erro
+                // Impede que o restante do script que depende do Firebase seja executado
+                return; 
+            }
+
+            // Inicializa os mapas Canvas assim que o DOM estiver pronto
+            initMap('fairMapCanvas');
+            initMap('adminMapCanvas');
+
+            // Listener de autenticação, agora dentro do DOMContentLoaded
+            if (window.auth) { // Garante que auth está disponível antes de adicionar o listener
+                onAuthStateChanged(window.auth, async (user) => { // Use onAuthStateChanged do módulo auth
+                    console.log("Estado de autenticação alterado. Usuário:", user ? user.uid : "null");
+                    if (user) {
+                        currentUserId = user.uid;
+                        console.log("Usuário autenticado:", currentUserId);
+                        if (userIdDisplay) {
+                            userIdDisplay.textContent = `ID do Usuário: ${currentUserId}`;
+                            userIdDisplay.classList.remove('hidden');
+                        }
+                        
+                        sidebar.classList.remove('sidebar-initial-hidden');
+                        sidebar.classList.remove('-translate-x-full');
+                        logoutButton.classList.remove('hidden');
+
+                        // Carrega dados APENAS se o Firebase estiver inicializado
+                        if (window.db) {
+                            loadPublicEvents();
+                            loadPublicExpositores();
+                            loadPublicLocations(); // Garante que o mapa é atualizado no login/reconexão
+                        }
+
+                        // Tenta buscar o perfil do usuário para determinar a role
+                        let userRole = 'visitor';
+                        if (window.db) { // Verifica se db está disponível antes de tentar buscar o perfil
+                            const userProfileDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`); // Use doc
+                            try {
+                                const userProfileSnap = await getDoc(userProfileDocRef); // Use getDoc
+                                userRole = userProfileSnap.exists ? userProfileSnap.data().role : 'visitor';
+                                console.log("Função do usuário:", userRole);
+                            } catch (profileError) {
+                                console.error("Erro ao carregar perfil do usuário:", profileError);
+                                // Continua como visitante em caso de erro ao carregar o perfil
+                            }
+                        }
+                        
+
+                        if (userRole === 'admin') {
+                            adminDashboardLink.classList.remove('hidden');
+                            window.showSection('admin-dashboard', document.querySelector('a[href=\'#admin-dashboard\']'));
+                            if (adminUserRoleDisplay) {
+                                adminUserRoleDisplay.textContent = `Você está logado como: Administrador (${user.email || 'N/A'})`;
+                            }
+                        } else {
+                            adminDashboardLink.classList.add('hidden');
+                            // Verifica se a URL já contém um hash para stand-details
+                            const hash = window.location.hash;
+                            if (hash.startsWith('#stand-details?id=')) {
+                                const standId = hash.split('id=')[1];
+                                window.showSection('stand-details', null); // Não há link de navegação para esta seção
+                                loadStandDetails(standId);
+                            } else if (hash === '' || hash === '#login' || hash === '#welcome-role-selection' || hash === '#admin-dashboard') {
+                                window.showSection('inicio', document.querySelector('a[href=\'#inicio\']'));
+                            } else {
+                                const currentHashSection = hash.substring(1);
+                                const currentNavLink = document.querySelector(`a[href="#${currentHashSection}"]`);
+                                if (currentNavLink) {
+                                    window.showSection(currentHashSection, currentNavLink);
+                                } else {
+                                    window.showSection('inicio', document.querySelector('a[href=\'#inicio\']'));
+                                }
+                            }
+                            if (adminUserRoleDisplay) { 
+                                adminUserRoleDisplay.textContent = '';
+                            }
+                        }
+
+                    } else {
+                        currentUserId = null;
+                        console.log("Nenhum usuário autenticado.");
+                        if (userIdDisplay) {
+                            userIdDisplay.textContent = '';
+                            userIdDisplay.classList.add('hidden');
+                        }
+                        sidebar.classList.add('sidebar-initial-hidden');
+                        sidebar.classList.add('-translate-x-full');
+                        logoutButton.classList.add('hidden');
+                        adminDashboardLink.classList.add('hidden');
+                        if (adminUserRoleDisplay) { 
+                            adminUserRoleDisplay.textContent = '';
+                        }
+
+                        // Se deslogado, verifica se a URL é de detalhes de estande para exibir
+                        const hash = window.location.hash;
+                        if (hash.startsWith('#stand-details?id=')) {
+                            const standId = hash.split('id=')[1];
+                            window.showSection('stand-details', null);
+                            loadStandDetails(standId);
+                        } else {
+                            window.showSection('welcome-role-selection', null);
+                        }
+                    }
+                });
+            } else {
+                console.error("Firebase Auth não foi inicializado, onAuthStateChanged não será anexado.");
+                firebaseErrorDetails.textContent = "Firebase Auth não pôde ser inicializado. Verifique os scripts CDN.";
+                firebaseErrorMessage.classList.remove('hidden');
+            }
+
+            // Listener para o botão do menu móvel
+            mobileMenuButton.addEventListener('click', () => {
+                console.log("Botão de menu móvel clicado!"); // Log para depuração
+                sidebar.classList.toggle('-translate-x-full');
+            });
+
+            // Fechar barra lateral ao clicar fora em mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMenuButton = mobileMenuButton.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnMenuButton && window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
+                    console.log("Clicado fora da barra lateral, fechando."); // Log para depuração
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+
+            // Restante dos listeners de evento DOMContentLoaded
+            const registerLink = document.getElementById('register-link');
+            if (registerLink) {
+                registerLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log("Link de registro clicado!"); // Log para depuração
+                    handleRegister();
+                });
+            }
+
+            const loginButton = document.getElementById('login-button');
+            if (loginButton) {
+                loginButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log("Botão de login clicado!"); // Log para depuração
+                    handleLogin();
+                });
+            }
+
+            const visitorButton = document.getElementById('visitor-button');
+            if (visitorButton) {
+                visitorButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log("Botão de visitante clicado!"); // Log para depuração
+                    registrationContext = 'visitor'; // Define o contexto para visitante
+                    handleVisitorLogin();
+                });
+            }
+
+            const adminButton = document.getElementById('admin-button');
+            if (adminButton) {
+                adminButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log("Botão de admin clicado!"); // Log para depuração
+                    registrationContext = 'admin'; // Define o contexto para administrador
+                    window.showSection('login', document.querySelector('a[href=\'#login\']'));
+                });
+            }
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', handleLogout);
+            }
+
+            const tentForm = document.getElementById('tent-form');
+            if (tentForm) {
+                tentForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    console.log("Formulário de tenda enviado!"); // Log para depuração
+                    const tentName = document.getElementById('tentName').value;
+                    const tentCategory = document.getElementById('tentCategory').value;
+                    const tentDescription = document.getElementById('tentDescription').value;
+                    await addNewExpositor({ name: tentName, category: tentCategory, description: tentDescription });
+                });
+            }
+
+            const locationForm = document.getElementById('location-form');
+            if (locationForm) {
+                locationForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    console.log("Formulário de localização enviado!"); // Log para depuração
+                    const standId = document.getElementById('standId').value;
+                    const standOccupant = document.getElementById('standOccupant').value;
+                    const standX = parseInt(document.getElementById('standX').value, 10);
+                    const standY = parseInt(document.getElementById('standY').value, 10);
+
+                    if (isNaN(standX) || isNaN(standY)) {
+                        document.getElementById('location-message').textContent = 'Por favor, clique no mapa para selecionar as coordenadas da estande.';
+                        document.getElementById('location-message').classList.remove('text-green-600');
+                        document.getElementById('location-message').classList.add('text-red-500');
+                        return;
+                    }
+                    await addNewLocation({ id: standId, occupant: standOccupant, x: standX, y: standY });
+                });
+            }
+
+            window.addEventListener('hashchange', () => {
+                console.log("Hash alterado para:", window.location.hash);
+                const hash = window.location.hash;
+                if (hash.startsWith('#stand-details?id=')) {
+                    const standId = hash.split('id=')[1];
+                    window.showSection('stand-details', null);
+                    loadStandDetails(standId);
+                } else {
+                    const newSection = hash ? hash.substring(1) : 'welcome-role-selection';
+                    const newLink = document.querySelector(`.nav-link[href="#${newSection}"]`);
+                    window.showSection(newSection, newLink);
+                }
+            });
+
+            // Verifica a hash na carga inicial da página
+            const initialHash = window.location.hash;
+            if (initialHash.startsWith('#stand-details?id=')) {
+                const standId = initialHash.split('id=')[1];
+                window.showSection('stand-details', null);
+                loadStandDetails(standId);
+            } else {
+                 // Define a seção inicial com base no hash ou padrão
+                const initialSectionId = initialHash ? initialHash.substring(1) : 'welcome-role-selection';
+                const initialNavLink = document.querySelector(`.nav-link[href="#${initialSectionId}"]`);
+                window.showSection(initialSectionId, initialNavLink);
+            }
+        });
+    </script>
+>>>>>>> 045048dd7d4252307a366fcde11da4d456711db7
 </body>
 </html>
