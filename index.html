@@ -60,7 +60,7 @@
             <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 hover:text-green-600">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
-            <h1 id="currentSectionTitle" class="text-2xl font-semibold text-gray-700">Bem-vindo!</h1>
+           
             <div class="flex items-center">
                 <div id="user-id-display" class="text-sm text-gray-500 hidden md:block mr-4"></div>
                 <button id="logout-button" class="btn-accent text-sm py-1 px-3 rounded-md hidden">Sair</button>
@@ -71,7 +71,7 @@
             <section id="welcome-role-selection" class="p-2 active">
                 <div class="max-w-md mx-auto card p-8 text-center">
                     <div class="flex justify-center mb-8">
-                        <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="[Logo AGROPEC 2025]" class="h-auto">
+                        <img src="img/logo-agropec.png" alt="[Logo AGROPEC 2025]" class="h-auto">
                     </div>
                     <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Bem-vindo!</h2>
                     <p class="text-center text-gray-600 mb-8">Eu sou</p>
@@ -112,7 +112,31 @@
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
                     <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
-                </div>
+                    <div class="relative w-full max-w-5xl mx-auto mt-6 overflow-hidden rounded-lg shadow-lg">
+                        <div id="carousel-images" class="whitespace-nowrap transition-transform duration-700 ease-in-out">                     
+                            <img src="img/img1.jpg" class="inline-block w-full" />
+                            <img src="img/img2.jpg" class="inline-block w-full" />
+                            <img src="img/img3.jpg" class="inline-block w-full" />
+                            <img src="img/img4.jpg" class="inline-block w-full" />
+                            <img src="img/img5.jpg" class="inline-block w-full" />
+                            <img src="img/img6.jpg" class="inline-block w-full" />
+                            <img src="img/img7.jpg" class="inline-block w-full" />
+                            <img src="img/img8.jpg" class="inline-block w-full" />
+                            <img src="img/img9.jpg" class="inline-block w-full" />
+                            <img src="img/img10.jpg" class="inline-block w-full" />
+                            <img src="img/img11.jpg" class="inline-block w-full" />
+                            <img src="img/img12.jpg" class="inline-block w-full" />
+  </div>
+
+  <!-- Botões -->
+   <button onclick="moveCarousel(-1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-l">
+    &#10094;
+  </button>
+  <button onclick="moveCarousel(1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-r">
+    &#10095;
+  </button>
+</div>
+
                 <div class="mb-6">
                     <h3 class="text-2xl font-semibold text-gray-700 mb-3">Últimas Notícias</h3>
                     <div id="public-news-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">

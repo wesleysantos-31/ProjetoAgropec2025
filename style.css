@@ -29,6 +29,17 @@ body {
     color: #FFFFFF;
     font-weight: 600;
 }
+
+#welcome-role-selection {
+  background-image: url(img/bg-login.JPG);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.651); /* verde com transparência */
+  background-blend-mode: overlay;
+}
+
 .main-content section {
     display: none;
 }
