@@ -166,11 +166,29 @@
                     </div>
                 </div>
                 <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-3 text-green-700">📢 Banner Principal</h3>
-                    <div class="bg-green-600 text-white p-8 rounded-lg text-center">
-                        <h4 class="text-2xl font-bold mb-2">AGROPEC 2025 - O Futuro do Campo é Agora!</h4>
-                        <p class="text-lg">Participe da maior exposição de produtos do campo. Inovação, tecnologia e negócios em um só lugar.</p>
+                    <div class="bg-green-600 text-white px-4 py-4 md:px-6 md:py-4 rounded-lg text-center">
+                        <h4 class="text-2xl font-bold mb-1">AGROPEC 2025 - O Futuro do Campo é Agora!</h4>
+                        <p class="text-lg mb-2">Participe da maior exposição de produtos do campo. Inovação, tecnologia e negócios em um só lugar.</p>
+
+ <!-- Carrossel de Imagens -->
+    <div class="relative w-full max-w-4xl mx-auto mt-6 overflow-hidden rounded-lg shadow-lg">
+        <div id="carousel-banner" class="whitespace-nowrap transition-transform duration-700 ease-in-out">
+            <img src="img/banner1.jpg" class="inline-block w-full h-48 object-cover" />
+            <img src="img/banner2.jpg" class="inline-block w-full h-48 object-cover" height="200px"/>
+            <img src="img/banner3.jpg" class="inline-block w-full h-48 object-cover" />
+            <img src="img/banner4.jpg" class="inline-block w-full h-48 object-cover" />
+        </div>
+
+        <!-- Botões -->
+        <button onclick="moveCarouselBanner(-1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-l">
+            &#10094;
+        </button>
+        <button onclick="moveCarouselBanner(1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-r">
+            &#10095;
+        </button>
+
                     </div>
+    </div>
                 </div>
                 <div class="card p-6">
                     <h3 class="text-xl font-semibold mb-3 text-green-700">Acesso Rápido</h3>
