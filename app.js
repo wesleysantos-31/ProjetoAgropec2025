@@ -1107,10 +1107,4 @@ let carouselIndex = 0;
     document.getElementById("carousel-images").style.transform = `translateX(-${carouselIndex * 100}%)`;
   }
 
-  let currentSlideBanner = 0;
-function moveCarouselBanner(direction) {
-    const carousel = document.getElementById("carousel-banner");
-    const totalSlides = carousel.children.length;
-    currentSlideBanner = (currentSlideBanner + direction + totalSlides) % totalSlides;
-    carousel.style.transform = `translateX(-${currentSlideBanner * 100}%)`;
-}
+ 
