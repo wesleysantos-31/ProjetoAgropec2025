@@ -12,6 +12,8 @@ body {
     background-color: #2E7D32; /* Verde Escuro para Sidebar */
     color: #E8F5E9; /* Texto Branco/Verde Claro na Sidebar */
     /* -translate-x-full é aplicado por Tailwind no HTML para estado inicial mobile */
+    width: 22rem; /* 352px */
+    min-width: 12rem; /* 192px, opcional */
 }
 .sidebar a {
     color: #E8F5E9; /* Cor padrão dos links na sidebar */

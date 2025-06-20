@@ -33,6 +33,8 @@ const firebaseErrorMessage = document.getElementById('firebase-error-message');
 const firebaseErrorDetails = document.getElementById('firebase-error-details');
 const mobileMenuButton = document.getElementById('mobileMenuButton');
 
+
+
 // Variáveis do Mapa Canvas
 let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
 let stands = []; 

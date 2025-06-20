@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGROPEC 2025 - Event App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="sidebar w-24 md:w-80 space-y-6 py-7 px-2 md:px-6 absolute inset-y-0 left- transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out sidebar-initial-hidden">
+        <div class="px-0 py-0 flex items-center justify-center md:justify-start">
+            <img src="img/logo-agropec.png" alt="[Ícone do Logo AGROPEC]" class="h-100 w-100 inline">
+            <span class="agropec-logo-text hidden md:block ml-2">
+            </span>
+        </div>
+
+        <nav class="mt-10">
+            <a href="#login" id="nav-login-link" onclick="window.showSection('login', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1"></path></svg>
+            <span class="ml-2">Login</span>
+            </a>
+            <a href="#inicio" onclick="window.showSection('inicio', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="ml-2">Início</span>
+            </a>
+            <a href="#agenda" onclick="window.showSection('agenda', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <span class="ml-2">Agenda</span>
+            </a>
+            <a href="#expositores" onclick="window.showSection('expositores', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            <span class="ml-2">Expositores</span>
+            </a>
+            <a href="#mapa" onclick="window.showSection('mapa', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 13v-6m0 6l-6-3"></path></svg>
+            <span class="ml-2">Mapa</span>
+            </a>
+            <a href="#admin-dashboard" id="admin-dashboard-link" onclick="window.showSection('admin-dashboard', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700 hidden">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.562.344 1.25.513 1.943.513z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span class="ml-2">Gerenciar Estandes</span>
+            </a>
+            <a href="#organizadores" id="organizadores-link" onclick="window.showSection('organizadores', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700 hidden">
+            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <span class="ml-2">Gerenciar Conteúdo</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="bg-white shadow-md p-4 flex items-center justify-between">
+            <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 hover:text-green-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+           
+            <div class="flex items-center">
+                <div id="user-id-display" class="text-sm text-gray-500 hidden md:block mr-4"></div>
+                <button id="logout-button" class="btn-accent text-sm py-1 px-3 rounded-md hidden">Sair</button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-2 main-content">
+            <section id="welcome-role-selection" class="p-2 active">
+                <div class="max-w-md mx-auto card p-8 text-center">
+                    <div class="flex justify-center mb-8">
+                        <img src="img/logo-agropec.png" alt="[Logo AGROPEC 2025]" class="h-auto">
+                    </div>
+                    <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Bem-vindo!</h2>
+                    <p class="text-center text-gray-600 mb-8">Eu sou</p>
+                    <button type="button" id="visitor-button" class="w-full btn-primary font-semibold py-3 px-4 rounded-md text-lg mb-4">Visitante</button>
+                    <button type="button" id="admin-button" class="w-full btn-accent font-semibold py-3 px-4 rounded-md text-lg">Organizador/Admin</button>
+                </div>
+            </section>
+
+            <section id="login" class="p-2">
+                <div class="max-w-md mx-auto card p-8">
+                    <div class="flex justify-center mb-8">
+                        <img src="https://placehold.co/200x100/4CAF50/FFFFFF?text=AGROPEC+2025&font=Inter" alt="[Logo AGROPEC 2025]" class="h-auto">
+                    </div>
+                    <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Acesse sua conta</h2>
+                    <p class="text-center text-gray-600 mb-8">Para explorar o evento AGROPEC.</p>
+                    <form>
+                        <div class="mb-4">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" class="input-field">
+                        </div>
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                            <input type="password" id="password" name="password" placeholder="********" class="input-field">
+                        </div>
+                        <button type="button" id="login-button" class="w-full btn-primary font-semibold py-2 px-4 rounded-md text-lg">Entrar</button>
+                        <div class="text-center mt-4">
+                            <a href="#" class="text-sm text-green-600 hover:underline">Esqueceu a senha?</a>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="text-sm text-gray-600">Não tem uma conta? </span><a href="#" id="register-link" class="text-sm text-green-600 hover:underline">Crie uma aqui.</a>
+                        </div>
+                        <div id="login-message" class="text-center mt-4 text-sm font-medium"></div>
+                    </form>
+                </div>
+            </section>
+
+            <section id="inicio" class="p-2">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
+                    <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
+                    <div class="relative w-full max-w-5xl mx-auto mt-6 overflow-hidden rounded-lg shadow-lg">
+                        <div id="carousel-images" class="whitespace-nowrap transition-transform duration-700 ease-in-out">                     
+                            <img src="img/img1.jpg" class="inline-block w-full" />
+                            <img src="img/img2.jpg" class="inline-block w-full" />
+                            <img src="img/img3.jpg" class="inline-block w-full" />
+                            <img src="img/img4.jpg" class="inline-block w-full" />
+                            <img src="img/img5.jpg" class="inline-block w-full" />
+                            <img src="img/img6.jpg" class="inline-block w-full" />
+                            <img src="img/img7.jpg" class="inline-block w-full" />
+                            <img src="img/img8.jpg" class="inline-block w-full" />
+                            <img src="img/img9.jpg" class="inline-block w-full" />
+                            <img src="img/img10.jpg" class="inline-block w-full" />
+                            <img src="img/img11.jpg" class="inline-block w-full" />
+                            <img src="img/img12.jpg" class="inline-block w-full" />
+  </div>
+
+  <!-- Botões -->
+   <button onclick="moveCarousel(-1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-l">
+    &#10094;
+  </button>
+  <button onclick="moveCarousel(1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-r">
+    &#10095;
+  </button>
+</div>
+
+                <div class="mb-6">
+                    <h3 class="text-2xl font-semibold text-gray-700 mb-3">Últimas Notícias</h3>
+                    <div id="public-news-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <p class="text-gray-500 col-span-full">Carregando notícias...</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">🐄 Próxima Palestra Imperdível</h3>
+                        <p class="text-gray-600 mb-1"><span class="font-medium">Título:</span> Inovações na Pecuária Sustentável</p>
+                        <p class="text-gray-600 mb-1"><span class="font-medium">Palestrante:</span> Dr. João Silva</p>
+                        <p class="text-gray-600 mb-3"><span class="font-medium">Horário:</span> Hoje, 14:00 - Auditório Principal</p>
+                        <button class="btn-accent text-sm py-2 px-3 rounded-md">Ver Detalhes</button>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">⭐ Meus Favoritos</h3>
+                        <p class="text-gray-600">Você ainda não marcou nenhum favorito.</p>
+                        <p class="text-gray-600 mb-3">Navegue pela agenda e expositores para adicionar.</p>
+                        <button onclick="window.showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-accent text-sm py-2 px-3 rounded-md">Ver Agenda</button>
+                    </div>
+                     <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">ℹ️ Informações Gerais</h3>
+                        <div id="public-info-container">
+                             <p class="text-gray-500">Carregando informações...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 mb-6">
+                    <div class="bg-green-600 text-white px-4 py-4 md:px-6 md:py-4 rounded-lg text-center">
+                        <h4 class="text-2xl font-bold mb-1">AGROPEC 2025 - O Futuro do Campo é Agora!</h4>
+                        <p class="text-lg mb-2">Participe da maior exposição de produtos do campo. Inovação, tecnologia e negócios em um só lugar.</p>
+
+ <!-- Carrossel de Imagens -->
+    <div class="relative w-full max-w-4xl mx-auto mt-6 overflow-hidden rounded-lg shadow-lg">
+        <div id="carousel-banner" class="whitespace-nowrap transition-transform duration-700 ease-in-out">
+            <img src="img/banner1.jpg" class="inline-block w-full h-48 object-cover" />
+            <img src="img/banner2.jpg" class="inline-block w-full h-48 object-cover" height="200px"/>
+            <img src="img/banner3.jpg" class="inline-block w-full h-48 object-cover" />
+            <img src="img/banner4.jpg" class="inline-block w-full h-48 object-cover" />
+        </div>
+
+        <!-- Botões -->
+        <button onclick="moveCarouselBanner(-1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-l">
+            &#10094;
+        </button>
+        <button onclick="moveCarouselBanner(1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-green-600 px-3 py-1 rounded-r">
+            &#10095;
+        </button>
+
+                    </div>
+    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">Acesso Rápido</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="window.showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Ver Agenda Completa</button>
+                        <button onclick="window.showSection('expositores', document.querySelector('a[href=\'#expositores\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Encontrar Expositores</button>
+                        <button onclick="window.showSection('mapa', document.querySelector('a[href=\'#mapa\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Explorar o Mapa</button>
+                        <button class="btn-primary py-3 px-4 rounded-md text-center">Fale Conosco</button>
+                    </div>
+                </div>
+                
+            </section>
+
+            <section id="agenda" class="p-2">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
+                </div>
+                <div class="mb-6 card p-4">
+                    <h3 class="text-xl font-semibold mb-3 text-green-700">Filtrar Eventos</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="filterEventDate" class="block text-sm font-medium text-gray-700">Data:</label>
+                            <input type="date" id="filterEventDate" name="filterEventDate" class="input-field">
+                        </div>
+                        <div>
+                            <label for="filterEventType" class="block text-sm font-medium text-gray-700">Tipo:</label>
+                            <select id="filterEventType" name="filterEventType" class="input-field">
+                                <option value="">Todos</option>
+                                <option value="Palestras">Palestras</option>
+                                <option value="Workshops">Workshops</option>
+                                <option value="Demonstrações">Demonstrações</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button id="applyEventFilters" class="btn-primary w-full py-2 px-4 rounded-md">Aplicar Filtros</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="agenda-events-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <p class="text-gray-500 col-span-full">Carregando eventos...</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Eventos por Dia</h3>
+                    <div class="chart-container">
+                        <canvas id="agendaChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="expositores" class="p-2">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Conheça as empresas e instituições que estão apresentando suas novidades e soluções para o agronegócio.</p>
+                </div>
+                <div class="mb-6 card p-4">
+                    <label for="searchExpositor" class="block text-sm font-medium text-gray-700">Buscar Expositor:</label>
+                    <input type="text" id="searchExpositor" name="searchExpositor" placeholder="Nome do expositor ou produto..." class="input-field">
+                </div>
+                <div id="expositores-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                     <p class="text-gray-500 col-span-full">Carregando expositores...</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-center text-green-700">Expositores por Categoria</h3>
+                    <div class="chart-container">
+                        <canvas id="expositoresChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mapa" class="p-2">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Mapa do Evento AGROPEC 2025</h2>
+                    <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
+                </div>
+                <div class="card p-6">
+                    <canvas id="fairMapCanvas" class="map-canvas"></canvas>
+                    <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes. Administradores podem adicionar estandes na seção de gerenciamento.</p>
+                </div>
+            </section>
+
+            <section id="admin-dashboard" class="p-2"> <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Gerenciar Estandes</h2>
+                    <p class="mt-2 text-gray-600">Adicione e gerencie as localizações das estandes no mapa.</p>
+                    <p id="admin-user-role-display-estandes" class="text-sm text-gray-500 mt-2"></p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-green-700">Adicionar Localização de Estande</h3>
+                        <p class="text-gray-600 mb-4">Clique no mapa abaixo para selecionar as coordenadas da estande.</p>
+                        <canvas id="adminMapCanvas" class="map-canvas"></canvas>
+                        <form id="location-form" class="space-y-4 mt-4">
+                            <div>
+                                <label for="standId" class="block text-sm font-medium text-gray-700">ID da Estande</label>
+                                <input type="text" id="standId" class="input-field" placeholder="Ex: A-01, Setor B" required>
+                            </div>
+                            <div>
+                                <label for="standOccupant" class="block text-sm font-medium text-gray-700">Ocupante da Estande (Nome do Expositor)</label>
+                                <input type="text" id="standOccupant" class="input-field" placeholder="Nome da Tenda/Expositor">
+                            </div>
+                            <div>
+                                <label for="standCoordinatesDisplay" class="block text-sm font-medium text-gray-700">Coordenadas Selecionadas (Clique no mapa)</label>
+                                <input type="text" id="standCoordinatesDisplay" class="input-field bg-gray-100" readonly placeholder="Clique no mapa para selecionar">
+                                <input type="hidden" id="standX">
+                                <input type="hidden" id="standY">
+                            </div>
+                            <button type="submit" class="btn-primary py-2 px-4 rounded-md">Salvar Localização</button>
+                            <div id="location-message" class="text-sm mt-2"></div>
+                        </form>
+                    </div>
+                     <div class="card p-6">
+                        <h3 class="text-xl font-semibold mb-3 text-green-700">Estandes Cadastradas</h3>
+                        <div id="registered-stands-display" class="space-y-2 text-gray-700 max-h-96 overflow-y-auto">
+                            <p>Nenhuma estande cadastrada ainda.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="organizadores" class="p-2">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Painel do Organizador - Conteúdo</h2>
+                    <p class="mt-2 text-gray-600">Gerencie notícias, palestras e informações gerais do evento.</p>
+                    <p id="admin-user-role-display-organizadores" class="text-sm text-gray-500 mt-2"></p>
+                </div>
+
+                <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar Nova Notícia</h3>
+                    <form id="news-form" class="space-y-4">
+                        <div>
+                            <label for="newsTitle" class="block text-sm font-medium text-gray-700">Título da Notícia</label>
+                            <input type="text" id="newsTitle" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="newsContent" class="block text-sm font-medium text-gray-700">Conteúdo da Notícia</label>
+                            <textarea id="newsContent" rows="4" class="input-field" required></textarea>
+                        </div>
+                        <div>
+                            <label for="newsDate" class="block text-sm font-medium text-gray-700">Data da Publicação</label>
+                            <input type="date" id="newsDate" class="input-field" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Publicar Notícia</button>
+                        <div id="news-message" class="text-sm mt-2"></div>
+                    </form>
+                </div>
+
+                <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Palestra ou Evento</h3>
+                    <form id="event-form" class="space-y-4">
+                        <input type="hidden" id="eventIdToUpdate"> <div>
+                            <label for="eventTitle" class="block text-sm font-medium text-gray-700">Título</label>
+                            <input type="text" id="eventTitle" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="eventType" class="block text-sm font-medium text-gray-700">Tipo</label>
+                             <select id="eventType" class="input-field" required>
+                                <option value="Palestra">Palestra</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Demonstração">Demonstração</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="eventDate" class="block text-sm font-medium text-gray-700">Data (DD/MM/AAAA)</label>
+                            <input type="text" id="eventDate" placeholder="DD/MM/AAAA" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="eventTime" class="block text-sm font-medium text-gray-700">Horário (HH:MM)</label>
+                            <input type="text" id="eventTime" placeholder="HH:MM" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="eventLocation" class="block text-sm font-medium text-gray-700">Local</label>
+                            <input type="text" id="eventLocation" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="eventDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+                            <textarea id="eventDescription" rows="3" class="input-field" required></textarea>
+                        </div>
+                        <button type="submit" id="event-submit-button" class="btn-primary">Adicionar Evento</button>
+                        <button type="button" id="event-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                        <div id="event-message" class="text-sm mt-2"></div>
+                    </form>
+                </div>
+                <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Eventos Cadastrados</h3>
+                    <div id="admin-events-list" class="space-y-3 max-h-96 overflow-y-auto">
+                        <p class="text-gray-500">Nenhum evento cadastrado ou carregando...</p>
+                    </div>
+                </div>
+
+                <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Gerenciar Informações de Expositores</h3>
+                    <form id="expositor-info-form" class="space-y-4">
+                         <input type="hidden" id="expositorIdToUpdate"> <div>
+                            <label for="expositorName" class="block text-sm font-medium text-gray-700">Nome do Expositor</label>
+                            <input type="text" id="expositorName" class="input-field" placeholder="Ex: AgroTech Solutions" required>
+                        </div>
+                        <div>
+                            <label for="expositorCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+                            <input type="text" id="expositorCategory" class="input-field" placeholder="Ex: Pecuária, Agricultura">
+                        </div>
+                        <div>
+                            <label for="expositorDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+                            <textarea id="expositorDescription" rows="3" class="input-field" placeholder="Breve descrição"></textarea>
+                        </div>
+                        <div>
+                            <label for="expositorLogoUrl" class="block text-sm font-medium text-gray-700">URL do Logo (opcional)</label>
+                            <input type="url" id="expositorLogoUrl" class="input-field" placeholder="https://exemplo.com/logo.png">
+                        </div>
+                        <button type="submit" id="expositor-info-submit-button" class="btn-primary">Adicionar Expositor</button>
+                         <button type="button" id="expositor-info-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                        <div id="expositor-info-message" class="text-sm mt-2"></div>
+                    </form>
+                </div>
+                 <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Expositores Cadastrados (Informações)</h3>
+                    <div id="admin-expositors-list" class="space-y-3 max-h-96 overflow-y-auto">
+                        <p class="text-gray-500">Nenhum expositor cadastrado ou carregando...</p>
+                    </div>
+                </div>
+
+
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar Informação Geral do Evento</h3>
+                    <form id="info-form" class="space-y-4">
+                        <div>
+                            <label for="infoTitle" class="block text-sm font-medium text-gray-700">Título da Informação</label>
+                            <input type="text" id="infoTitle" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="infoContent" class="block text-sm font-medium text-gray-700">Conteúdo da Informação</label>
+                            <textarea id="infoContent" rows="4" class="input-field" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Publicar Informação</button>
+                        <div id="info-message" class="text-sm mt-2"></div>
+                    </form>
+                </div>
+            </section>
+
+
+            <section id="stand-details" class="p-2">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Detalhes da Estande</h2>
+                    <p class="mt-2 text-gray-600">Informações detalhadas sobre a estande.</p>
+                </div>
+                <div class="card p-6">
+                    <div id="stand-details-content">
+                        <p class="text-gray-500">Carregando detalhes da estande...</p>
+                    </div>
+                    <button onclick="window.history.back()" class="btn-primary py-2 px-4 rounded-md mt-6">Voltar</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="qrCodeModal" class="qr-modal"> <div class="qr-modal-content">
+            <span class="qr-modal-close">&times;</span>
+            <div id="qrcode" class="flex justify-center mb-4"></div>
+        </div>
+    </div>
+
+    <div id="firebase-error-message" class="fixed bottom-4 right-4 bg-red-500 text-white p-3 rounded-md shadow-lg hidden z-2000">
+        Ocorreu um erro ao carregar o Firebase. Detalhes: <span id="firebase-error-details"></span>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
