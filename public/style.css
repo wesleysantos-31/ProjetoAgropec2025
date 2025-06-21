@@ -50,7 +50,23 @@ body {
 }
 /* Estilos para inputs globais para consistência se não usar Tailwind em todos */
 .input-field {
-    @apply mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm;
+    margin-top: 0.25rem; /* mt-1 */
+    display: block; /* block */
+    width: 100%; /* w-full */
+    padding-left: 0.75rem; /* px-3 */
+    padding-right: 0.75rem; /* px-3 */
+    padding-top: 0.5rem; /* py-2 */
+    padding-bottom: 0.5rem; /* py-2 */
+    border: 1px solid #D1D5DB; /* border-gray-300 */
+    border-radius: 0.375rem; /* rounded-md */
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); /* shadow-sm */
+    font-size: 0.875rem; /* sm:text-sm */
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field:focus {
+    border-color: #4CAF50; /* focus:border-green-500 */
+    box-shadow: 0 0 0 2px #4CAF5066; /* focus:ring-green-500 (approximate) */
 }
 
 .btn-primary {
@@ -96,6 +112,17 @@ body {
         height: 380px;
     }
 }
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
     font-weight: 600; 
@@ -107,23 +134,9 @@ h1, h2, h3, h4, h5, h6 {
     color: #FFFFFF; 
     display: inline-block;
 }
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #ECEFF1; /* Cinza mais claro para track */
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-    background: #4CAF50; 
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #388E3C; 
-}
 
 .sidebar-initial-hidden {
+    content: ''; /* Apenas para o linter não reclamar */
     /* A visibilidade inicial é controlada por -translate-x-full no HTML via Tailwind.
        Esta classe é mais um marcador para o JS, mas pode ser usada para forçar display:none
        se houver problemas de "flash of unstyled content" antes do JS atuar.
@@ -167,7 +180,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1.5rem;
   box-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -191,6 +204,60 @@ h1, h2, h3, h4, h5, h6 {
 #carousel-container {
   position: relative;
 }
+
+.custom-card {
+  background-color: #16a34a; /* equivalente ao bg-green-600 */
+  padding: 1.5rem;           /* p-6 */
+  margin-bottom: 1.5rem;     /* mb-6 */
+  border-radius: 0.5rem;     /* opcional, estilo de card */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* sombra suave */
+  color: white;             /* se o texto estiver claro */
+  min-height: 300px; /* altura mínima aumentada */
+}
+
+.agropec-banner {
+  background-color: rgb(63, 63, 63);
+  color: white;
+  box-shadow: inset 6px 6px 13px 0px rgba(0, 0, 0, 0.445);
+  background-attachment: fixed;
+  color: white; /* text-white */
+  padding: 1rem; /* px-4 py-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  text-align: center;
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* alinha verticalmente */
+  align-items: center;     /* alinha horizontalmente */
+  min-height: 300px;       /* altura suficiente para centralizar */
+}
+
+div#img1 {
+    background-image: url(img/banner1.JPG);
+    background-position: right center;
+    background-size: cover;
+}
+
+@media (min-width: 768px) {
+  .agropec-banner {
+    padding: 1.5rem; /* md:px-6 md:py-4 */
+  }
+}
+
+.agropec-banner-title {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* sombra preta suave */
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: bold; /* font-bold */
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.agropec-banner-subtitle {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* sombra um pouco menor */
+  font-size: 1.125rem; /* text-lg */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
 
 .map-canvas {
     border: 1px solid #BDBDBD; /* Cinza mais escuro para borda */
@@ -269,4 +336,11 @@ h1, h2, h3, h4, h5, h6 {
 #nav-login-link.active {
     background-color: #4CAF50 !important; /* Garante que o link de login fique verde quando ativo */
     color: #FFFFFF !important;
+}
+
+footer {
+    background-color: #388E3C;;
+    color: white;
+    text-align: center;
+    padding: 30px;
 }
