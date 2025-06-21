@@ -33,12 +33,15 @@ const firebaseErrorMessage = document.getElementById('firebase-error-message');
 const firebaseErrorDetails = document.getElementById('firebase-error-details');
 const mobileMenuButton = document.getElementById('mobileMenuButton');
 
-
-
 // Variáveis do Mapa Canvas
 let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
 let stands = []; 
 let adminMapTemporaryMarker = null;
+
+// Função para exibir/ocultar a sidebar no mobile
+document.getElementById('closeSidebarBtn').onclick = function() {
+    document.querySelector('.sidebar').classList.add('-translate-x-full');
+};
 
 // Função para exibir/ocultar seções
 window.showSection = function(sectionId, clickedLink) {
@@ -87,6 +90,37 @@ window.showSection = function(sectionId, clickedLink) {
         sidebar.classList.add('-translate-x-full');
     }
 }
+
+// Função para passar as imagens do carrossel
+let carouselIndex = 0;
+const totalSlides = 12; // atualize se mudar o número de imagens
+
+let carouselInterval = null;
+const intervalTime = 5000;
+
+function moveCarousel(direction) {
+    carouselIndex = (carouselIndex + direction + totalSlides) % totalSlides;
+    document.getElementById("carousel-images").style.transform = `translateX(-${carouselIndex * 100}%)`;
+    resetCarouselInterval(); // Reinicia o tempo sempre que o usuário clicar
+}
+
+function startCarouselInterval() {
+    carouselInterval = setInterval(() => {
+        carouselIndex = (carouselIndex + 1) % totalSlides;
+        document.getElementById("carousel-images").style.transform = `translateX(-${carouselIndex * 100}%)`;
+    }, intervalTime);
+}
+
+function resetCarouselInterval() {
+    clearInterval(carouselInterval);
+    startCarouselInterval();
+}
+
+// Inicia o carrossel ao carregar a página
+startCarouselInterval();
+
+//mover as imagens do carrossel
+window.moveCarousel = moveCarousel;
 
 // --- Funções do Mapa ---
 function initMap(canvasId) {
@@ -684,9 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.showSection('welcome-role-selection', null);
         }
     });
-    // Dispara manualmente o hashchange na carga para garantir que a seção correta seja exibida
-    // Isso é melhor tratado dentro do onAuthStateChanged para garantir que o estado do usuário seja conhecido
-    // window.dispatchEvent(new HashChangeEvent("hashchange")); // Removido, pois onAuthStateChanged lida com a navegação inicial
 });
 
 
@@ -1099,15 +1130,3 @@ if (applyEventFiltersButton) {
         updateAgendaChart(filteredEvents);
     });
 }
-
-
-let carouselIndex = 0;
-  const totalSlides = 12; // atualize se mudar o número de imagens
-
-  function moveCarousel(direction) {
-    carouselIndex = (carouselIndex + direction + totalSlides) % totalSlides;
-    document.getElementById("carousel-images").style.transform = `translateX(-${carouselIndex * 100}%)`;
-  }
-
-  // rotação automática
-  setInterval(() => moveCarousel(1), 5000);
