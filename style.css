@@ -209,12 +209,38 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
-.agropec-banner {
+.custom-card {
   background-color: #16a34a; /* equivalente ao bg-green-600 */
+  padding: 1.5rem;           /* p-6 */
+  margin-bottom: 1.5rem;     /* mb-6 */
+  border-radius: 0.5rem;     /* opcional, estilo de card */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* sombra suave */
+  color: white;             /* se o texto estiver claro */
+  min-height: 300px; /* altura mínima aumentada */
+}
+
+.agropec-banner {
+  background-color: rgb(63, 63, 63);
+  color: white;
+  box-shadow: inset 6px 6px 13px 0px rgba(0, 0, 0, 0.445);
+  background-attachment: fixed;
   color: white; /* text-white */
   padding: 1rem; /* px-4 py-4 */
   border-radius: 0.5rem; /* rounded-lg */
   text-align: center;
+  min-height: 300px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* alinha verticalmente */
+  align-items: center;     /* alinha horizontalmente */
+  min-height: 300px;       /* altura suficiente para centralizar */
+}
+
+div#img1 {
+    background-image: url(img/banner1.JPG);
+    background-position: right center;
+    background-size: cover;
 }
 
 @media (min-width: 768px) {
@@ -224,12 +250,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .agropec-banner-title {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* sombra preta suave */
   font-size: 1.5rem; /* text-2xl */
   font-weight: bold; /* font-bold */
   margin-bottom: 0.25rem; /* mb-1 */
 }
 
 .agropec-banner-subtitle {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* sombra um pouco menor */
   font-size: 1.125rem; /* text-lg */
   margin-bottom: 0.5rem; /* mb-2 */
 }
