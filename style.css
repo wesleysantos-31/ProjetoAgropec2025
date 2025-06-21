@@ -112,6 +112,17 @@ body {
         height: 380px;
     }
 }
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
     font-weight: 600; 
@@ -122,21 +133,6 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.6rem; /* Aumentado um pouco */
     color: #FFFFFF; 
     display: inline-block;
-}
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #ECEFF1; /* Cinza mais claro para track */
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-    background: #4CAF50; 
-    border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #388E3C; 
 }
 
 .sidebar-initial-hidden {
