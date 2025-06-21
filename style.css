@@ -209,6 +209,32 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
+.agropec-banner {
+  background-color: #16a34a; /* equivalente ao bg-green-600 */
+  color: white; /* text-white */
+  padding: 1rem; /* px-4 py-4 */
+  border-radius: 0.5rem; /* rounded-lg */
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .agropec-banner {
+    padding: 1.5rem; /* md:px-6 md:py-4 */
+  }
+}
+
+.agropec-banner-title {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: bold; /* font-bold */
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.agropec-banner-subtitle {
+  font-size: 1.125rem; /* text-lg */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+
 .map-canvas {
     border: 1px solid #BDBDBD; /* Cinza mais escuro para borda */
     background-color: #f4f6f8; 
