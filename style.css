@@ -341,3 +341,10 @@ div#img1 {
     background-color: #4CAF50 !important; /* Garante que o link de login fique verde quando ativo */
     color: #FFFFFF !important;
 }
+
+footer {
+    background-color: #388E3C;;
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
