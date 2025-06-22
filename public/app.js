@@ -1129,4 +1129,40 @@ if (applyEventFiltersButton) {
         }
         updateAgendaChart(filteredEvents);
     });
+    // Busca dinâmica de expositores
+    const searchExpositorInput = document.getElementById('searchExpositor');
+    if (searchExpositorInput) {
+        searchExpositorInput.addEventListener('input', function () {
+            const termo = this.value.trim().toLowerCase();
+            const container = document.getElementById('expositores-container');
+            if (!container) return;
+    
+            // Usa o cache global já carregado
+            let filtrados = globalExpositorsCache;
+            if (termo) {
+                filtrados = globalExpositorsCache.filter(expo =>
+                    (expo.name && expo.name.toLowerCase().includes(termo)) ||
+                    (expo.category && expo.category.toLowerCase().includes(termo)) ||
+                    (expo.description && expo.description.toLowerCase().includes(termo))
+                );
+            }
+    
+            container.innerHTML = '';
+            if (filtrados.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-full">Nenhum expositor encontrado.</p>';
+            } else {
+                filtrados.forEach(expositor => {
+                    const expositorCard = `
+                        <div class="card p-6 text-center">
+                            <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="[Logo do Expositor]" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+                            <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
+                            <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
+                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
+                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                        </div>`;
+                    container.innerHTML += expositorCard;
+                });
+            }
+        });
+    }
 }
