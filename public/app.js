@@ -642,6 +642,11 @@ document.addEventListener('DOMContentLoaded', () => {
             logoUrl: document.getElementById('expositorLogoUrl').value
         }, expositorIdToUpdate || null);
     });
+
+     // funçao de carregar estandes
+     loadStands();
+
+
     const expositorCancelEditBtn = document.getElementById('expositor-info-cancel-edit-button');
     if(expositorCancelEditBtn) expositorCancelEditBtn.addEventListener('click', () => {
         document.getElementById('expositor-info-form').reset();
@@ -1165,4 +1170,56 @@ if (applyEventFiltersButton) {
             }
         });
     }
+}
+
+//Estandes
+// 1. Carrega estandes do Firestore
+async function loadStands() {
+  if (!window.db) return;
+  const snapshot = await getDocs(collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/stands`));
+  stands = [];
+  snapshot.forEach(doc => {
+    stands.push({ id: doc.id, ...doc.data() });
+  });
+  renderStandsList(stands);
+}
+
+// 2. Exibe os estandes com botão "Excluir"
+function renderStandsList(stands) {
+  const container = document.getElementById('registered-stands-display');
+  container.innerHTML = '';
+
+  if (stands.length === 0) {
+    container.innerHTML = '<p>Nenhuma estande cadastrada ainda.</p>';
+    return;
+  }
+
+  stands.forEach(stand => {
+    const div = document.createElement('div');
+    div.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
+    div.innerHTML = `
+      <div>
+        <strong>${stand.id}</strong> - ${stand.occupant}
+      </div>
+      <button class="text-red-500 hover:text-red-700 text-sm" onclick="deleteStand('${stand.id}')">Excluir</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// 3. Exclui estande do Firestore
+async function deleteStand(standId) {
+  if (!window.db || !standId) return;
+
+  if (confirm('Tem certeza que deseja excluir esta estande?')) {
+    try {
+      const standRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/stands`, standId);
+      await deleteDoc(standRef);
+      alert('Estande excluída com sucesso!');
+      loadStands(); // Recarrega lista
+    } catch (error) {
+      console.error('Erro ao excluir estande:', error);
+      alert('Erro ao excluir estande.');
+    }
+  }
 }
