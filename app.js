@@ -38,12 +38,13 @@ let offsetY = 0;
 let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
-const minZoom = 0.5; // Zoom mínimo permitido
+const minZoom = 1.0; // Zoom mínimo permitido
 const maxZoom = 5.0; // Zoom máximo permitido
 
 // Variáveis para a animação de pulso dos hotspots
 let pulseValue = 0;
 let pulseDirection = 1;
+let initialPinchDistance = null;
 // --- Fim das Novas Variáveis ---
 
 
@@ -223,6 +224,28 @@ function initMap(canvasId) {
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
     
+// app.js (Adicione estas linhas dentro da função initMap)
+
+// ...
+    // Adiciona os listeners de eventos para zoom e pan no canvas
+    canvas.addEventListener('wheel', handleWheel);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
+    
+    // --- INÍCIO DO CÓDIGO A SER ADICIONADO ---
+    // Adiciona os listeners para eventos de toque (celulares e tablets)
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchcancel', handleTouchEnd); // Cancela se o toque for interrompido
+    // --- FIM DO CÓDIGO A SER ADICIONADO ---
+
+    // A lógica de clique que existia aqui foi movida para o handleMouseUp/handleTouchEnd
+    // ...
+// ...
+
     // Listener de clique específico para cada tipo de mapa
     
     window.addEventListener('resize', () => handleMapResize(canvasId));
@@ -476,14 +499,26 @@ function showInfoModal(data) {
 
 // Função para atualizar as barras de rolagem personalizadas
 // Esta função deve ser chamada sempre que o mapa for desenhado ou redimensionado
+// app.js (SUBSTITUA a função updateCustomScrollbars inteira)
+
 function updateCustomScrollbars(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas || !mapImage || !mapImage.complete) return;
 
-    const scrollbarH = document.getElementById(`${canvasId}ScrollbarH`);
-    const thumbH = document.getElementById(`${canvasId}ThumbH`);
-    const scrollbarV = document.getElementById(`${canvasId}ScrollbarV`);
-    const thumbV = document.getElementById(`${canvasId}ThumbV`);
+    // CORREÇÃO: Remove a parte 'Canvas' do ID para encontrar os elementos corretos.
+    const baseId = canvasId.replace('Canvas', ''); 
+
+    const scrollbarH = document.getElementById(`${baseId}ScrollbarH`);
+    const thumbH = document.getElementById(`${baseId}ThumbH`);
+    const scrollbarV = document.getElementById(`${baseId}ScrollbarV`);
+    const thumbV = document.getElementById(`${baseId}ThumbV`);
+
+    // Adicionamos uma verificação para garantir que todos os elementos existem antes de continuar.
+    if (!scrollbarH || !thumbH || !scrollbarV || !thumbV) {
+        // Isso evita o erro caso os elementos não estejam no HTML.
+        // console.warn(`Elementos de scrollbar para '${canvasId}' não encontrados.`);
+        return;
+    }
 
     const canvasWidth = canvas.clientWidth;
     const canvasHeight = canvas.clientHeight;
@@ -514,6 +549,118 @@ function updateCustomScrollbars(canvasId) {
 }
 
 // --- FIM DO NOVO BLOCO DE FUNÇÕES DO MAPA ---
+
+// app.js (Adicione este novo bloco de funções)
+
+// --- INÍCIO DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
+
+function handleTouchStart(event) {
+    event.preventDefault(); // Previne o comportamento padrão do navegador (como rolar a página)
+
+    const touches = event.touches;
+    if (touches.length === 1) {
+        // Início de um arraste com um dedo
+        dragStartX = touches[0].clientX;
+        dragStartY = touches[0].clientY;
+        isDragging = false; // Começa como não arrastando, será 'true' se mover
+    } else if (touches.length === 2) {
+        // Início de um gesto de pinça com dois dedos
+        initialPinchDistance = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+        isDragging = true; // Um gesto de pinça é considerado um "arraste" para não virar clique
+    }
+}
+
+function handleTouchMove(event) {
+    event.preventDefault();
+    const touches = event.touches;
+
+    if (touches.length === 1) {
+        // Lógica para arrastar (pan) com um dedo
+        if (isDragging || Math.abs(touches[0].clientX - dragStartX) > 5 || Math.abs(touches[0].clientY - dragStartY) > 5) {
+            isDragging = true;
+
+            const dx = touches[0].clientX - dragStartX;
+            const dy = touches[0].clientY - dragStartY;
+
+            let newOffsetX = offsetX + dx;
+            let newOffsetY = offsetY + dy;
+
+            // Aplica os mesmos limites do arraste com o mouse
+            if (mapImage && mapImage.complete) {
+                const canvas = event.target;
+                const canvasWidth = canvas.clientWidth;
+                const canvasHeight = canvas.clientHeight;
+                const mapRenderedWidth = mapImage.width * scale;
+                const mapRenderedHeight = mapImage.height * scale;
+                const minOffsetX = canvasWidth - mapRenderedWidth;
+                const minOffsetY = canvasHeight - mapRenderedHeight;
+                newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, 0));
+                newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, 0));
+            }
+
+            offsetX = newOffsetX;
+            offsetY = newOffsetY;
+
+            // Atualiza a posição inicial para o próximo movimento
+            dragStartX = touches[0].clientX;
+            dragStartY = touches[0].clientY;
+
+            drawAllMaps();
+        }
+    } else if (touches.length === 2 && initialPinchDistance) {
+        // Lógica para zoom (gesto de pinça) com dois dedos
+        const currentPinchDistance = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+
+        // Calcula o fator de escala
+        const zoomFactor = currentPinchDistance / initialPinchDistance;
+        const newScale = Math.max(minZoom, Math.min(maxZoom, scale * zoomFactor));
+
+        // Calcula o ponto médio entre os dedos para centralizar o zoom
+        const midX = (touches[0].clientX + touches[1].clientX) / 2;
+        const midY = (touches[0].clientY + touches[1].clientY) / 2;
+        
+        // Ajusta o offset para que o zoom pareça vir do centro dos dedos
+        offsetX = midX - (midX - offsetX) * (newScale / scale);
+        offsetY = midY - (midY - offsetY) * (newScale / scale);
+
+        scale = newScale;
+        initialPinchDistance = currentPinchDistance; // Atualiza para o próximo movimento
+
+        drawAllMaps();
+    }
+}
+
+function handleTouchEnd(event) {
+    // Se a ação de toque terminou, resetamos as variáveis de controle
+    const wasDragging = isDragging;
+    isDragging = false;
+    initialPinchDistance = null;
+
+    // Lógica de clique: se o toque terminou sem ser um arraste, processa o clique
+    if (!wasDragging && event.changedTouches.length === 1) {
+        const touch = event.changedTouches[0];
+        const fakeMouseEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+
+        // Chama a função de clique apropriada baseada no canvas
+        if (event.target.id === 'fairMapCanvas') {
+            handleFairMapClick(fakeMouseEvent);
+        } else if (event.target.id === 'adminMapCanvas') {
+            handleAdminMapClick(fakeMouseEvent);
+        }
+    }
+}
+// --- FIM DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
 
 // Listeners para fechar o modal (adicione dentro do DOMContentLoaded ou globalmente)
 const infoModal = document.getElementById('info-modal');

@@ -291,18 +291,32 @@ div#img1 {
     cursor: crosshair;
 }
 
-
-/* Novo container que mantém a proporção do mapa e evita que ele estique. */
+/* Estilos Padrão (Mobile-First) */
 .map-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 141%; /* 141% para manter a proporção de 1024x724 */
-  /* Isso cria um espaço proporcional para o mapa, mantendo a proporção correta */
+  max-width: 793.7px; /* A largura máxima será sempre a da imagem */
+  
+  /* A altura é calculada pela proporção em telas pequenas */
+  padding-top: 141.43%; 
+  height: 0; /* Necessário para o truque do padding-top funcionar corretamente */
+  
+  margin-left: auto;
+  margin-right: auto;
   background-color: #f4f6f8;
   border-radius: 0.375rem;
-  overflow: hidden; /* Essencial para que o canvas não vaze */
+  overflow: hidden; 
   border: 1px solid #BDBDBD;
   margin-bottom: 1.5rem;
+}
+
+
+@media (min-width: 800px) {
+  .map-wrapper {
+    /* Em telas de PC, definimos uma ALTURA FIXA */
+    height: 1122.52px;
+    padding-top: 0;
+  }
 }
 
 .map-canvas {
