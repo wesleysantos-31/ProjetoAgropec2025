@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -272,14 +273,6 @@
                             <div id="fairMapThumbV" class="scrollbar-thumb"></div>
                         </div>
                         <canvas id="fairMapCanvas"></canvas>
-                        <!-- Scrollbar horizontal -->
-                        <div id="fairMapCanvasScrollbarH" class="custom-scrollbar horizontal">
-                            <div id="fairMapCanvasThumbH" class="scrollbar-thumb"></div>
-                        </div>
-                        <!-- Scrollbar vertical -->
-                        <div id="fairMapCanvasScrollbarV" class="custom-scrollbar vertical">
-                            <div id="fairMapCanvasThumbV" class="scrollbar-thumb"></div>
-                        </div>
                     </div>
                     <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes.</p>
                 </div>
@@ -340,8 +333,10 @@
                 </div>
 
                 <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar Nova Notícia</h3>
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Notícia</h3>
                     <form id="news-form" class="space-y-4">
+                        <input type="hidden" id="newsIdToUpdate">
+                        
                         <div>
                             <label for="newsTitle" class="block text-sm font-medium text-gray-700">Título da Notícia</label>
                             <input type="text" id="newsTitle" class="input-field" required>
@@ -350,9 +345,20 @@
                             <label for="newsContent" class="block text-sm font-medium text-gray-700">Conteúdo da Notícia</label>
                             <textarea id="newsContent" rows="4" class="input-field" required></textarea>
                         </div>
-                        <button type="submit" class="btn-primary">Publicar Notícia</button>
+                        
+                        <div>
+                            <button type="submit" id="news-submit-button" class="btn-primary">Publicar Notícia</button>
+                            <button type="button" id="news-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                        </div>
                         <div id="news-message" class="text-sm mt-2"></div>
                     </form>
+                </div>
+
+                <div class="card p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">Notícias Publicadas</h3>
+                    <div id="admin-news-list" class="space-y-3 max-h-96 overflow-y-auto">
+                        <p class="text-gray-500">Nenhuma notícia publicada ou carregando...</p>
+                    </div>
                 </div>
 
                 <div class="card p-6 mb-6">
@@ -480,6 +486,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 </html>

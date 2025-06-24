@@ -681,17 +681,32 @@ if(infoModal) {
 }
 
 // --- Funções de Gerenciamento de Conteúdo (Organizadores) ---
-async function addNewNews(newsData) {
+async function submitNewsForm(newsData, newsIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('news-message');
+    
     try {
-        const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
-        await addDoc(newsCollectionRef, { ...newsData, publishedAt: serverTimestamp(), authorId: currentUserId });
-        messageEl.textContent = 'Notícia publicada!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        if (newsIdToUpdate) {
+            // ATUALIZAR notícia existente
+            const newsDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`, newsIdToUpdate);
+            await updateDoc(newsDocRef, { ...newsData, updatedAt: serverTimestamp() });
+            messageEl.textContent = 'Notícia atualizada com sucesso!';
+        } else {
+            // ADICIONAR nova notícia
+            const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
+            await addDoc(newsCollectionRef, { ...newsData, publishedAt: serverTimestamp(), authorId: currentUserId });
+            messageEl.textContent = 'Notícia publicada!';
+        }
+        
+        messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('news-form').reset();
+        document.getElementById('newsIdToUpdate').value = ''; // Limpa o ID
+        document.getElementById('news-submit-button').textContent = 'Publicar Notícia';
+        document.getElementById('news-cancel-edit-button').classList.add('hidden');
+
     } catch (error) {
-        console.error("Erro ao publicar notícia:", error);
-        messageEl.textContent = 'Erro ao publicar.'; messageEl.className = 'text-red-500 text-sm mt-2';
+        console.error("Erro ao salvar notícia:", error);
+        messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
     }
 }
 
@@ -765,23 +780,43 @@ function loadPublicNews() {
     if (!window.db) return;
     const newsContainer = document.getElementById('public-news-container');
     if (!newsContainer) return;
-    const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
-    const qNews = query(newsCollectionRef, where("date", "<=", new Date().toISOString().split('T')[0])); // Exemplo de filtro
     
-    onSnapshot(qNews, (snapshot) => {
+    // Referência à coleção, sem filtros de data
+    const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
+    
+    // Usamos a referência direta, que busca todos os documentos da coleção
+    onSnapshot(newsCollectionRef, (snapshot) => {
         newsContainer.innerHTML = '';
         if (snapshot.empty) {
             newsContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia recente.</p>';
             return;
         }
+        
+        let newsList = [];
         snapshot.forEach(doc => {
-            const news = doc.data();
+            newsList.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Ordena as notícias pela data de publicação do Firestore (mais recentes primeiro)
+        newsList.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
+
+        // ATUALIZA A LISTA NO PAINEL DE ADMIN
+        displayAdminNewsList(newsList);
+
+        newsList.forEach(news => {
+            // ... (código existente para exibir notícias na tela inicial) ...
+        });
+
+        newsList.forEach(news => {
+            // Se a data estiver no formato "DD/MM/AAAA", ela será exibida corretamente.
+            const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-BR');
+
             const newsCard = `
                 <div class="card p-6">
                     <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
-                    <p class="text-xs text-gray-400 mb-2">Publicado em: ${new Date(news.date).toLocaleDateString('pt-BR')}</p>
+                    <p class="text-xs text-gray-400 mb-2">Publicado em: ${displayDate}</p>
                     <p class="text-gray-600 text-sm">${news.content.substring(0,150)}${news.content.length > 150 ? '...' : ''}</p>
-                    </div>`;
+                </div>`;
             newsContainer.innerHTML += newsCard;
         });
     }, error => {
@@ -817,6 +852,77 @@ function loadPublicGeneralInfo() {
     });
 }
 
+function displayAdminNewsList(newsList) {
+    const listContainer = document.getElementById('admin-news-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+
+    if (newsList.length === 0) {
+        listContainer.innerHTML = '<p class="text-gray-500">Nenhuma notícia publicada.</p>';
+        return;
+    }
+
+    // Ordena para mostrar as mais recentes primeiro
+    const sortedNews = newsList.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
+
+    sortedNews.forEach(news => {
+        const item = document.createElement('div');
+        item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
+        item.innerHTML = `
+            <div>
+                <h4 class="font-semibold text-green-700 text-md">${news.title}</h4>
+                <p class="text-sm text-gray-600">Publicado em: ${news.date}</p>
+            </div>
+            <div>
+                <button class="text-blue-500 hover:text-blue-700 text-sm mr-2 edit-news-btn" data-news-id="${news.id}">Editar</button>
+                <button class="text-red-500 hover:text-red-700 text-sm delete-news-btn" data-news-id="${news.id}">Excluir</button>
+            </div>`;
+        listContainer.appendChild(item);
+    });
+}
+
+// app.js (Adicione estas duas novas funções)
+
+async function handleDeleteNews(newsId) {
+    if (!window.db || !newsId) return;
+    if (confirm('Tem certeza que deseja excluir esta notícia? Esta ação não pode ser desfeita.')) {
+        try {
+            const newsDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`, newsId);
+            await deleteDoc(newsDocRef);
+            // A lista se atualizará automaticamente graças ao onSnapshot.
+        } catch (error) {
+            console.error('Erro ao excluir notícia:', error);
+            alert('Ocorreu um erro ao excluir a notícia.');
+        }
+    }
+}
+
+function populateNewsFormForEdit(newsId) {
+    // Busca a notícia no nosso cache global (que precisa ser criado)
+    // Vamos assumir que a 'newsList' dentro de loadPublicNews é nosso cache por enquanto.
+    // Para uma solução mais robusta, teríamos um globalNewsCache.
+    // Por simplicidade, vamos buscar direto do Firestore por agora.
+    const newsDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`, newsId);
+    getDoc(newsDocRef).then(docSnap => {
+        if (docSnap.exists()) {
+            const news = docSnap.data();
+            document.getElementById('newsIdToUpdate').value = newsId;
+            document.getElementById('newsTitle').value = news.title;
+            document.getElementById('newsContent').value = news.content;
+            
+            const submitButton = document.getElementById('news-submit-button');
+            const cancelButton = document.getElementById('news-cancel-edit-button');
+            
+            submitButton.textContent = 'Atualizar Notícia';
+            cancelButton.classList.remove('hidden');
+
+            // Rola a página para o formulário para facilitar a edição
+            document.getElementById('news-form').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            console.error("Notícia não encontrada para edição.");
+        }
+    });
+}
 
 // --- Funções de Carregamento e Exibição (Agenda, Expositores, Estandes) ---
 // (loadPublicEvents, loadPublicExpositores, loadPublicLocations, displayCollectedData, etc., adaptadas)
@@ -834,7 +940,7 @@ function displayAdminEventsList(events) {
         item.innerHTML = `
             <div>
                 <h4 class="font-semibold text-md text-green-700">${event.title}</h4>
-                <p class="text-sm text-gray-600">${event.date} - ${event.time} @ ${event.location}</p>
+                <p class="text-sm text-gray-600">${event.date} - ${event.time} - ${event.location}</p>
             </div>
             <div>
                 <button class="text-blue-500 hover:text-blue-700 text-sm mr-2 edit-event-btn" data-event-id="${event.id}">Editar</button>
@@ -947,6 +1053,40 @@ document.addEventListener('DOMContentLoaded', () => {
         if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
         return; 
     }
+
+    // Listener para a lista de notícias do admin (Editar/Excluir)
+    const adminNewsList = document.getElementById('admin-news-list');
+    if (adminNewsList) {
+        adminNewsList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit-news-btn')) {
+                const newsId = e.target.dataset.newsId;
+                populateNewsFormForEdit(newsId);
+            }
+            if (e.target.classList.contains('delete-news-btn')) {
+                const newsId = e.target.dataset.newsId;
+                handleDeleteNews(newsId);
+            }
+        });
+    }
+
+    // Listener para o botão "Cancelar Edição"
+    const newsCancelEditBtn = document.getElementById('news-cancel-edit-button');
+    if(newsCancelEditBtn) newsCancelEditBtn.addEventListener('click', () => {
+        document.getElementById('news-form').reset();
+        document.getElementById('newsIdToUpdate').value = '';
+        document.getElementById('news-submit-button').textContent = 'Publicar Notícia';
+        newsCancelEditBtn.classList.add('hidden');
+    });
+
+    // Ativa o calendário (date picker) no campo de data
+    const eventDateInput = document.getElementById('eventDate');
+    if (eventDateInput) {
+    flatpickr(eventDateInput, {
+        "locale": "pt", // Usa a tradução para Português que importamos
+        "dateFormat": "d/m/Y", // Define o formato da data como DD/MM/AAAA
+        "allowInput": true // Permite que o usuário também digite a data
+    });
+}
     
     initMap('fairMapCanvas');
     initMap('adminMapCanvas');
@@ -1024,10 +1164,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Listeners de Formulários de Conteúdo (Organizadores) ---
+    // app.js
+
     const newsForm = document.getElementById('news-form');
     if (newsForm) newsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        await addNewNews({ title: document.getElementById('newsTitle').value, content: document.getElementById('newsContent').value, date: document.getElementById('newsDate').value });
+        
+        const newsIdToUpdate = document.getElementById('newsIdToUpdate').value;
+        const formattedDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        await submitNewsForm({ 
+            title: document.getElementById('newsTitle').value, 
+            content: document.getElementById('newsContent').value, 
+            date: formattedDate 
+        }, newsIdToUpdate || null);
     });
 
     const eventForm = document.getElementById('event-form');
