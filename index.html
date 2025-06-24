@@ -190,7 +190,10 @@
                         <button onclick="window.showSection('agenda', document.querySelector('a[href=\'#agenda\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Ver Agenda Completa</button>
                         <button onclick="window.showSection('expositores', document.querySelector('a[href=\'#expositores\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Encontrar Expositores</button>
                         <button onclick="window.showSection('mapa', document.querySelector('a[href=\'#mapa\']'))" class="btn-primary py-3 px-4 rounded-md text-center">Explorar o Mapa</button>
-                        <button class="btn-primary py-3 px-4 rounded-md text-center">Fale Conosco</button>
+                        <a href="https://wa.me/559100000000" target="_blank" rel="noopener" class="btn-primary py-3 px-4 rounded-md text-center flex items-center justify-center"> <!--Precisa alterar o número de telefone aqui!-->
+                            <img src="/img/logo-whatsapp.svg" alt="WhatsApp" class="w-5 h-5 mr-2" />
+                            Fale Conosco
+                        </a>
                     </div>
                 </div>
                 
@@ -255,11 +258,29 @@
             </section>
 
             <section id="mapa" class="p-2">
-                    <h2 class="text-3xl font-semibold text-gray-800">Mapa do AGROPEC 2025</h2>
-                    <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
-                </div>
+                <h2 class="text-3xl font-semibold text-gray-800">Mapa do AGROPEC 2025</h2>
+                <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
                 <div class="card p-6">
-                    <canvas id="fairMapCanvas" class="map-canvas"></canvas>
+                    <div class="relative map-wrapper">
+                        <!-- Canvas do mapa -->
+                        <canvas id="fairMapCanvas" class="map-canvas"></canvas>
+                        <!-- Scrollbars customizadas -->
+                        <div id="fairMapScrollbarH" class="custom-scrollbar horizontal">
+                            <div id="fairMapThumbH" class="scrollbar-thumb"></div>
+                        </div>
+                        <div id="fairMapScrollbarV" class="custom-scrollbar vertical">
+                            <div id="fairMapThumbV" class="scrollbar-thumb"></div>
+                        </div>
+                        <canvas id="fairMapCanvas"></canvas>
+                        <!-- Scrollbar horizontal -->
+                        <div id="fairMapCanvasScrollbarH" class="custom-scrollbar horizontal">
+                            <div id="fairMapCanvasThumbH" class="scrollbar-thumb"></div>
+                        </div>
+                        <!-- Scrollbar vertical -->
+                        <div id="fairMapCanvasScrollbarV" class="custom-scrollbar vertical">
+                            <div id="fairMapCanvasThumbV" class="scrollbar-thumb"></div>
+                        </div>
+                    </div>
                     <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes.</p>
                 </div>
             </section>
@@ -273,7 +294,16 @@
                     <div class="card p-6">
                         <h3 class="text-xl font-semibold mb-4 text-green-700">Adicionar Localização de Estande</h3>
                         <p class="text-gray-600 mb-4">Clique no mapa abaixo para selecionar as coordenadas da estande.</p>
-                        <canvas id="adminMapCanvas" class="map-canvas"></canvas>
+                        <div class="map-wrapper">
+                            <canvas id="adminMapCanvas" class="map-canvas"></canvas>
+                            <div id="adminMapScrollbarH" class="custom-scrollbar horizontal">
+                                <div id="adminMapThumbH" class="scrollbar-thumb"></div>
+                            </div>
+                            <div id="adminMapScrollbarV" class="custom-scrollbar vertical">
+                                <div id="adminMapThumbV" class="scrollbar-thumb"></div>
+                            </div>
+                        </div>
+                        <p class="text-center mt-4 text-gray-500">Use a roda do mouse para zoom. Clique e arraste para mover.</p>
                         <form id="location-form" class="space-y-4 mt-4">
                             <div>
                                 <label for="standId" class="block text-sm font-medium text-gray-700">ID da Estande</label>
@@ -444,6 +474,14 @@
 
     <div id="firebase-error-message" class="fixed bottom-4 right-4 bg-red-500 text-white p-3 rounded-md shadow-lg hidden z-2000">
         Ocorreu um erro ao carregar o Firebase. Detalhes: <span id="firebase-error-details"></span>
+    </div>
+
+    <div id="info-modal" class="qr-modal" style="display: none;"> <div class="qr-modal-content"> <button id="modal-close-btn" class="qr-modal-close">&times;</button>
+            <img id="modal-image" src="https://placehold.co/100x100/388E3C/FFFFFF?text=Logo" alt="Logo do Expositor" class="mx-auto mb-4 rounded-full h-24 w-24 object-cover border-2 border-green-500">
+            <h3 id="modal-title" class="text-2xl font-semibold mb-2 text-green-700">Nome do Local</h3>
+            <p id="modal-category" class="text-md text-gray-500 mb-4">Categoria do Expositor</p>
+            <p id="modal-description" class="text-left">Descrição completa do local ou estande aparecerá aqui.</p>
+        </div>
     </div>
 
     <script type="module" src="app.js"></script>

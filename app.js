@@ -20,6 +20,59 @@ let registrationContext = 'visitor'; // 'visitor' ou 'admin'
 let globalEventsCache = []; // Cache para eventos, usado para edição
 let globalExpositorsCache = []; // Cache para expositores, usado para edição
 
+// app.js (Substitua as variáveis de mapa existentes)
+
+// --- Novas Variáveis para Mapa Interativo com Zoom/Pan ---
+let mapImage = null;
+const mapImageURL = 'img/mapa-agropec-2025.svg'; // Caminho para a sua imagem SVG
+
+// Elementos da UI do Mapa
+let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
+let stands = []; 
+let adminMapTemporaryMarker = null;
+
+// Estado de transformação do mapa (zoom e pan)
+let scale = 1.0;
+let offsetX = 0;
+let offsetY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+const minZoom = 1.0; // Zoom mínimo permitido
+const maxZoom = 5.0; // Zoom máximo permitido
+
+// Variáveis para a animação de pulso dos hotspots
+let pulseValue = 0;
+let pulseDirection = 1;
+let initialPinchDistance = null;
+// --- Fim das Novas Variáveis ---
+
+
+// Força o redimensionamento do canvas ao mostrar a guia do mapa
+function resizeFairMapCanvas() {
+    const canvas = document.getElementById('fairMapCanvas');
+    if (!canvas) return;
+    const wrapper = canvas.parentElement;
+    canvas.width = wrapper.clientWidth;
+    canvas.height = Math.max(300, wrapper.clientHeight);
+    // Redesenhe o mapa aqui se necessário
+    if (window.drawFairMap) window.drawFairMap();
+}
+// Detecta quando a seção do mapa é exibida
+const mapaSection = document.getElementById('mapa');
+if (mapaSection) {
+    const observer = new MutationObserver(() => {
+        if (mapaSection.classList.contains('active')) {
+            setTimeout(resizeFairMapCanvas, 50);
+        }
+    });
+    observer.observe(mapaSection, { attributes: true, attributeFilter: ['class'] });
+}
+// Também ajusta ao redimensionar a janela
+window.addEventListener('resize', resizeFairMapCanvas);
+// Ajuste dos pinos (bolinhas) verdes/vermelhas
+window.FAIR_MAP_PIN_RADIUS = 10; // Diminua para 10px (antes era maior)
+
 // Elementos da UI
 const userIdDisplay = document.getElementById('user-id-display');
 const sidebar = document.querySelector('.sidebar');
@@ -33,10 +86,7 @@ const firebaseErrorMessage = document.getElementById('firebase-error-message');
 const firebaseErrorDetails = document.getElementById('firebase-error-details');
 const mobileMenuButton = document.getElementById('mobileMenuButton');
 
-// Variáveis do Mapa Canvas
-let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
-let stands = []; 
-let adminMapTemporaryMarker = null;
+
 
 // Função para exibir/ocultar a sidebar no mobile
 document.getElementById('closeSidebarBtn').onclick = function() {
@@ -122,144 +172,512 @@ startCarouselInterval();
 //mover as imagens do carrossel
 window.moveCarousel = moveCarousel;
 
-// --- Funções do Mapa ---
+// --- INÍCIO DO NOVO BLOCO DE FUNÇÕES DO MAPA ---
+
+// Inicia a animação de pulsação que será usada para os hotspots
+function startPulseAnimation() {
+    function animate() {
+        // Lógica simples para criar um valor que oscila entre 0 e 1
+        pulseValue += 0.05 * pulseDirection;
+        if (pulseValue >= 1 || pulseValue <= 0) {
+            pulseDirection *= -1; // Inverte a direção da animação
+        }
+        // Redesenha os mapas em cada quadro da animação
+        drawAllMaps();
+        requestAnimationFrame(animate);
+    }
+    // Inicia o loop da animação
+    if (window.requestAnimationFrame) {
+        animate();
+    }
+}
+
+// Inicializa um canvas específico
 function initMap(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) { console.error(`Canvas '${canvasId}' não encontrado.`); return; }
-    const ctx = canvas.getContext('2d');
     
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr; // Usa a altura definida pelo CSS (.map-canvas)
-    ctx.scale(dpr, dpr);
-
-    if (canvasId === 'fairMapCanvas') { fairMapCanvas = canvas; fairMapCtx = ctx; }
-    else if (canvasId === 'adminMapCanvas') { adminMapCanvas = canvas; adminMapCtx = ctx; }
-
-    if (canvasId === 'adminMapCanvas') {
-        canvas.removeEventListener('click', handleMapClick);
-        canvas.addEventListener('click', handleMapClick);
-    } else if (canvasId === 'fairMapCanvas') {
-        canvas.removeEventListener('click', handleFairMapClick);
-        canvas.addEventListener('click', handleFairMapClick);
+    // Carrega a imagem do mapa (apenas uma vez para todo o app)
+    if (!mapImage) {
+        mapImage = new Image();
+        mapImage.src = mapImageURL;
+        mapImage.onload = () => {
+            console.log("Imagem do mapa SVG carregada!");
+            drawAllMaps(); // Desenha todos os mapas quando a imagem estiver pronta
+            startPulseAnimation(); // Inicia a animação de pulso
+        };
+        mapImage.onerror = () => console.error("Falha ao carregar a imagem do mapa. Verifique o caminho: " + mapImageURL);
     }
+
+    if (canvasId === 'fairMapCanvas') {
+        fairMapCanvas = canvas;
+        fairMapCtx = canvas.getContext('2d');
+    } else if (canvasId === 'adminMapCanvas') {
+        adminMapCanvas = canvas;
+        adminMapCtx = canvas.getContext('2d');
+    }
+
+    // Adiciona os listeners de eventos para zoom e pan no canvas
+    canvas.addEventListener('wheel', handleWheel);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
     
-    window.removeEventListener('resize', () => handleMapResize(canvasId)); // Evita duplicatas
+// app.js (Adicione estas linhas dentro da função initMap)
+
+// ...
+    // Adiciona os listeners de eventos para zoom e pan no canvas
+    canvas.addEventListener('wheel', handleWheel);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
+    
+    // --- INÍCIO DO CÓDIGO A SER ADICIONADO ---
+    // Adiciona os listeners para eventos de toque (celulares e tablets)
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchcancel', handleTouchEnd); // Cancela se o toque for interrompido
+    // --- FIM DO CÓDIGO A SER ADICIONADO ---
+
+    // A lógica de clique que existia aqui foi movida para o handleMouseUp/handleTouchEnd
+    // ...
+// ...
+
+    // Listener de clique específico para cada tipo de mapa
+    
     window.addEventListener('resize', () => handleMapResize(canvasId));
-    
-    drawMap(canvasId, ctx, canvas.clientWidth, canvas.clientHeight); // Usa clientWidth/Height para dimensões CSS
-    if (window.db) loadPublicLocations();
+    handleMapResize(canvasId); // Configuração inicial do tamanho
 }
 
+// Redimensiona o canvas quando a janela muda de tamanho
 function handleMapResize(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
     
+    const dpr = window.devicePixelRatio || 1;
+    // Pega o tamanho do .map-wrapper, que agora controla as dimensões
+    const rect = canvas.parentElement.getBoundingClientRect(); 
+
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
     
-    drawMap(canvasId, ctx, rect.width, rect.height); // Passa as dimensões CSS
+    drawMap(canvasId, ctx, rect.width, rect.height);
 }
 
-function drawMap(canvasId, ctx, cssWidth, cssHeight) {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, cssWidth, cssHeight);
-    ctx.fillStyle = '#F0F0F0'; 
-    ctx.fillRect(0, 0, cssWidth, cssHeight);
-
-    // Desenho simplificado do mapa para focar na funcionalidade das estandes
-    const streetColor = '#A0A0A0';
-    ctx.fillStyle = streetColor;
-    ctx.fillRect(cssWidth * 0.1, 0, cssWidth * 0.08, cssHeight); // Rua vertical 1
-    ctx.fillRect(cssWidth * 0.82, 0, cssWidth * 0.08, cssHeight); // Rua vertical 2
-    ctx.fillRect(0, cssHeight * 0.2, cssWidth, cssHeight * 0.08); // Rua horizontal 1
-    ctx.fillRect(0, cssHeight * 0.72, cssWidth, cssHeight * 0.08); // Rua horizontal 2
-
-    stands.forEach(stand => {
-        // As coordenadas X, Y são salvas relativas ao tamanho CSS do mapa de admin (400px de altura)
-        // Precisamos escalar para o tamanho atual do mapa de visualização, se diferente.
-        // Para simplificar, vamos assumir que o mapa de admin e visualização têm a mesma proporção de altura
-        // e que as coordenadas são salvas em pixels absolutos para um mapa de altura 400px.
-        const originalMapHeightForCoords = 400; // A altura base para a qual as coords foram salvas
-        const scaleFactor = cssHeight / originalMapHeightForCoords;
-
-        const displayX = stand.x * scaleFactor;
-        const displayY = stand.y * scaleFactor;
-        
-        const standSize = Math.min(20 * scaleFactor, cssWidth * 0.03, cssHeight * 0.04);
-        const halfSize = standSize / 2;
-
-        ctx.fillStyle = '#4CAF50'; 
-        ctx.strokeStyle = '#388E3C'; 
-        ctx.lineWidth = 2 * scaleFactor;
-        ctx.fillRect(displayX - halfSize, displayY - halfSize, standSize, standSize);
-        ctx.strokeRect(displayX - halfSize, displayY - halfSize, standSize, standSize);
-
-        ctx.fillStyle = '#FFFFFF'; 
-        ctx.font = `bold ${Math.max(8, standSize * 0.4)}px Inter`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(stand.id, displayX, displayY);
-
-        if (stand.occupant) {
-            ctx.fillStyle = '#424242'; 
-            ctx.font = `${Math.max(7, standSize * 0.35)}px Inter`;
-            ctx.fillText(stand.occupant, displayX, displayY + halfSize + Math.max(7, standSize * 0.35));
-        }
-    });
-
-    if (canvasId === 'adminMapCanvas' && adminMapTemporaryMarker) {
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 5, 0, Math.PI * 2); // Marcador usa coords diretas do clique
-        ctx.fill();
+// Função para redesenhar ambos os mapas (útil para animação e eventos)
+function drawAllMaps() {
+    if (fairMapCanvas && fairMapCtx) {
+        drawMap('fairMapCanvas', fairMapCtx, fairMapCanvas.parentElement.clientWidth, fairMapCanvas.parentElement.clientHeight);
+    }
+    if (adminMapCanvas && adminMapCtx) {
+        drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.parentElement.clientWidth, adminMapCanvas.parentElement.clientHeight);
     }
 }
 
-function handleMapClick(event) { // Admin map click
-    const currentActiveSection = document.querySelector('.main-content section.active');
-    if (!adminMapCanvas || (currentActiveSection && currentActiveSection.id !== 'admin-dashboard')) return;
+// Função principal de desenho, agora com transformações
+function drawMap(canvasId, ctx, cssWidth, cssHeight) {
+    if (!ctx) return;
+    if (!mapImage || !mapImage.complete) return;
+    
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    
+    // Salva o estado original do canvas (sem zoom ou pan)
+    ctx.save();
+    
+    // Aplica as transformações de Pan e Zoom ao canvas
+    ctx.translate(offsetX, offsetY);
+    ctx.scale(scale, scale);
 
-    const rect = adminMapCanvas.getBoundingClientRect();
-    const x = event.clientX - rect.left; // Coordenada X relativa ao elemento canvas CSS
-    const y = event.clientY - rect.top; // Coordenada Y relativa ao elemento canvas CSS
+    // Desenha a imagem do mapa, se carregada
+    if (mapImage && mapImage.complete) {
+        // Desenha a imagem do mapa na sua posição e orientação originais
+        ctx.drawImage(mapImage, 0, 0);
+    }
+    
+    // Desenha os hotspots (estandes) com o novo visual
+    stands.forEach(stand => {
+        // Ajusta o tamanho do hotspot com base no zoom para que pareça ter um tamanho constante
+        const baseRadius = 8 / scale;
+        const pulseRadius = baseRadius + (pulseValue * 4 / scale);
 
-    document.getElementById('standX').value = Math.round(x);
-    document.getElementById('standY').value = Math.round(y);
-    document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
+        // Desenha o pulso externo (mais transparente e animado)
+        ctx.beginPath();
+        ctx.arc(stand.x, stand.y, pulseRadius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(22, 163, 74, ${0.5 * (1 - pulseValue)})`; // Verde com opacidade variável
+        ctx.fill();
+        
+        // Desenha o ponto central (sólido)
+        ctx.beginPath();
+        ctx.arc(stand.x, stand.y, baseRadius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(22, 163, 74, 1)'; // Verde sólido
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = 1.5 / scale; // Borda com espessura constante
+        ctx.fill();
+        ctx.stroke();
+    });
 
-    adminMapTemporaryMarker = { x, y };
-    drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
+    // Desenha o marcador temporário do admin
+    if (canvasId === 'adminMapCanvas' && adminMapTemporaryMarker) {
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.8)'; // Vermelho
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2 / scale;
+        ctx.beginPath();
+        ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 10 / scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    }
+    
+    // Restaura o estado do canvas para o original (remove o pan e zoom)
+    ctx.restore();
+    updateCustomScrollbars(canvasId);
 }
 
-function handleFairMapClick(event) { // Visitor map click
-    if (!fairMapCanvas || stands.length === 0) return;
-    const rect = fairMapCanvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
+// --- Funções de Eventos do Mouse para Zoom e Pan ---
+function handleWheel(event) {
+    event.preventDefault();
+    const scaleAmount = 1.1;
+    const rect = event.target.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
 
-    const originalMapHeightForCoords = 400;
-    const scaleFactor = fairMapCanvas.clientHeight / originalMapHeightForCoords;
+    let newScale;
+    if (event.deltaY < 0) { // Zoom In
+        newScale = Math.min(maxZoom, scale * scaleAmount);
+    } else { // Zoom Out
+        newScale = Math.max(minZoom, scale / scaleAmount);
+    }
+    
+    // Ajusta o offset para que o zoom seja centrado no mouse
+    offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
+    offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
+    scale = newScale;
+
+    drawAllMaps();
+}
+
+function handleMouseDown(event) {
+    if (event.button !== 0) return; // Apenas botão esquerdo
+    
+    // Armazena a posição exata do início do clique
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+    
+    isDragging = false; // Começa como 'não arrastando'
+    event.target.style.cursor = 'grabbing';
+}
+
+function handleMouseMove(event) {
+    // A verificação 'buttons' é mais confiável que uma flag booleana
+    if (event.buttons !== 1) return; 
+
+    isDragging = true; // Marca que um arraste está ocorrendo
+
+    const dx = event.clientX - dragStartX;
+    const dy = event.clientY - dragStartY;
+    
+    let newOffsetX = offsetX + dx;
+    let newOffsetY = offsetY + dy;
+
+    // Calcula os limites para não arrastar o mapa para fora da tela
+    if (mapImage && mapImage.complete) {
+        const canvasWidth = event.target.clientWidth;
+        const canvasHeight = event.target.clientHeight;
+        const mapRenderedWidth = mapImage.width * scale;
+        const mapRenderedHeight = mapImage.height * scale;
+
+        // Limite máximo (não arrastar para a direita/baixo demais, deixando espaço em branco)
+        const maxOffsetX = 0;
+        const maxOffsetY = 0;
+        
+        // Limite mínimo (não arrastar para a esquerda/cima demais)
+        const minOffsetX = canvasWidth - mapRenderedWidth;
+        const minOffsetY = canvasHeight - mapRenderedHeight;
+        
+        // Aplica os limites
+        newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, maxOffsetX));
+        newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, maxOffsetY));
+    }
+    
+    offsetX = newOffsetX;
+    offsetY = newOffsetY;
+    
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
+
+    drawAllMaps(); // Redesenha o mapa na nova posição
+}
+
+function handleMouseUp(event) {
+    event.target.style.cursor = 'grab';
+
+    const dx = Math.abs(event.clientX - dragStartX);
+    const dy = Math.abs(event.clientY - dragStartY);
+
+    // Se o mouse se moveu menos que 5 pixels, considera um clique.
+    if (dx < 5 && dy < 5) {
+        // Chama a função de clique apropriada com base no canvas
+        if (event.target.id === 'fairMapCanvas') {
+            handleFairMapClick(event);
+        } else if (event.target.id === 'adminMapCanvas') {
+            handleAdminMapClick(event);
+        }
+    }
+    // Reseta o estado de 'isDragging' ao final
+    isDragging = false; 
+}
+
+// --- Funções de Clique Atualizadas ---
+function handleAdminMapClick(event) {
+    if (isDragging) return; // Ignora cliques que foram parte de um arraste
+    const rect = event.target.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Converte as coordenadas do clique (na tela) para coordenadas do "mundo" (no mapa)
+    // Esta é a fórmula crucial que corrige o posicionamento dos hotspots
+    const worldX = (mouseX - offsetX) / scale;
+    const worldY = (mouseY - offsetY) / scale;
+
+    // Atualiza o formulário com as coordenadas corretas e independentes do zoom
+    document.getElementById('standX').value = Math.round(worldX);
+    document.getElementById('standY').value = Math.round(worldY);
+    document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(worldX)}, Y: ${Math.round(worldY)}`;
+
+    adminMapTemporaryMarker = { x: worldX, y: worldY };
+    drawAllMaps();
+}
+
+function handleFairMapClick(event) {
+    
+    if (isDragging) return; // Ignora cliques que foram parte de um arraste
+
+    const rect = event.target.getBoundingClientRect();
+    // Converte o clique na tela para coordenadas do "mundo" (mapa)
+    const clickX = (event.clientX - rect.left - offsetX) / scale;
+    const clickY = (event.clientY - rect.top - offsetY) / scale;
 
     let clickedStand = null;
-    for (const stand of stands) {
-        const displayX = stand.x * scaleFactor;
-        const displayY = stand.y * scaleFactor;
-        const standSize = Math.min(20 * scaleFactor, fairMapCanvas.clientWidth * 0.03, fairMapCanvas.clientHeight * 0.04);
-        const halfSize = standSize / 2;
+    for (const stand of [...stands].reverse()) {
+        const radius = 12 / scale; // Área de clique um pouco maior que o ponto visual
+        const distance = Math.sqrt(Math.pow(clickX - stand.x, 2) + Math.pow(clickY - stand.y, 2));
 
-        if (clickX >= displayX - halfSize && clickX <= displayX + halfSize &&
-            clickY >= displayY - halfSize && clickY <= displayY + halfSize) {
+        if (distance <= radius) {
             clickedStand = stand;
             break;
         }
     }
-    if (clickedStand) window.location.hash = `#stand-details?id=${clickedStand.id}`;
+
+    if (clickedStand) {
+        const expositorInfo = globalExpositorsCache.find(expo => expo.name === clickedStand.occupant);
+        const fullStandData = { ...expositorInfo, ...clickedStand };
+        showInfoModal(fullStandData);
+    }
+}
+
+// A função `showInfoModal` permanece a mesma que você já tem
+function showInfoModal(data) {
+    const modal = document.getElementById('info-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDescription = document.getElementById('modal-description');
+    const modalCategory = document.getElementById('modal-category');
+    const modalImage = document.getElementById('modal-image');
+
+    if (!modal) return;
+
+    modalTitle.textContent = data.name || data.id || "Informação Indisponível";
+    modalDescription.textContent = data.description || "Nenhuma descrição detalhada fornecida.";
+    modalCategory.textContent = data.category || "Sem categoria";
+    modalImage.src = data.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter';
+
+    modal.style.display = 'flex';
+}
+
+// Função para atualizar as barras de rolagem personalizadas
+// Esta função deve ser chamada sempre que o mapa for desenhado ou redimensionado
+// app.js (SUBSTITUA a função updateCustomScrollbars inteira)
+
+function updateCustomScrollbars(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !mapImage || !mapImage.complete) return;
+
+    // CORREÇÃO: Remove a parte 'Canvas' do ID para encontrar os elementos corretos.
+    const baseId = canvasId.replace('Canvas', ''); 
+
+    const scrollbarH = document.getElementById(`${baseId}ScrollbarH`);
+    const thumbH = document.getElementById(`${baseId}ThumbH`);
+    const scrollbarV = document.getElementById(`${baseId}ScrollbarV`);
+    const thumbV = document.getElementById(`${baseId}ThumbV`);
+
+    // Adicionamos uma verificação para garantir que todos os elementos existem antes de continuar.
+    if (!scrollbarH || !thumbH || !scrollbarV || !thumbV) {
+        // Isso evita o erro caso os elementos não estejam no HTML.
+        // console.warn(`Elementos de scrollbar para '${canvasId}' não encontrados.`);
+        return;
+    }
+
+    const canvasWidth = canvas.clientWidth;
+    const canvasHeight = canvas.clientHeight;
+    const mapRenderedWidth = mapImage.width * scale;
+    const mapRenderedHeight = mapImage.height * scale;
+
+    // Lógica para a barra de rolagem horizontal
+    if (mapRenderedWidth > canvasWidth) {
+        scrollbarH.style.display = 'block';
+        const thumbWidth = (canvasWidth / mapRenderedWidth) * 100;
+        const thumbLeft = (-offsetX / (mapRenderedWidth - canvasWidth)) * (100 - thumbWidth);
+        thumbH.style.width = `${thumbWidth}%`;
+        thumbH.style.left = `${thumbLeft}%`;
+    } else {
+        scrollbarH.style.display = 'none';
+    }
+
+    // Lógica para a barra de rolagem vertical
+    if (mapRenderedHeight > canvasHeight) {
+        scrollbarV.style.display = 'block';
+        const thumbHeight = (canvasHeight / mapRenderedHeight) * 100;
+        const thumbTop = (-offsetY / (mapRenderedHeight - canvasHeight)) * (100 - thumbHeight);
+        thumbV.style.height = `${thumbHeight}%`;
+        thumbV.style.top = `${thumbTop}%`;
+    } else {
+        scrollbarV.style.display = 'none';
+    }
+}
+
+// --- FIM DO NOVO BLOCO DE FUNÇÕES DO MAPA ---
+
+// app.js (Adicione este novo bloco de funções)
+
+// --- INÍCIO DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
+
+function handleTouchStart(event) {
+    event.preventDefault(); // Previne o comportamento padrão do navegador (como rolar a página)
+
+    const touches = event.touches;
+    if (touches.length === 1) {
+        // Início de um arraste com um dedo
+        dragStartX = touches[0].clientX;
+        dragStartY = touches[0].clientY;
+        isDragging = false; // Começa como não arrastando, será 'true' se mover
+    } else if (touches.length === 2) {
+        // Início de um gesto de pinça com dois dedos
+        initialPinchDistance = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+        isDragging = true; // Um gesto de pinça é considerado um "arraste" para não virar clique
+    }
+}
+
+function handleTouchMove(event) {
+    event.preventDefault();
+    const touches = event.touches;
+
+    if (touches.length === 1) {
+        // Lógica para arrastar (pan) com um dedo
+        if (isDragging || Math.abs(touches[0].clientX - dragStartX) > 5 || Math.abs(touches[0].clientY - dragStartY) > 5) {
+            isDragging = true;
+
+            const dx = touches[0].clientX - dragStartX;
+            const dy = touches[0].clientY - dragStartY;
+
+            let newOffsetX = offsetX + dx;
+            let newOffsetY = offsetY + dy;
+
+            // Aplica os mesmos limites do arraste com o mouse
+            if (mapImage && mapImage.complete) {
+                const canvas = event.target;
+                const canvasWidth = canvas.clientWidth;
+                const canvasHeight = canvas.clientHeight;
+                const mapRenderedWidth = mapImage.width * scale;
+                const mapRenderedHeight = mapImage.height * scale;
+                const minOffsetX = canvasWidth - mapRenderedWidth;
+                const minOffsetY = canvasHeight - mapRenderedHeight;
+                newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, 0));
+                newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, 0));
+            }
+
+            offsetX = newOffsetX;
+            offsetY = newOffsetY;
+
+            // Atualiza a posição inicial para o próximo movimento
+            dragStartX = touches[0].clientX;
+            dragStartY = touches[0].clientY;
+
+            drawAllMaps();
+        }
+    } else if (touches.length === 2 && initialPinchDistance) {
+        // Lógica para zoom (gesto de pinça) com dois dedos
+        const currentPinchDistance = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+
+        // Calcula o fator de escala
+        const zoomFactor = currentPinchDistance / initialPinchDistance;
+        const newScale = Math.max(minZoom, Math.min(maxZoom, scale * zoomFactor));
+
+        // Calcula o ponto médio entre os dedos para centralizar o zoom
+        const midX = (touches[0].clientX + touches[1].clientX) / 2;
+        const midY = (touches[0].clientY + touches[1].clientY) / 2;
+        
+        // Ajusta o offset para que o zoom pareça vir do centro dos dedos
+        offsetX = midX - (midX - offsetX) * (newScale / scale);
+        offsetY = midY - (midY - offsetY) * (newScale / scale);
+
+        scale = newScale;
+        initialPinchDistance = currentPinchDistance; // Atualiza para o próximo movimento
+
+        drawAllMaps();
+    }
+}
+
+function handleTouchEnd(event) {
+    // Se a ação de toque terminou, resetamos as variáveis de controle
+    const wasDragging = isDragging;
+    isDragging = false;
+    initialPinchDistance = null;
+
+    // Lógica de clique: se o toque terminou sem ser um arraste, processa o clique
+    if (!wasDragging && event.changedTouches.length === 1) {
+        const touch = event.changedTouches[0];
+        const fakeMouseEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+
+        // Chama a função de clique apropriada baseada no canvas
+        if (event.target.id === 'fairMapCanvas') {
+            handleFairMapClick(fakeMouseEvent);
+        } else if (event.target.id === 'adminMapCanvas') {
+            handleAdminMapClick(fakeMouseEvent);
+        }
+    }
+}
+// --- FIM DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
+
+// Listeners para fechar o modal (adicione dentro do DOMContentLoaded ou globalmente)
+const infoModal = document.getElementById('info-modal');
+if(infoModal) {
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    // Fecha ao clicar no botão 'X'
+    modalCloseBtn.addEventListener('click', () => {
+        infoModal.style.display = 'none';
+    });
+
+    // Fecha ao clicar no fundo escuro (overlay)
+    infoModal.addEventListener('click', (event) => {
+        if (event.target === infoModal) {
+            infoModal.style.display = 'none';
+        }
+    });
 }
 
 // --- Funções de Gerenciamento de Conteúdo (Organizadores) ---
