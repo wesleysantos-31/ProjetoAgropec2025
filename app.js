@@ -761,27 +761,42 @@ async function addNewInfo(infoData) {
 }
 
 // --- Funções de Carregamento de Dados Públicos ---
+// app.js (VERSÃO CORRIGIDA)
+
 function loadPublicNews() {
     if (!window.db) return;
     const newsContainer = document.getElementById('public-news-container');
     if (!newsContainer) return;
-    const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
-    const qNews = query(newsCollectionRef, where("date", "<=", new Date().toISOString().split('T')[0])); // Exemplo de filtro
     
-    onSnapshot(qNews, (snapshot) => {
+    // Referência à coleção, sem filtros de data
+    const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
+    
+    // Usamos a referência direta, que busca todos os documentos da coleção
+    onSnapshot(newsCollectionRef, (snapshot) => {
         newsContainer.innerHTML = '';
         if (snapshot.empty) {
             newsContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia recente.</p>';
             return;
         }
+        
+        let newsList = [];
         snapshot.forEach(doc => {
-            const news = doc.data();
+            newsList.push(doc.data());
+        });
+
+        // Ordena as notícias pela data de publicação do Firestore (mais recentes primeiro)
+        newsList.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
+
+        newsList.forEach(news => {
+            // Se a data estiver no formato "DD/MM/AAAA", ela será exibida corretamente.
+            const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-BR');
+
             const newsCard = `
                 <div class="card p-6">
                     <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
-                    <p class="text-xs text-gray-400 mb-2">Publicado em: ${new Date(news.date).toLocaleDateString('pt-BR')}</p>
+                    <p class="text-xs text-gray-400 mb-2">Publicado em: ${displayDate}</p>
                     <p class="text-gray-600 text-sm">${news.content.substring(0,150)}${news.content.length > 150 ? '...' : ''}</p>
-                    </div>`;
+                </div>`;
             newsContainer.innerHTML += newsCard;
         });
     }, error => {
@@ -1024,10 +1039,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Listeners de Formulários de Conteúdo (Organizadores) ---
+    // app.js
+
     const newsForm = document.getElementById('news-form');
     if (newsForm) newsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        await addNewNews({ title: document.getElementById('newsTitle').value, content: document.getElementById('newsContent').value, date: document.getElementById('newsDate').value });
+        
+        // Gera a data atual no formato DD/MM/AAAA
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+
+        // Chama a função para adicionar a notícia, agora com a data automática
+        await addNewNews({ 
+            title: document.getElementById('newsTitle').value, 
+            content: document.getElementById('newsContent').value, 
+            date: formattedDate
+        });
     });
 
     const eventForm = document.getElementById('event-form');
