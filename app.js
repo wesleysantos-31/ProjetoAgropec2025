@@ -1183,6 +1183,18 @@ document.addEventListener('DOMContentLoaded', () => {
         "dateFormat": "d/m/Y", // Define o formato da data como DD/MM/AAAA
         "allowInput": true // Permite que o usuário também digite a data
     });
+
+    const eventTimeInput = document.getElementById('eventTime');
+    if (eventTimeInput) {
+        flatpickr(eventTimeInput, {
+            enableTime: true,      // Habilita a seleção de hora
+            noCalendar: true,      // Desabilita o calendário, mostrando APENAS o seletor de hora
+            dateFormat: "H:i",     // Define o formato para 24 horas (ex: 14:30)
+            time_24hr: true,       // Força o uso do formato 24h
+            minuteIncrement: 15,   // Opcional: faz os minutos pularem de 15 em 15, facilitando a seleção
+            allowInput: true       // Permite que o usuário também digite a hora
+        });
+    }
 }
     
     initMap('fairMapCanvas');
@@ -1706,19 +1718,32 @@ function updateAgendaChart(events) {
     if (!agendaCtxEl) return;
     const agendaCtx = agendaCtxEl.getContext('2d');
 
+    //tipos no SINGULAR para corresponder aos dados do banco.
+    const eventTypes = ['Palestra', 'Workshop', 'Demonstração', 'Outro'];
+    
+    // Objeto para mapear o tipo singular para o plural (para a legenda do gráfico)
+    const typeLabels = {
+        'Palestra': 'Palestras',
+        'Workshop': 'Workshops',
+        'Demonstração': 'Demonstrações',
+        'Outro': 'Outros'
+    };
+
     const days = {};
-    const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
     events.forEach(event => {
         const date = event.date || 'Data Desconhecida';
-        const type = eventTypes.includes(event.type) ? event.type : 'Outros';
         if (!days[date]) {
-            days[date] = {}; eventTypes.forEach(t => days[date][t] = 0);
+            days[date] = {};
+            eventTypes.forEach(t => days[date][t] = 0);
         }
-        days[date][type]++;
+        // Garante que o tipo seja um dos conhecidos, senão vira 'Outro'.
+        const eventType = eventTypes.includes(event.type) ? event.type : 'Outro';
+        days[date][eventType]++;
     });
     
     const sortedDates = Object.keys(days).sort((a, b) => {
-        if (a === 'Data Desconhecida') return 1; if (b === 'Data Desconhecida') return -1;
+        if (a === 'Data Desconhecida') return 1;
+        if (b === 'Data Desconhecida') return -1;
         const [dayA, monthA, yearA] = a.split('/').map(Number);
         const [dayB, monthB, yearB] = b.split('/').map(Number);
         return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
@@ -1726,19 +1751,39 @@ function updateAgendaChart(events) {
 
     const datasets = eventTypes.map(type => {
         let bgColor, brdColor;
+        // Mantém as cores que você já tinha, mas usando a chave singular 'type'
         switch(type) {
-            case 'Palestras': bgColor = 'rgba(76, 175, 80, 0.7)'; brdColor = 'rgba(76, 175, 80, 1)'; break;
-            case 'Workshops': bgColor = 'rgba(255, 193, 7, 0.7)'; brdColor = 'rgba(255, 193, 7, 1)'; break;
-            case 'Demonstrações': bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)'; break; // Azul para demonstrações
-            default: bgColor = 'rgba(158, 158, 158, 0.7)'; brdColor = 'rgba(158, 158, 158, 1)';
+            case 'Palestra':      bgColor = 'rgba(76, 175, 80, 0.7)';  brdColor = 'rgba(76, 175, 80, 1)';   break;
+            case 'Workshop':      bgColor = 'rgba(255, 193, 7, 0.7)';  brdColor = 'rgba(255, 193, 7, 1)';   break;
+            case 'Demonstração':  bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)';  break;
+            default:              bgColor = 'rgba(158, 158, 158, 0.7)';brdColor = 'rgba(158, 158, 158, 1)';
         }
-        return { label: type, data: sortedDates.map(date => days[date][type] || 0), backgroundColor: bgColor, borderColor: brdColor, borderWidth: 1 };
+        return {
+            label: typeLabels[type], // CORREÇÃO: Usa o nome no plural para a legenda ficar mais bonita
+            data: sortedDates.map(date => days[date][type] || 0),
+            backgroundColor: bgColor,
+            borderColor: brdColor,
+            borderWidth: 1
+        };
     });
 
     if (agendaChartInstance) agendaChartInstance.destroy();
     agendaChartInstance = new Chart(agendaCtx, {
-        type: 'bar', data: { labels: sortedDates, datasets: datasets },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        type: 'bar',
+        data: { labels: sortedDates, datasets: datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true }, // Empilha as barras para melhor visualização
+                y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index'
+                }
+            }
+        }
     });
 }
 
