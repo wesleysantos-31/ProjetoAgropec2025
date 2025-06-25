@@ -320,60 +320,89 @@ function drawAllMaps() {
     }
 }
 
-// Função principal de desenho, agora com transformações
 function drawMap(canvasId, ctx, cssWidth, cssHeight) {
     if (!ctx) return;
     if (!mapImage || !mapImage.complete) return;
 
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-    // Salva o estado original do canvas (sem zoom ou pan)
     ctx.save();
-
-    // Aplica as transformações de Pan e Zoom ao canvas
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
 
-    // Desenha a imagem do mapa, se carregada
     if (mapImage && mapImage.complete) {
-        // Desenha a imagem do mapa na sua posição e orientação originais
         ctx.drawImage(mapImage, 0, 0);
     }
 
-    // Desenha os hotspots (estandes) com o novo visual
+    // --- LÓGICA DE DESENHO DOS ESTANDES E SEUS IDs ---
     stands.forEach(stand => {
-        // Ajusta o tamanho do hotspot com base no zoom para que pareça ter um tamanho constante
         const baseRadius = 8 / scale;
         const pulseRadius = baseRadius + (pulseValue * 4 / scale);
 
-        // Desenha o pulso externo (mais transparente e animado)
+        // Desenha o pulso externo
         ctx.beginPath();
         ctx.arc(stand.x, stand.y, pulseRadius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(22, 163, 74, ${0.5 * (1 - pulseValue)})`; // Verde com opacidade variável
+        ctx.fillStyle = `rgba(22, 163, 74, ${0.5 * (1 - pulseValue)})`;
         ctx.fill();
 
-        // Desenha o ponto central (sólido)
+        // Desenha o ponto central
         ctx.beginPath();
         ctx.arc(stand.x, stand.y, baseRadius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(22, 163, 74, 1)'; // Verde sólido
+        ctx.fillStyle = 'rgba(22, 163, 74, 1)';
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-        ctx.lineWidth = 1.5 / scale; // Borda com espessura constante
+        ctx.lineWidth = 1.5 / scale;
         ctx.fill();
         ctx.stroke();
+        
+        // --- NOVO: LÓGICA PARA DESENHAR O ID DO ESTANDE ---
+        if (stand.id) {
+            // Configurações do texto
+            const fontSize = 10 / scale;
+            ctx.font = `bold ${fontSize}px Inter, sans-serif`;
+            ctx.textAlign = 'center';
+            
+            // Adiciona um contorno branco para legibilidade
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2 / scale;
+            ctx.strokeText(stand.id, stand.x, stand.y - (baseRadius + 5 / scale));
+            
+            // Preenche o texto com cor escura
+            ctx.fillStyle = '#1E293B'; // Cor escura (slate-800)
+            ctx.fillText(stand.id, stand.x, stand.y - (baseRadius + 5 / scale));
+        }
+        // --- FIM DA LÓGICA DE DESENHO DO ID ---
     });
 
-    // Desenha o marcador temporário do admin
+    // --- LÓGICA DE DESENHO DO MARCADOR TEMPORÁRIO E SUAS COORDENADAS ---
     if (canvasId === 'adminMapCanvas' && adminMapTemporaryMarker) {
-        ctx.fillStyle = 'rgba(220, 38, 38, 0.8)'; // Vermelho
+        const markerRadius = 10 / scale;
+        
+        // Desenha o marcador vermelho
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.8)';
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 2 / scale;
         ctx.beginPath();
-        ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, 10 / scale, 0, Math.PI * 2);
+        ctx.arc(adminMapTemporaryMarker.x, adminMapTemporaryMarker.y, markerRadius, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+
+        // --- NOVO: LÓGICA PARA DESENHAR AS COORDENADAS ---
+        const coordText = `(X:${Math.round(adminMapTemporaryMarker.x)}, Y:${Math.round(adminMapTemporaryMarker.y)})`;
+        const fontSize = 10 / scale;
+        ctx.font = `600 ${fontSize}px Inter, sans-serif`;
+        ctx.textAlign = 'left';
+
+        // Contorno branco para legibilidade
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 3 / scale;
+        ctx.strokeText(coordText, adminMapTemporaryMarker.x + markerRadius + (5 / scale), adminMapTemporaryMarker.y + (fontSize / 3));
+
+        // Preenchimento do texto
+        ctx.fillStyle = '#B91C1C'; // Cor vermelha escura (red-800)
+        ctx.fillText(coordText, adminMapTemporaryMarker.x + markerRadius + (5 / scale), adminMapTemporaryMarker.y + (fontSize / 3));
+        // --- FIM DA LÓGICA DE DESENHO DAS COORDENADAS ---
     }
 
-    // Restaura o estado do canvas para o original (remove o pan e zoom)
     ctx.restore();
     updateCustomScrollbars(canvasId);
 }
