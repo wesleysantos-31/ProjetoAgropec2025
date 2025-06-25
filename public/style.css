@@ -156,6 +156,11 @@ body {
     /* Padding é aplicado via Tailwind no HTML (p-6, p-4 etc.) */
 }
 
+/* Estilos para botões de ação */
+.btn-accent{
+    margin-top: 10px;
+}
+
 .chart-container {
     position: relative;
     width: 100%;
@@ -430,6 +435,7 @@ div#img1 {
 }
 
 footer {
+    font-size: 12px;
     background-color: #388E3C;;
     color: white;
     text-align: center;
@@ -476,4 +482,59 @@ footer {
 .custom-scrollbar.vertical .scrollbar-thumb {
     width: 100%;
     left: 0;
+}
+
+/* Estilos para as abas do painel de admin */
+.admin-tab {
+    padding: 0.5rem 1rem;
+    border-bottom: 3px solid transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4B5563; /* text-gray-600 */
+    transition: all 0.2s ease-in-out;
+}
+
+.admin-tab:hover {
+    color: #166534; /* text-green-800 */
+    border-bottom-color: #D1D5DB; /* border-gray-300 */
+}
+
+.admin-tab.active {
+    color: #15803d; /* text-green-700 */
+    border-bottom-color: #15803d; /* border-green-700 */
+}
+
+/* Painéis de conteúdo das abas */
+.admin-tab-panel {
+    display: none; /* Todos os painéis começam ocultos */
+}
+
+.admin-tab-panel.active {
+    display: block; /* Apenas o painel ativo é exibido */
+}
+
+/* --- Responsividade para Abas do Admin --- */
+/* Por padrão (mobile), a navegação das abas terá scroll horizontal */
+#admin-tab-container {
+    overflow-x: auto; /* Habilita o scroll horizontal quando o conteúdo ultrapassa a largura */
+    -webkit-overflow-scrolling: touch; /* Melhora a experiência de "deslizar" no iOS */
+    
+    /* As linhas abaixo escondem a barra de scroll visualmente mas mantêm a funcionalidade */
+    scrollbar-width: none; /* Para Firefox */
+}
+
+#admin-tab-container::-webkit-scrollbar {
+    display: none; /* Para Chrome, Safari e Opera */
+}
+
+/* Garante que os botões das abas não encolham e mantenham seu tamanho */
+#admin-tab-container .admin-tab {
+    flex-shrink: 0;
+}
+
+/* Em telas de PC (768px ou mais), desativamos o scroll horizontal */
+@media (min-width: 768px) {
+    #admin-tab-container {
+        overflow-x: visible; /* Restaura o comportamento padrão, sem scroll */
+    }
 }

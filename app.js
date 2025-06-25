@@ -1,26 +1,38 @@
 // Importa as funções necessárias do SDK do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"; // Descomente se for usar
 import { getAuth, signInAnonymously, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-// Sua configuração do Firebase
+// ============= CONFIGURAÇÃO NECESSÁRIA DO FIREBASE =============
+// Objeto de configuração contendo as credenciais para inicializar a conexão com o Firebase.
 const firebaseConfig = {
-    apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4", // ATENÇÃO: Considere proteger sua chave de API
-    authDomain: "agropec-2025-app.firebaseapp.com",
-    projectId: "agropec-2025-app",
-    storageBucket: "agropec-2025-app.firebaseapp.com",
-    messagingSenderId: "203743696437",
-    appId: "1:203743696437:web:0332c09896cc34eb14437c",
-    measurementId: "G-40JHQ2RPEQ"
+    // Chave de API que autoriza as requisições para os serviços do Google Cloud e Firebase.
+    apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4", // Esta chave precisa ser alterada para a chave real do projeto que é de suma importância para a conexão com o Firebase.
+
+    // O domínio oficial do projeto no Firebase, usado para os fluxos de autenticação (Firebase Auth).
+    authDomain: "agropec-2025-app.firebaseapp.com", // Este domínio deve ser o mesmo que o do projeto no Firebase Console. Por tanto, esse domímio precisa ser alterado para o domínio real do projeto.
+
+    // Identificador único e imutável do projeto no console do Google Cloud e Firebase.
+    projectId: "agropec-2025-app", // Este ID é gerado precisa ser o mesmo que o do projeto no Firebase Console. Portanto, esse ID precisa ser alterado para o ID real do projeto.
+
+    // URL do bucket padrão no Cloud Storage, utilizado para armazenar arquivos como imagens e vídeos.
+    storageBucket: "agropec-2025-app.firebaseapp.com", // Este bucket é usado para armazenar arquivos e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse bucket precisa ser alterado para o bucket real do projeto.
+
+    // ID do remetente para o Firebase Cloud Messaging (FCM), serviço de envio de notificações push.
+    messagingSenderId: "203743696437", // Este ID é usado para identificar o remetente de mensagens e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse ID precisa ser alterado para o ID real do projeto.
+
+    // Identificador único para esta aplicação web específica dentro do projeto Firebase.
+    appId: "1:203743696437:web:0332c09896cc34eb14437c", // Este appId é usado para identificar a aplicação no Firebase e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse appId precisa ser alterado para o appId real do projeto.
+
+    // ID de medição para o Google Analytics, usado para coletar dados de uso e eventos da aplicação.
+    measurementId: "G-40JHQ2RPEQ" // Este measurementId é usado para identificar a aplicação no Google Analytics e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse measurementId precisa ser alterado para o measurementId real do projeto.
 };
+// ========== FIM DA CONFIGURAÇÃO NECESSÁRIA DO FIREBASE ==========
 
 let currentUserId = null;
 let registrationContext = 'visitor'; // 'visitor' ou 'admin'
 let globalEventsCache = []; // Cache para eventos, usado para edição
 let globalExpositorsCache = []; // Cache para expositores, usado para edição
-
-// app.js (Substitua as variáveis de mapa existentes)
 
 // --- Novas Variáveis para Mapa Interativo com Zoom/Pan ---
 let mapImage = null;
@@ -28,7 +40,7 @@ const mapImageURL = 'img/mapa-agropec-2025.svg'; // Caminho para a sua imagem SV
 
 // Elementos da UI do Mapa
 let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
-let stands = []; 
+let stands = [];
 let adminMapTemporaryMarker = null;
 
 // Estado de transformação do mapa (zoom e pan)
@@ -63,11 +75,39 @@ const mapaSection = document.getElementById('mapa');
 if (mapaSection) {
     const observer = new MutationObserver(() => {
         if (mapaSection.classList.contains('active')) {
-            setTimeout(resizeFairMapCanvas, 50);
+            setTimeout(() => {
+                // Redimensiona o canvas do mapa público quando a seção se torna ativa
+                handleMapResize('fairMapCanvas');
+            }, 100);
         }
     });
     observer.observe(mapaSection, { attributes: true, attributeFilter: ['class'] });
 }
+
+// detectar quando a seção do painel de administração se torna visível.
+const adminDashboardSection = document.getElementById('admin-dashboard');
+
+if (adminDashboardSection) {
+    // Cria um observador que reage a mudanças nos atributos da seção.
+    const adminMapObserver = new MutationObserver(() => {
+        // Verifica se a seção agora está ativa (visível).
+        if (adminDashboardSection.classList.contains('active')) {
+            // Se estiver ativa, chama a função 'handleMapResize' para o canvas do admin.
+            // Um pequeno atraso (100ms) garante que a animação de transição da tela
+            // termine e o canvas tenha o tamanho correto para ser desenhado.
+            setTimeout(() => {
+                handleMapResize('adminMapCanvas');
+            }, 100);
+        }
+    });
+
+    // Configura o observador para monitorar especificamente o atributo 'class'.
+    adminMapObserver.observe(adminDashboardSection, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
+
 // Também ajusta ao redimensionar a janela
 window.addEventListener('resize', resizeFairMapCanvas);
 // Ajuste dos pinos (bolinhas) verdes/vermelhas
@@ -94,52 +134,53 @@ document.getElementById('closeSidebarBtn').onclick = function() {
 };
 
 // Função para exibir/ocultar seções
+// app.js (SUBSTITUA sua função window.showSection por esta)
+
+// app.js (SUBSTITUA SUA FUNÇÃO ATUAL PELA VERSÃO CORRIGIDA ABAIXO)
+
 window.showSection = function(sectionId, clickedLink) {
-    console.log(`Exibindo seção: ${sectionId}`);
-    const sections = document.querySelectorAll('.main-content section');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const currentSectionTitle = document.getElementById('currentSectionTitle');
+    // Seleciona os elementos de layout principais
+    const header = document.querySelector('header');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContentArea = document.querySelector('.main-content');
 
-    sections.forEach(section => section.classList.remove('active'));
+    const isAuthScreen = sectionId === 'welcome-role-selection' || sectionId === 'login';
+
+    // Controla a visibilidade do header, sidebar e do espaçamento do topo
+    if (header && sidebar && mainContentArea) {
+        header.classList.toggle('hidden', isAuthScreen);
+        sidebar.classList.toggle('hidden', isAuthScreen);
+    }
+
+    // --- ESTA É A PARTE MAIS IMPORTANTE PARA CORRIGIR A SOBREPOSIÇÃO ---
+    // Este seletor encontra TODAS as seções, não importa a estrutura do HTML
+    const sections = document.querySelectorAll('main > div > section, main > section');
+
+    // Primeiro, ele esconde TODAS as seções
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+
+    // Depois, ele mostra APENAS a seção correta
     const activeSection = document.getElementById(sectionId);
-    if (activeSection) activeSection.classList.add('active');
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
 
-    const titleMap = {
-        'inicio': 'Painel Principal',
-        'admin-dashboard': 'Gerenciar Estandes',
-        'organizadores': 'Gerenciar Conteúdo do Evento',
-        'stand-details': 'Detalhes da Estande',
-        'welcome-role-selection': 'Bem-vindo!',
-        'login': 'Acesso ao Evento',
-        'agenda': 'Agenda do Evento',
-        'expositores': 'Lista de Expositores',
-        'mapa': 'Mapa da Feira'
-    };
-    if(currentSectionTitle) currentSectionTitle.textContent = titleMap[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-
+    // O resto da lógica para os links do menu continua igual
+    const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
-        link.classList.remove('active', 'bg-green-700', 'text-white'); // Classes mais escuras para ativo na sidebar
-        if (sidebar.contains(link)) {
-            link.classList.add('text-gray-300'); // Cor padrão para links da sidebar
-            link.classList.remove('bg-green-500'); // Tailwind classe que pode ter sido adicionada antes
-        }
+        link.classList.remove('active', 'bg-green-700');
     });
 
     if (clickedLink) {
-        clickedLink.classList.add('active');
-        if (sidebar.contains(clickedLink)) {
-            clickedLink.classList.add('bg-green-700'); // Verde mais escuro para ativo na sidebar
-            clickedLink.classList.add('text-white');
-        } else {
-            // Para links fora da sidebar, se houver (não é o caso atual)
-            // clickedLink.classList.add('bg-green-500', 'text-white');
-        }
+        clickedLink.classList.add('active', 'bg-green-700');
     }
-    
+
     if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
     }
-}
+};
 
 // Função para passar as imagens do carrossel
 let carouselIndex = 0;
@@ -196,7 +237,7 @@ function startPulseAnimation() {
 function initMap(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) { console.error(`Canvas '${canvasId}' não encontrado.`); return; }
-    
+
     // Carrega a imagem do mapa (apenas uma vez para todo o app)
     if (!mapImage) {
         mapImage = new Image();
@@ -223,7 +264,7 @@ function initMap(canvasId) {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
-    
+
 // app.js (Adicione estas linhas dentro da função initMap)
 
 // ...
@@ -233,7 +274,7 @@ function initMap(canvasId) {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
-    
+
     // --- INÍCIO DO CÓDIGO A SER ADICIONADO ---
     // Adiciona os listeners para eventos de toque (celulares e tablets)
     canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
@@ -247,7 +288,7 @@ function initMap(canvasId) {
 // ...
 
     // Listener de clique específico para cada tipo de mapa
-    
+
     window.addEventListener('resize', () => handleMapResize(canvasId));
     handleMapResize(canvasId); // Configuração inicial do tamanho
 }
@@ -257,15 +298,15 @@ function handleMapResize(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const dpr = window.devicePixelRatio || 1;
     // Pega o tamanho do .map-wrapper, que agora controla as dimensões
-    const rect = canvas.parentElement.getBoundingClientRect(); 
+    const rect = canvas.parentElement.getBoundingClientRect();
 
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
-    
+
     drawMap(canvasId, ctx, rect.width, rect.height);
 }
 
@@ -283,12 +324,12 @@ function drawAllMaps() {
 function drawMap(canvasId, ctx, cssWidth, cssHeight) {
     if (!ctx) return;
     if (!mapImage || !mapImage.complete) return;
-    
+
     ctx.clearRect(0, 0, cssWidth, cssHeight);
-    
+
     // Salva o estado original do canvas (sem zoom ou pan)
     ctx.save();
-    
+
     // Aplica as transformações de Pan e Zoom ao canvas
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
@@ -298,7 +339,7 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         // Desenha a imagem do mapa na sua posição e orientação originais
         ctx.drawImage(mapImage, 0, 0);
     }
-    
+
     // Desenha os hotspots (estandes) com o novo visual
     stands.forEach(stand => {
         // Ajusta o tamanho do hotspot com base no zoom para que pareça ter um tamanho constante
@@ -310,7 +351,7 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         ctx.arc(stand.x, stand.y, pulseRadius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(22, 163, 74, ${0.5 * (1 - pulseValue)})`; // Verde com opacidade variável
         ctx.fill();
-        
+
         // Desenha o ponto central (sólido)
         ctx.beginPath();
         ctx.arc(stand.x, stand.y, baseRadius, 0, Math.PI * 2);
@@ -331,7 +372,7 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         ctx.fill();
         ctx.stroke();
     }
-    
+
     // Restaura o estado do canvas para o original (remove o pan e zoom)
     ctx.restore();
     updateCustomScrollbars(canvasId);
@@ -351,7 +392,7 @@ function handleWheel(event) {
     } else { // Zoom Out
         newScale = Math.max(minZoom, scale / scaleAmount);
     }
-    
+
     // Ajusta o offset para que o zoom seja centrado no mouse
     offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
     offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
@@ -362,24 +403,24 @@ function handleWheel(event) {
 
 function handleMouseDown(event) {
     if (event.button !== 0) return; // Apenas botão esquerdo
-    
+
     // Armazena a posição exata do início do clique
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-    
+
     isDragging = false; // Começa como 'não arrastando'
     event.target.style.cursor = 'grabbing';
 }
 
 function handleMouseMove(event) {
     // A verificação 'buttons' é mais confiável que uma flag booleana
-    if (event.buttons !== 1) return; 
+    if (event.buttons !== 1) return;
 
     isDragging = true; // Marca que um arraste está ocorrendo
 
     const dx = event.clientX - dragStartX;
     const dy = event.clientY - dragStartY;
-    
+
     let newOffsetX = offsetX + dx;
     let newOffsetY = offsetY + dy;
 
@@ -393,19 +434,19 @@ function handleMouseMove(event) {
         // Limite máximo (não arrastar para a direita/baixo demais, deixando espaço em branco)
         const maxOffsetX = 0;
         const maxOffsetY = 0;
-        
+
         // Limite mínimo (não arrastar para a esquerda/cima demais)
         const minOffsetX = canvasWidth - mapRenderedWidth;
         const minOffsetY = canvasHeight - mapRenderedHeight;
-        
+
         // Aplica os limites
         newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, maxOffsetX));
         newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, maxOffsetY));
     }
-    
+
     offsetX = newOffsetX;
     offsetY = newOffsetY;
-    
+
     dragStartX = event.clientX;
     dragStartY = event.clientY;
 
@@ -428,7 +469,7 @@ function handleMouseUp(event) {
         }
     }
     // Reseta o estado de 'isDragging' ao final
-    isDragging = false; 
+    isDragging = false;
 }
 
 // --- Funções de Clique Atualizadas ---
@@ -453,7 +494,7 @@ function handleAdminMapClick(event) {
 }
 
 function handleFairMapClick(event) {
-    
+
     if (isDragging) return; // Ignora cliques que foram parte de um arraste
 
     const rect = event.target.getBoundingClientRect();
@@ -506,7 +547,7 @@ function updateCustomScrollbars(canvasId) {
     if (!canvas || !mapImage || !mapImage.complete) return;
 
     // CORREÇÃO: Remove a parte 'Canvas' do ID para encontrar os elementos corretos.
-    const baseId = canvasId.replace('Canvas', ''); 
+    const baseId = canvasId.replace('Canvas', '');
 
     const scrollbarH = document.getElementById(`${baseId}ScrollbarH`);
     const thumbH = document.getElementById(`${baseId}ThumbH`);
@@ -624,7 +665,7 @@ function handleTouchMove(event) {
         // Calcula o ponto médio entre os dedos para centralizar o zoom
         const midX = (touches[0].clientX + touches[1].clientX) / 2;
         const midY = (touches[0].clientY + touches[1].clientY) / 2;
-        
+
         // Ajusta o offset para que o zoom pareça vir do centro dos dedos
         offsetX = midX - (midX - offsetX) * (newScale / scale);
         offsetY = midY - (midY - offsetY) * (newScale / scale);
@@ -662,7 +703,7 @@ function handleTouchEnd(event) {
 }
 // --- FIM DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
 
-// Listeners para fechar o modal (adicione dentro do DOMContentLoaded ou globalmente)
+// Listeners para fechar o modal
 const infoModal = document.getElementById('info-modal');
 if(infoModal) {
     const modalCloseBtn = document.getElementById('modal-close-btn');
@@ -684,7 +725,7 @@ if(infoModal) {
 async function submitNewsForm(newsData, newsIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('news-message');
-    
+
     try {
         if (newsIdToUpdate) {
             // ATUALIZAR notícia existente
@@ -697,7 +738,7 @@ async function submitNewsForm(newsData, newsIdToUpdate = null) {
             await addDoc(newsCollectionRef, { ...newsData, publishedAt: serverTimestamp(), authorId: currentUserId });
             messageEl.textContent = 'Notícia publicada!';
         }
-        
+
         messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('news-form').reset();
         document.getElementById('newsIdToUpdate').value = ''; // Limpa o ID
@@ -714,7 +755,7 @@ async function submitEventForm(eventData, eventIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('event-message');
     const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
-    
+
     try {
         if (eventIdToUpdate) { // Atualizando evento existente
             const eventDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`, eventIdToUpdate);
@@ -739,7 +780,7 @@ async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('expositor-info-message');
     const expositorsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
-    
+
     try {
         if (expositorIdToUpdate) {
             const expositorDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`, expositorIdToUpdate);
@@ -761,17 +802,31 @@ async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null
 }
 
 
-async function addNewInfo(infoData) {
-    if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
+async function submitInfoForm(infoData, infoIdToUpdate = null) {
+    if (!currentUserId || !window.db) return;
     const messageEl = document.getElementById('info-message');
     try {
-        const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
-        await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
-        messageEl.textContent = 'Informação publicada!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        if (infoIdToUpdate) {
+            // ATUALIZAR informação existente
+            const infoDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`, infoIdToUpdate);
+            await updateDoc(infoDocRef, { ...infoData, updatedAt: serverTimestamp() });
+            messageEl.textContent = 'Informação atualizada com sucesso!';
+        } else {
+            // ADICIONAR nova informação
+            const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
+            await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
+            messageEl.textContent = 'Informação publicada!';
+        }
+
+        messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('info-form').reset();
+        document.getElementById('infoIdToUpdate').value = '';
+        document.getElementById('info-submit-button').textContent = 'Publicar Informação';
+        document.getElementById('info-cancel-edit-button').classList.add('hidden');
+
     } catch (error) {
-        console.error("Erro ao publicar informação:", error);
-        messageEl.textContent = 'Erro ao publicar.'; messageEl.className = 'text-red-500 text-sm mt-2';
+        console.error("Erro ao salvar informação:", error);
+        messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
     }
 }
 
@@ -780,10 +835,10 @@ function loadPublicNews() {
     if (!window.db) return;
     const newsContainer = document.getElementById('public-news-container');
     if (!newsContainer) return;
-    
+
     // Referência à coleção, sem filtros de data
     const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
-    
+
     // Usamos a referência direta, que busca todos os documentos da coleção
     onSnapshot(newsCollectionRef, (snapshot) => {
         newsContainer.innerHTML = '';
@@ -791,7 +846,7 @@ function loadPublicNews() {
             newsContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia recente.</p>';
             return;
         }
-        
+
         let newsList = [];
         snapshot.forEach(doc => {
             newsList.push({ id: doc.id, ...doc.data() });
@@ -825,30 +880,101 @@ function loadPublicNews() {
     });
 }
 
+// app.js (Adicione estas 3 novas funções)
+
+function displayAdminInfoList(infoList) {
+    const listContainer = document.getElementById('admin-info-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+
+    if (infoList.length === 0) {
+        listContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação publicada.</p>';
+        return;
+    }
+
+    infoList.forEach(info => {
+        const item = document.createElement('div');
+        item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
+        item.innerHTML = `
+            <div class="flex-1 min-w-0 pr-4">
+                <h4 class="font-semibold text-md text-green-700">${info.title}</h4>
+            </div>
+            <div class="flex-shrink-0">
+                <button class="text-blue-500 hover:text-blue-700 text-sm mr-2 edit-info-btn" data-info-id="${info.id}">Editar</button>
+                <button class="text-red-500 hover:text-red-700 text-sm delete-info-btn" data-info-id="${info.id}">Excluir</button>
+            </div>`;
+        listContainer.appendChild(item);
+    });
+}
+
+async function handleDeleteInfo(infoId) {
+    if (!window.db || !infoId) return;
+    if (confirm('Tem certeza que deseja excluir esta informação? Esta ação não pode ser desfeita.')) {
+        try {
+            const infoDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`, infoId);
+            await deleteDoc(infoDocRef);
+        } catch (error) {
+            console.error('Erro ao excluir informação:', error);
+            alert('Ocorreu um erro ao excluir a informação.');
+        }
+    }
+}
+
+function populateInfoFormForEdit(infoId) {
+    const infoDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`, infoId);
+    getDoc(infoDocRef).then(docSnap => {
+        if (docSnap.exists()) {
+            const info = docSnap.data();
+            document.getElementById('infoIdToUpdate').value = infoId;
+            document.getElementById('infoTitle').value = info.title;
+            document.getElementById('infoContent').value = info.content;
+
+            document.getElementById('info-submit-button').textContent = 'Atualizar Informação';
+            document.getElementById('info-cancel-edit-button').classList.remove('hidden');
+
+            document.getElementById('info-form').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('Erro: informação não encontrada.');
+        }
+    });
+}
+
 function loadPublicGeneralInfo() {
     if (!window.db) return;
     const infoContainer = document.getElementById('public-info-container');
-    if (!infoContainer) return;
     const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
-    
+
     onSnapshot(infoCollectionRef, (snapshot) => {
-        infoContainer.innerHTML = '';
-        if (snapshot.empty) {
-            infoContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação geral disponível.</p>';
-            return;
-        }
+        let infoList = [];
         snapshot.forEach(doc => {
-            const info = doc.data();
-            const infoItem = `
-                <div class="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
-                    <h5 class="font-medium text-md text-green-600">${info.title}</h5>
-                    <p class="text-gray-600 text-sm">${info.content}</p>
-                </div>`;
-            infoContainer.innerHTML += infoItem;
+            infoList.push({ id: doc.id, ...doc.data() });
         });
+
+        // Ordena por data de criação
+        infoList.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+
+        // ATUALIZA A LISTA NO PAINEL DE ADMIN
+        displayAdminInfoList(infoList);
+
+        // Renderiza as informações na tela inicial
+        if (infoContainer) {
+            infoContainer.innerHTML = '';
+            if (infoList.length === 0) {
+                infoContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação geral disponível.</p>';
+            } else {
+                infoList.forEach(info => {
+                    const infoItem = `
+                        <div class="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
+                            <h5 class="font-medium text-md text-green-600">${info.title}</h5>
+                            <p class="text-gray-600 text-sm">${info.content}</p>
+                        </div>`;
+                    infoContainer.innerHTML += infoItem;
+                });
+            }
+        }
     }, error => {
         console.error("Erro ao carregar informações gerais:", error);
-        infoContainer.innerHTML = '<p class="text-red-500">Erro ao carregar informações.</p>';
+        if(infoContainer) infoContainer.innerHTML = '<p class="text-red-500">Erro ao carregar informações.</p>';
     });
 }
 
@@ -909,10 +1035,10 @@ function populateNewsFormForEdit(newsId) {
             document.getElementById('newsIdToUpdate').value = newsId;
             document.getElementById('newsTitle').value = news.title;
             document.getElementById('newsContent').value = news.content;
-            
+
             const submitButton = document.getElementById('news-submit-button');
             const cancelButton = document.getElementById('news-cancel-edit-button');
-            
+
             submitButton.textContent = 'Atualizar Notícia';
             cancelButton.classList.remove('hidden');
 
@@ -1027,6 +1153,34 @@ async function handleDeleteExpositor(expositorId) {
     }
 }
 
+// --- Funções de Configuração de Abas do Admin ---
+function setupAdminTabs() {
+    const tabsContainer = document.querySelector('[aria-label="Tabs"]');
+    if (!tabsContainer) return;
+
+    const tabButtons = tabsContainer.querySelectorAll('.admin-tab');
+    const tabPanels = document.querySelectorAll('.admin-tab-panel');
+
+    tabsContainer.addEventListener('click', (e) => {
+        const clickedTab = e.target.closest('.admin-tab');
+        if (!clickedTab) return;
+
+        // Remove a classe 'active' de todas as abas e painéis
+        tabButtons.forEach(button => button.classList.remove('active'));
+        tabPanels.forEach(panel => panel.classList.remove('active'));
+
+        // Adiciona a classe 'active' na aba clicada
+        clickedTab.classList.add('active');
+
+        // Mostra o painel de conteúdo correspondente
+        const targetPanelId = clickedTab.dataset.tabTarget;
+        const activePanel = document.getElementById(targetPanelId);
+        if (activePanel) {
+            activePanel.classList.add('active');
+        }
+    });
+}
+
 
 // --- Funções de Autenticação ---
 // (handleRegister, handleLogin, handleVisitorLogin, handleLogout - adaptadas)
@@ -1049,8 +1203,11 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Erro CRUCIAL ao inicializar Firebase:", error);
         if(firebaseErrorDetails) firebaseErrorDetails.textContent = error.message;
         if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
-        return; 
+        return;
     }
+
+    //chamar a função de abas do admin
+    setupAdminTabs();
 
     // Listener para a lista de notícias do admin (Editar/Excluir)
     const adminNewsList = document.getElementById('admin-news-list');
@@ -1084,8 +1241,20 @@ document.addEventListener('DOMContentLoaded', () => {
         "dateFormat": "d/m/Y", // Define o formato da data como DD/MM/AAAA
         "allowInput": true // Permite que o usuário também digite a data
     });
+
+    const eventTimeInput = document.getElementById('eventTime');
+    if (eventTimeInput) {
+        flatpickr(eventTimeInput, {
+            enableTime: true,      // Habilita a seleção de hora
+            noCalendar: true,      // Desabilita o calendário, mostrando APENAS o seletor de hora
+            dateFormat: "H:i",     // Define o formato para 24 horas (ex: 14:30)
+            time_24hr: true,       // Força o uso do formato 24h
+            minuteIncrement: 15,   // Opcional: faz os minutos pularem de 15 em 15, facilitando a seleção
+            allowInput: true       // Permite que o usuário também digite a hora
+        });
+    }
 }
-    
+
     initMap('fairMapCanvas');
     initMap('adminMapCanvas');
 
@@ -1112,11 +1281,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         if(userProfileSnap.exists()) userRole = userProfileSnap.data().role || 'visitor';
                     } catch (e) { console.error("Erro perfil:", e); }
                 }
-                
+
                 const isAdmin = userRole === 'admin';
                 if(adminDashboardLink) adminDashboardLink.classList.toggle('hidden', !isAdmin);
                 if(organizadoresLink) organizadoresLink.classList.toggle('hidden', !isAdmin);
-                
+
                 const adminRoleText = `Logado como: Administrador (${user.email || 'N/A'})`;
                 if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = isAdmin ? adminRoleText : '';
                 if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = isAdmin ? adminRoleText : '';
@@ -1150,7 +1319,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(organizadoresLink) organizadoresLink.classList.add('hidden');
                 if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = '';
                 if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = '';
-                
+
                 const hash = window.location.hash;
                 if (hash.startsWith('#stand-details?id=')) {
                     window.showSection('stand-details', null); loadStandDetails(hash.split('id=')[1]);
@@ -1167,14 +1336,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const newsForm = document.getElementById('news-form');
     if (newsForm) newsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const newsIdToUpdate = document.getElementById('newsIdToUpdate').value;
         const formattedDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-        await submitNewsForm({ 
-            title: document.getElementById('newsTitle').value, 
-            content: document.getElementById('newsContent').value, 
-            date: formattedDate 
+        await submitNewsForm({
+            title: document.getElementById('newsTitle').value,
+            content: document.getElementById('newsContent').value,
+            date: formattedDate
         }, newsIdToUpdate || null);
     });
 
@@ -1223,12 +1392,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoForm = document.getElementById('info-form');
     if (infoForm) infoForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        await addNewInfo({ title: document.getElementById('infoTitle').value, content: document.getElementById('infoContent').value });
+        const infoIdToUpdate = document.getElementById('infoIdToUpdate').value;
+        await submitInfoForm({
+            title: document.getElementById('infoTitle').value,
+            content: document.getElementById('infoContent').value
+        }, infoIdToUpdate || null);
     });
-    
+
     // Outros Listeners (login, logout, forms de estande, etc.)
-    // ... (código de listeners de handleRegister, handleLogin, etc. do seu script original) ...
-    // Adaptei alguns para melhor clareza e consistência.
+    // ... (código de listeners de handleRegister, handleLogin, etc. do seu script original)
 
     if(mobileMenuButton && sidebar) {
         mobileMenuButton.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
@@ -1262,13 +1434,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(standX) || isNaN(standY)) {
             messageEl.textContent = 'Clique no mapa para coords.'; messageEl.className = 'text-red-500 text-sm mt-2'; return;
         }
-        await addNewLocation({ 
-            id: document.getElementById('standId').value, 
-            occupant: document.getElementById('standOccupant').value, 
-            x: standX, y: standY 
+        await addNewLocation({
+            id: document.getElementById('standId').value,
+            occupant: document.getElementById('standOccupant').value,
+            x: standX, y: standY
         });
     });
-    
+
     window.addEventListener('hashchange', () => {
         const hash = window.location.hash;
         console.log("Hash alterado para:", hash);
@@ -1410,7 +1582,7 @@ function loadPublicEvents() {
                 globalEventsCache.forEach(event => { // Usa o cache global
                     const eventCard = `
                         <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
+                            <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
                             <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
                             <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
@@ -1468,13 +1640,13 @@ async function loadPublicLocations() {
     if (!window.db) return;
     const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
     onSnapshot(locationsCollectionRef, (snapshot) => {
-        stands = []; 
+        stands = [];
         snapshot.forEach((doc) => stands.push({ docId: doc.id, ...doc.data() }));
         console.log("Localizações carregadas:", stands);
 
         if (fairMapCanvas && fairMapCtx) drawMap('fairMapCanvas', fairMapCtx, fairMapCanvas.clientWidth, fairMapCanvas.clientHeight);
         if (adminMapCanvas && adminMapCtx) drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
-        displayCollectedData(); 
+        displayCollectedData();
 
         if (stands.length === 0 && firebaseConfig.projectId === "agropec-2025-app") {
              // seedInitialMapData(); // Descomente para popular dados iniciais se necessário
@@ -1526,7 +1698,7 @@ async function addNewLocation(locationData) { // Para o form de admin-dashboard 
             const expoSnapshot = await getDocs(qExpo);
             if (!expoSnapshot.empty) description = expoSnapshot.docs[0].data().description || '';
         }
-        
+
         await addDoc(locationsCollectionRef, { ...locationData, description });
         messageEl.textContent = 'Localização salva!'; messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('location-form').reset();
@@ -1539,22 +1711,21 @@ async function addNewLocation(locationData) { // Para o form de admin-dashboard 
     }
 }
 
-// Funções de QR Code, Gráficos (Chart.js), Detalhes da Estande (sem grandes alterações, mas revisadas para consistência)
 // (generateAndShowQrCode, updateAgendaChart, updateExpositoresChart, loadStandDetails - adaptadas do seu script original)
 function generateAndShowQrCode(stand) {
     const qrCodeModal = document.getElementById('qrCodeModal');
     const qrcodeDiv = document.getElementById('qrcode');
     if (!qrCodeModal || !qrcodeDiv) return;
 
-    qrcodeDiv.innerHTML = ''; 
+    qrcodeDiv.innerHTML = '';
     const standDetailsUrl = `${window.location.origin}${window.location.pathname}#stand-details?id=${stand.id}`;
     console.log("Gerando QR para URL:", standDetailsUrl);
 
     try {
-        new window.QRCode(qrcodeDiv, { 
+        new window.QRCode(qrcodeDiv, {
             text: standDetailsUrl, width: 200, height: 200,
             colorDark : "#000000", colorLight : "#ffffff",
-            correctLevel : window.QRCode.CorrectLevel.H 
+            correctLevel : window.QRCode.CorrectLevel.H
         });
         qrCodeModal.style.display = 'flex';
     } catch (e) {
@@ -1582,19 +1753,32 @@ function updateAgendaChart(events) {
     if (!agendaCtxEl) return;
     const agendaCtx = agendaCtxEl.getContext('2d');
 
+    //tipos no SINGULAR para corresponder aos dados do banco.
+    const eventTypes = ['Palestra', 'Workshop', 'Demonstração', 'Outro'];
+
+    // Objeto para mapear o tipo singular para o plural (para a legenda do gráfico)
+    const typeLabels = {
+        'Palestra': 'Palestras',
+        'Workshop': 'Workshops',
+        'Demonstração': 'Demonstrações',
+        'Outro': 'Outros'
+    };
+
     const days = {};
-    const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
     events.forEach(event => {
         const date = event.date || 'Data Desconhecida';
-        const type = eventTypes.includes(event.type) ? event.type : 'Outros';
         if (!days[date]) {
-            days[date] = {}; eventTypes.forEach(t => days[date][t] = 0);
+            days[date] = {};
+            eventTypes.forEach(t => days[date][t] = 0);
         }
-        days[date][type]++;
+        // Garante que o tipo seja um dos conhecidos, senão vira 'Outro'.
+        const eventType = eventTypes.includes(event.type) ? event.type : 'Outro';
+        days[date][eventType]++;
     });
-    
+
     const sortedDates = Object.keys(days).sort((a, b) => {
-        if (a === 'Data Desconhecida') return 1; if (b === 'Data Desconhecida') return -1;
+        if (a === 'Data Desconhecida') return 1;
+        if (b === 'Data Desconhecida') return -1;
         const [dayA, monthA, yearA] = a.split('/').map(Number);
         const [dayB, monthB, yearB] = b.split('/').map(Number);
         return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
@@ -1602,19 +1786,39 @@ function updateAgendaChart(events) {
 
     const datasets = eventTypes.map(type => {
         let bgColor, brdColor;
+        // Mantém as cores que você já tinha, mas usando a chave singular 'type'
         switch(type) {
-            case 'Palestras': bgColor = 'rgba(76, 175, 80, 0.7)'; brdColor = 'rgba(76, 175, 80, 1)'; break;
-            case 'Workshops': bgColor = 'rgba(255, 193, 7, 0.7)'; brdColor = 'rgba(255, 193, 7, 1)'; break;
-            case 'Demonstrações': bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)'; break; // Azul para demonstrações
-            default: bgColor = 'rgba(158, 158, 158, 0.7)'; brdColor = 'rgba(158, 158, 158, 1)';
+            case 'Palestra':      bgColor = 'rgba(76, 175, 80, 0.7)';  brdColor = 'rgba(76, 175, 80, 1)';   break;
+            case 'Workshop':      bgColor = 'rgba(255, 193, 7, 0.7)';  brdColor = 'rgba(255, 193, 7, 1)';   break;
+            case 'Demonstração':  bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)';  break;
+            default:              bgColor = 'rgba(158, 158, 158, 0.7)';brdColor = 'rgba(158, 158, 158, 1)';
         }
-        return { label: type, data: sortedDates.map(date => days[date][type] || 0), backgroundColor: bgColor, borderColor: brdColor, borderWidth: 1 };
+        return {
+            label: typeLabels[type], // CORREÇÃO: Usa o nome no plural para a legenda ficar mais bonita
+            data: sortedDates.map(date => days[date][type] || 0),
+            backgroundColor: bgColor,
+            borderColor: brdColor,
+            borderWidth: 1
+        };
     });
 
     if (agendaChartInstance) agendaChartInstance.destroy();
     agendaChartInstance = new Chart(agendaCtx, {
-        type: 'bar', data: { labels: sortedDates, datasets: datasets },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        type: 'bar',
+        data: { labels: sortedDates, datasets: datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true }, // Empilha as barras para melhor visualização
+                y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index'
+                }
+            }
+        }
     });
 }
 
@@ -1665,7 +1869,7 @@ if (applyEventFiltersButton) {
     applyEventFiltersButton.addEventListener('click', () => {
         const dateFilter = document.getElementById('filterEventDate').value;
         const typeFilter = document.getElementById('filterEventType').value;
-        
+
         let filteredEvents = globalEventsCache;
 
         if (dateFilter) {
@@ -1689,7 +1893,7 @@ if (applyEventFiltersButton) {
                 filteredEvents.forEach(event => {
                     const eventCard = `
                         <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
+                            <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
                             <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
                             <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
@@ -1707,7 +1911,7 @@ if (applyEventFiltersButton) {
             const termo = this.value.trim().toLowerCase();
             const container = document.getElementById('expositores-container');
             if (!container) return;
-    
+
             // Usa o cache global já carregado
             let filtrados = globalExpositorsCache;
             if (termo) {
@@ -1717,7 +1921,7 @@ if (applyEventFiltersButton) {
                     (expo.description && expo.description.toLowerCase().includes(termo))
                 );
             }
-    
+
             container.innerHTML = '';
             if (filtrados.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 col-span-full">Nenhum expositor encontrado.</p>';

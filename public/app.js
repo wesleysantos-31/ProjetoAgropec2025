@@ -1,26 +1,38 @@
 // Importa as funções necessárias do SDK do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js"; // Descomente se for usar
 import { getAuth, signInAnonymously, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-// Sua configuração do Firebase
+// ============= CONFIGURAÇÃO NECESSÁRIA DO FIREBASE =============
+// Objeto de configuração contendo as credenciais para inicializar a conexão com o Firebase.
 const firebaseConfig = {
-    apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4", // ATENÇÃO: Considere proteger sua chave de API
-    authDomain: "agropec-2025-app.firebaseapp.com",
-    projectId: "agropec-2025-app",
-    storageBucket: "agropec-2025-app.firebaseapp.com",
-    messagingSenderId: "203743696437",
-    appId: "1:203743696437:web:0332c09896cc34eb14437c",
-    measurementId: "G-40JHQ2RPEQ"
+    // Chave de API que autoriza as requisições para os serviços do Google Cloud e Firebase.
+    apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4", // Esta chave precisa ser alterada para a chave real do projeto que é de suma importância para a conexão com o Firebase.
+
+    // O domínio oficial do projeto no Firebase, usado para os fluxos de autenticação (Firebase Auth).
+    authDomain: "agropec-2025-app.firebaseapp.com", // Este domínio deve ser o mesmo que o do projeto no Firebase Console. Por tanto, esse domímio precisa ser alterado para o domínio real do projeto.
+
+    // Identificador único e imutável do projeto no console do Google Cloud e Firebase.
+    projectId: "agropec-2025-app", // Este ID é gerado precisa ser o mesmo que o do projeto no Firebase Console. Portanto, esse ID precisa ser alterado para o ID real do projeto.
+
+    // URL do bucket padrão no Cloud Storage, utilizado para armazenar arquivos como imagens e vídeos.
+    storageBucket: "agropec-2025-app.firebaseapp.com", // Este bucket é usado para armazenar arquivos e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse bucket precisa ser alterado para o bucket real do projeto.
+
+    // ID do remetente para o Firebase Cloud Messaging (FCM), serviço de envio de notificações push.
+    messagingSenderId: "203743696437", // Este ID é usado para identificar o remetente de mensagens e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse ID precisa ser alterado para o ID real do projeto.
+
+    // Identificador único para esta aplicação web específica dentro do projeto Firebase.
+    appId: "1:203743696437:web:0332c09896cc34eb14437c", // Este appId é usado para identificar a aplicação no Firebase e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse appId precisa ser alterado para o appId real do projeto.
+
+    // ID de medição para o Google Analytics, usado para coletar dados de uso e eventos da aplicação.
+    measurementId: "G-40JHQ2RPEQ" // Este measurementId é usado para identificar a aplicação no Google Analytics e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse measurementId precisa ser alterado para o measurementId real do projeto.
 };
+// ========== FIM DA CONFIGURAÇÃO NECESSÁRIA DO FIREBASE ==========
 
 let currentUserId = null;
 let registrationContext = 'visitor'; // 'visitor' ou 'admin'
 let globalEventsCache = []; // Cache para eventos, usado para edição
 let globalExpositorsCache = []; // Cache para expositores, usado para edição
-
-// app.js (Substitua as variáveis de mapa existentes)
 
 // --- Novas Variáveis para Mapa Interativo com Zoom/Pan ---
 let mapImage = null;
@@ -94,52 +106,53 @@ document.getElementById('closeSidebarBtn').onclick = function() {
 };
 
 // Função para exibir/ocultar seções
+// app.js (SUBSTITUA sua função window.showSection por esta)
+
+// app.js (SUBSTITUA SUA FUNÇÃO ATUAL PELA VERSÃO CORRIGIDA ABAIXO)
+
 window.showSection = function(sectionId, clickedLink) {
-    console.log(`Exibindo seção: ${sectionId}`);
-    const sections = document.querySelectorAll('.main-content section');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const currentSectionTitle = document.getElementById('currentSectionTitle');
+    // Seleciona os elementos de layout principais
+    const header = document.querySelector('header');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContentArea = document.querySelector('.main-content');
 
-    sections.forEach(section => section.classList.remove('active'));
+    const isAuthScreen = sectionId === 'welcome-role-selection' || sectionId === 'login';
+
+    // Controla a visibilidade do header, sidebar e do espaçamento do topo
+    if (header && sidebar && mainContentArea) {
+        header.classList.toggle('hidden', isAuthScreen);
+        sidebar.classList.toggle('hidden', isAuthScreen);
+    }
+
+    // --- ESTA É A PARTE MAIS IMPORTANTE PARA CORRIGIR A SOBREPOSIÇÃO ---
+    // Este seletor encontra TODAS as seções, não importa a estrutura do HTML
+    const sections = document.querySelectorAll('main > div > section, main > section');
+    
+    // Primeiro, ele esconde TODAS as seções
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Depois, ele mostra APENAS a seção correta
     const activeSection = document.getElementById(sectionId);
-    if (activeSection) activeSection.classList.add('active');
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
 
-    const titleMap = {
-        'inicio': 'Painel Principal',
-        'admin-dashboard': 'Gerenciar Estandes',
-        'organizadores': 'Gerenciar Conteúdo do Evento',
-        'stand-details': 'Detalhes da Estande',
-        'welcome-role-selection': 'Bem-vindo!',
-        'login': 'Acesso ao Evento',
-        'agenda': 'Agenda do Evento',
-        'expositores': 'Lista de Expositores',
-        'mapa': 'Mapa da Feira'
-    };
-    if(currentSectionTitle) currentSectionTitle.textContent = titleMap[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-
+    // O resto da lógica para os links do menu continua igual
+    const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
-        link.classList.remove('active', 'bg-green-700', 'text-white'); // Classes mais escuras para ativo na sidebar
-        if (sidebar.contains(link)) {
-            link.classList.add('text-gray-300'); // Cor padrão para links da sidebar
-            link.classList.remove('bg-green-500'); // Tailwind classe que pode ter sido adicionada antes
-        }
+        link.classList.remove('active', 'bg-green-700');
     });
 
     if (clickedLink) {
-        clickedLink.classList.add('active');
-        if (sidebar.contains(clickedLink)) {
-            clickedLink.classList.add('bg-green-700'); // Verde mais escuro para ativo na sidebar
-            clickedLink.classList.add('text-white');
-        } else {
-            // Para links fora da sidebar, se houver (não é o caso atual)
-            // clickedLink.classList.add('bg-green-500', 'text-white');
-        }
+        clickedLink.classList.add('active', 'bg-green-700');
     }
-    
+
     if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
     }
-}
+};
 
 // Função para passar as imagens do carrossel
 let carouselIndex = 0;
@@ -662,7 +675,7 @@ function handleTouchEnd(event) {
 }
 // --- FIM DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
 
-// Listeners para fechar o modal (adicione dentro do DOMContentLoaded ou globalmente)
+// Listeners para fechar o modal
 const infoModal = document.getElementById('info-modal');
 if(infoModal) {
     const modalCloseBtn = document.getElementById('modal-close-btn');
@@ -761,17 +774,31 @@ async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null
 }
 
 
-async function addNewInfo(infoData) {
-    if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
+async function submitInfoForm(infoData, infoIdToUpdate = null) {
+    if (!currentUserId || !window.db) return;
     const messageEl = document.getElementById('info-message');
     try {
-        const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
-        await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
-        messageEl.textContent = 'Informação publicada!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        if (infoIdToUpdate) {
+            // ATUALIZAR informação existente
+            const infoDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`, infoIdToUpdate);
+            await updateDoc(infoDocRef, { ...infoData, updatedAt: serverTimestamp() });
+            messageEl.textContent = 'Informação atualizada com sucesso!';
+        } else {
+            // ADICIONAR nova informação
+            const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
+            await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
+            messageEl.textContent = 'Informação publicada!';
+        }
+        
+        messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('info-form').reset();
+        document.getElementById('infoIdToUpdate').value = '';
+        document.getElementById('info-submit-button').textContent = 'Publicar Informação';
+        document.getElementById('info-cancel-edit-button').classList.add('hidden');
+
     } catch (error) {
-        console.error("Erro ao publicar informação:", error);
-        messageEl.textContent = 'Erro ao publicar.'; messageEl.className = 'text-red-500 text-sm mt-2';
+        console.error("Erro ao salvar informação:", error);
+        messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
     }
 }
 
@@ -825,30 +852,101 @@ function loadPublicNews() {
     });
 }
 
+// app.js (Adicione estas 3 novas funções)
+
+function displayAdminInfoList(infoList) {
+    const listContainer = document.getElementById('admin-info-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
+
+    if (infoList.length === 0) {
+        listContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação publicada.</p>';
+        return;
+    }
+
+    infoList.forEach(info => {
+        const item = document.createElement('div');
+        item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
+        item.innerHTML = `
+            <div class="flex-1 min-w-0 pr-4">
+                <h4 class="font-semibold text-md text-green-700">${info.title}</h4>
+            </div>
+            <div class="flex-shrink-0">
+                <button class="text-blue-500 hover:text-blue-700 text-sm mr-2 edit-info-btn" data-info-id="${info.id}">Editar</button>
+                <button class="text-red-500 hover:text-red-700 text-sm delete-info-btn" data-info-id="${info.id}">Excluir</button>
+            </div>`;
+        listContainer.appendChild(item);
+    });
+}
+
+async function handleDeleteInfo(infoId) {
+    if (!window.db || !infoId) return;
+    if (confirm('Tem certeza que deseja excluir esta informação? Esta ação não pode ser desfeita.')) {
+        try {
+            const infoDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`, infoId);
+            await deleteDoc(infoDocRef);
+        } catch (error) {
+            console.error('Erro ao excluir informação:', error);
+            alert('Ocorreu um erro ao excluir a informação.');
+        }
+    }
+}
+
+function populateInfoFormForEdit(infoId) {
+    const infoDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`, infoId);
+    getDoc(infoDocRef).then(docSnap => {
+        if (docSnap.exists()) {
+            const info = docSnap.data();
+            document.getElementById('infoIdToUpdate').value = infoId;
+            document.getElementById('infoTitle').value = info.title;
+            document.getElementById('infoContent').value = info.content;
+            
+            document.getElementById('info-submit-button').textContent = 'Atualizar Informação';
+            document.getElementById('info-cancel-edit-button').classList.remove('hidden');
+
+            document.getElementById('info-form').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('Erro: informação não encontrada.');
+        }
+    });
+}
+
 function loadPublicGeneralInfo() {
     if (!window.db) return;
     const infoContainer = document.getElementById('public-info-container');
-    if (!infoContainer) return;
     const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
     
     onSnapshot(infoCollectionRef, (snapshot) => {
-        infoContainer.innerHTML = '';
-        if (snapshot.empty) {
-            infoContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação geral disponível.</p>';
-            return;
-        }
+        let infoList = [];
         snapshot.forEach(doc => {
-            const info = doc.data();
-            const infoItem = `
-                <div class="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
-                    <h5 class="font-medium text-md text-green-600">${info.title}</h5>
-                    <p class="text-gray-600 text-sm">${info.content}</p>
-                </div>`;
-            infoContainer.innerHTML += infoItem;
+            infoList.push({ id: doc.id, ...doc.data() });
         });
+
+        // Ordena por data de criação
+        infoList.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+        
+        // ATUALIZA A LISTA NO PAINEL DE ADMIN
+        displayAdminInfoList(infoList);
+
+        // Renderiza as informações na tela inicial
+        if (infoContainer) {
+            infoContainer.innerHTML = '';
+            if (infoList.length === 0) {
+                infoContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação geral disponível.</p>';
+            } else {
+                infoList.forEach(info => {
+                    const infoItem = `
+                        <div class="mb-3 pb-3 border-b border-gray-200 last:border-b-0">
+                            <h5 class="font-medium text-md text-green-600">${info.title}</h5>
+                            <p class="text-gray-600 text-sm">${info.content}</p>
+                        </div>`;
+                    infoContainer.innerHTML += infoItem;
+                });
+            }
+        }
     }, error => {
         console.error("Erro ao carregar informações gerais:", error);
-        infoContainer.innerHTML = '<p class="text-red-500">Erro ao carregar informações.</p>';
+        if(infoContainer) infoContainer.innerHTML = '<p class="text-red-500">Erro ao carregar informações.</p>';
     });
 }
 
@@ -1027,6 +1125,34 @@ async function handleDeleteExpositor(expositorId) {
     }
 }
 
+// --- Funções de Configuração de Abas do Admin ---
+function setupAdminTabs() {
+    const tabsContainer = document.querySelector('[aria-label="Tabs"]');
+    if (!tabsContainer) return;
+
+    const tabButtons = tabsContainer.querySelectorAll('.admin-tab');
+    const tabPanels = document.querySelectorAll('.admin-tab-panel');
+
+    tabsContainer.addEventListener('click', (e) => {
+        const clickedTab = e.target.closest('.admin-tab');
+        if (!clickedTab) return;
+
+        // Remove a classe 'active' de todas as abas e painéis
+        tabButtons.forEach(button => button.classList.remove('active'));
+        tabPanels.forEach(panel => panel.classList.remove('active'));
+
+        // Adiciona a classe 'active' na aba clicada
+        clickedTab.classList.add('active');
+
+        // Mostra o painel de conteúdo correspondente
+        const targetPanelId = clickedTab.dataset.tabTarget;
+        const activePanel = document.getElementById(targetPanelId);
+        if (activePanel) {
+            activePanel.classList.add('active');
+        }
+    });
+}
+
 
 // --- Funções de Autenticação ---
 // (handleRegister, handleLogin, handleVisitorLogin, handleLogout - adaptadas)
@@ -1053,6 +1179,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
         return; 
     }
+
+    //chamar a função de abas do admin
+    setupAdminTabs();
 
     // Listener para a lista de notícias do admin (Editar/Excluir)
     const adminNewsList = document.getElementById('admin-news-list');
@@ -1086,6 +1215,18 @@ document.addEventListener('DOMContentLoaded', () => {
         "dateFormat": "d/m/Y", // Define o formato da data como DD/MM/AAAA
         "allowInput": true // Permite que o usuário também digite a data
     });
+
+    const eventTimeInput = document.getElementById('eventTime');
+    if (eventTimeInput) {
+        flatpickr(eventTimeInput, {
+            enableTime: true,      // Habilita a seleção de hora
+            noCalendar: true,      // Desabilita o calendário, mostrando APENAS o seletor de hora
+            dateFormat: "H:i",     // Define o formato para 24 horas (ex: 14:30)
+            time_24hr: true,       // Força o uso do formato 24h
+            minuteIncrement: 15,   // Opcional: faz os minutos pularem de 15 em 15, facilitando a seleção
+            allowInput: true       // Permite que o usuário também digite a hora
+        });
+    }
 }
     
     initMap('fairMapCanvas');
@@ -1214,6 +1355,28 @@ document.addEventListener('DOMContentLoaded', () => {
      // funçao de carregar estandes
      loadStands();
 
+     // Listener para a lista de Informações Gerais do admin
+    const adminInfoList = document.getElementById('admin-info-list');
+    if (adminInfoList) {
+        adminInfoList.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target.classList.contains('edit-info-btn')) {
+                populateInfoFormForEdit(target.dataset.infoId);
+            }
+            if (target.classList.contains('delete-info-btn')) {
+                handleDeleteInfo(target.dataset.infoId);
+            }
+        });
+    }
+
+    // Listener para o botão "Cancelar Edição" do formulário de informações
+    const infoCancelEditBtn = document.getElementById('info-cancel-edit-button');
+    if (infoCancelEditBtn) infoCancelEditBtn.addEventListener('click', () => {
+        document.getElementById('info-form').reset();
+        document.getElementById('infoIdToUpdate').value = '';
+        document.getElementById('info-submit-button').textContent = 'Publicar Informação';
+        infoCancelEditBtn.classList.add('hidden');
+    });
 
     const expositorCancelEditBtn = document.getElementById('expositor-info-cancel-edit-button');
     if(expositorCancelEditBtn) expositorCancelEditBtn.addEventListener('click', () => {
@@ -1227,12 +1390,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoForm = document.getElementById('info-form');
     if (infoForm) infoForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        await addNewInfo({ title: document.getElementById('infoTitle').value, content: document.getElementById('infoContent').value });
+        const infoIdToUpdate = document.getElementById('infoIdToUpdate').value;
+        await submitInfoForm({ 
+            title: document.getElementById('infoTitle').value, 
+            content: document.getElementById('infoContent').value 
+        }, infoIdToUpdate || null);
     });
     
     // Outros Listeners (login, logout, forms de estande, etc.)
-    // ... (código de listeners de handleRegister, handleLogin, etc. do seu script original) ...
-    // Adaptei alguns para melhor clareza e consistência.
+    // ... (código de listeners de handleRegister, handleLogin, etc. do seu script original)
 
     if(mobileMenuButton && sidebar) {
         mobileMenuButton.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
@@ -1603,7 +1769,6 @@ async function addNewLocation(locationData) { // Para o form de admin-dashboard 
     }
 }
 
-// Funções de QR Code, Gráficos (Chart.js), Detalhes da Estande (sem grandes alterações, mas revisadas para consistência)
 // (generateAndShowQrCode, updateAgendaChart, updateExpositoresChart, loadStandDetails - adaptadas do seu script original)
 function generateAndShowQrCode(stand) {
     const qrCodeModal = document.getElementById('qrCodeModal');
@@ -1646,19 +1811,32 @@ function updateAgendaChart(events) {
     if (!agendaCtxEl) return;
     const agendaCtx = agendaCtxEl.getContext('2d');
 
+    //tipos no SINGULAR para corresponder aos dados do banco.
+    const eventTypes = ['Palestra', 'Workshop', 'Demonstração', 'Outro'];
+    
+    // Objeto para mapear o tipo singular para o plural (para a legenda do gráfico)
+    const typeLabels = {
+        'Palestra': 'Palestras',
+        'Workshop': 'Workshops',
+        'Demonstração': 'Demonstrações',
+        'Outro': 'Outros'
+    };
+
     const days = {};
-    const eventTypes = ['Palestras', 'Workshops', 'Demonstrações', 'Outros'];
     events.forEach(event => {
         const date = event.date || 'Data Desconhecida';
-        const type = eventTypes.includes(event.type) ? event.type : 'Outros';
         if (!days[date]) {
-            days[date] = {}; eventTypes.forEach(t => days[date][t] = 0);
+            days[date] = {};
+            eventTypes.forEach(t => days[date][t] = 0);
         }
-        days[date][type]++;
+        // Garante que o tipo seja um dos conhecidos, senão vira 'Outro'.
+        const eventType = eventTypes.includes(event.type) ? event.type : 'Outro';
+        days[date][eventType]++;
     });
     
     const sortedDates = Object.keys(days).sort((a, b) => {
-        if (a === 'Data Desconhecida') return 1; if (b === 'Data Desconhecida') return -1;
+        if (a === 'Data Desconhecida') return 1;
+        if (b === 'Data Desconhecida') return -1;
         const [dayA, monthA, yearA] = a.split('/').map(Number);
         const [dayB, monthB, yearB] = b.split('/').map(Number);
         return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
@@ -1666,19 +1844,39 @@ function updateAgendaChart(events) {
 
     const datasets = eventTypes.map(type => {
         let bgColor, brdColor;
+        // Mantém as cores que você já tinha, mas usando a chave singular 'type'
         switch(type) {
-            case 'Palestras': bgColor = 'rgba(76, 175, 80, 0.7)'; brdColor = 'rgba(76, 175, 80, 1)'; break;
-            case 'Workshops': bgColor = 'rgba(255, 193, 7, 0.7)'; brdColor = 'rgba(255, 193, 7, 1)'; break;
-            case 'Demonstrações': bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)'; break; // Azul para demonstrações
-            default: bgColor = 'rgba(158, 158, 158, 0.7)'; brdColor = 'rgba(158, 158, 158, 1)';
+            case 'Palestra':      bgColor = 'rgba(76, 175, 80, 0.7)';  brdColor = 'rgba(76, 175, 80, 1)';   break;
+            case 'Workshop':      bgColor = 'rgba(255, 193, 7, 0.7)';  brdColor = 'rgba(255, 193, 7, 1)';   break;
+            case 'Demonstração':  bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)';  break;
+            default:              bgColor = 'rgba(158, 158, 158, 0.7)';brdColor = 'rgba(158, 158, 158, 1)';
         }
-        return { label: type, data: sortedDates.map(date => days[date][type] || 0), backgroundColor: bgColor, borderColor: brdColor, borderWidth: 1 };
+        return {
+            label: typeLabels[type], // CORREÇÃO: Usa o nome no plural para a legenda ficar mais bonita
+            data: sortedDates.map(date => days[date][type] || 0),
+            backgroundColor: bgColor,
+            borderColor: brdColor,
+            borderWidth: 1
+        };
     });
 
     if (agendaChartInstance) agendaChartInstance.destroy();
     agendaChartInstance = new Chart(agendaCtx, {
-        type: 'bar', data: { labels: sortedDates, datasets: datasets },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        type: 'bar',
+        data: { labels: sortedDates, datasets: datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true }, // Empilha as barras para melhor visualização
+                y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index'
+                }
+            }
+        }
     });
 }
 
@@ -1852,3 +2050,6 @@ async function deleteStand(standId) {
     }
   }
 }
+
+// Atualiza o ano no rodapé
+document.getElementById('footer-year').textContent = new Date().getFullYear();

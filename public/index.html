@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGROPEC 2025 - Event App</title>
+    <title>AGROPEC 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
@@ -18,16 +18,16 @@
 </head>
 <body class="flex h-screen overflow-hidden">
 
-        <aside class="sidebar w-24 md:w-80 space-y-6 py-7 px-2 md:px-6 fixed md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out sidebar-initial-hidden z-30">
-            <!-- Botão X visível só no mobile -->
-            <button id="closeSidebarBtn" class="absolute top-4 left-6 md:hidden text-white-600 hover:text-red-600 text-2xl font-bold z-40" aria-label="Fechar menu">
-                &times;
-            </button>
-            <div class="px-0 py-0 flex items-center justify-center md:justify-start">
-                <img src="img/logo-agropec.png" alt="[Ícone do Logo AGROPEC]" class="h-100 w-100 inline">
-                <span class="agropec-logo-text hidden md:block ml-2">
-                </span>
-            </div>
+    <aside class="sidebar w-24 md:w-80 space-y-6 py-7 px-2 md:px-6 fixed md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out sidebar-initial-hidden z-30">
+        <!-- Botão X visível só no mobile -->
+        <button id="closeSidebarBtn" class="absolute top-4 left-6 md:hidden text-white-600 hover:text-red-600 text-2xl font-bold z-40" aria-label="Fechar menu">
+            &times;
+        </button>
+        <div class="px-0 py-0 flex items-center justify-center md:justify-start">
+            <img src="img/logo-agropec.png" alt="[Ícone do Logo AGROPEC]" class="h-100 w-100 inline">
+            <span class="agropec-logo-text hidden md:block ml-2">
+            </span>
+        </div>
 
             <nav class="mt-10">
                 <a href="#login" id="nav-login-link" onclick="window.showSection('login', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
@@ -70,7 +70,18 @@
             </nav>
         </aside>
 
+    <header class="bg-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-10 shadow-sm border-b border-gray-200 md:pl-80 pl-5">
+        <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 hover:text-green-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div class="flex items-center ml-auto space-x-4">
+            <div id="user-id-display" class="text-sm text-gray-500 hidden md:block"></div>
+            <button id="logout-button" class="btn-accent text-sm py-1 px-3 rounded-md hidden">Sair</button>
+        </div>
+    </header>
+    
     <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 main-content">
+    
         <section id="welcome-role-selection" class="p-6 active">
             <div class="max-w-md mx-auto card-inicio p-8 text-center">
                 <div class="flex justify-center mb-8">
@@ -112,21 +123,10 @@
         </section>
 
         <div class="flex-1 flex flex-col overflow-hidden">
-
-            <header class="bg-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-10 shadow-none border-b border-gray-200 md:pl-80 pl-5">
-                <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 hover:text-green-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div class="flex items-center ml-auto"></div>
-                    <div id="user-id-display" class="text-sm text-gray-500 hidden md:block mr-4"></div>
-                    <button id="logout-button" class="btn-accent text-sm py-1 px-3 rounded-md hidden">Sair</button>
-                </div>
-            </header>
-            <div class="h-20"></div>
-
             <section id="inicio" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
-                    <h2 class="text-3xl font-semibold text-gray-800">Painel Principal AGROPEC</h2>
+                    <h2 class="text-3xl font-semibold text-gray-800">Painel Principal</h2>
                     <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
                     <div class="relative w-full max-w-5xl mx-auto mt-6 overflow-hidden rounded-lg shadow-lg mb-8">
                         <div id="carousel-container">
@@ -210,6 +210,7 @@
             </section>
 
             <section id="agenda" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
@@ -225,10 +226,10 @@
                             <label for="filterEventType" class="block text-sm font-medium text-gray-700">Tipo:</label>
                             <select id="filterEventType" name="filterEventType" class="input-field">
                                 <option value="">Todos</option>
-                                <option value="Palestras">Palestras</option>
-                                <option value="Workshops">Workshops</option>
-                                <option value="Demonstrações">Demonstrações</option>
-                                <option value="Outros">Outros</option>
+                                <option value="Palestra">Palestras</option>
+                                <option value="Workshop">Workshops</option>
+                                <option value="Demonstração">Demonstrações</option>
+                                <option value="Outro">Outros</option>
                             </select>
                         </div>
                         <div class="flex items-end">
@@ -248,6 +249,7 @@
             </section>
 
             <section id="expositores" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Conheça as empresas e instituições que estão apresentando suas novidades e soluções para o agronegócio.</p>
@@ -268,6 +270,7 @@
             </section>
 
             <section id="mapa" class="p-2">
+                <div style="height: 72px;"></div>
                 <h2 class="text-3xl font-semibold text-gray-800">Mapa do AGROPEC 2025</h2>
                 <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
                 <div class="card p-6">
@@ -356,137 +359,175 @@
                 </div>
             </section>
 
-            <section id="organizadores" class="p-2">
+            <section id="organizadores" class="space p-2">
                 <div class="mb-6">
+                    <div style="height: 72px;"></div>
                     <h2 class="text-3xl font-semibold text-gray-800">Painel do Organizador - Conteúdo</h2>
-                    <p class="mt-2 text-gray-600">Gerencie notícias, palestras e informações gerais do evento.</p>
+                    <p class="mt-2 text-gray-600">Gerencie notícias, palestras, expositores e informações gerais do evento.</p>
                     <p id="admin-user-role-display-organizadores" class="text-sm text-gray-500 mt-2"></p>
                 </div>
 
-                <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Notícia</h3>
-                    <form id="news-form" class="space-y-4">
-                        <input type="hidden" id="newsIdToUpdate">
-                        
-                        <div>
-                            <label for="newsTitle" class="block text-sm font-medium text-gray-700">Título da Notícia</label>
-                            <input type="text" id="newsTitle" class="input-field" required>
-                        </div>
-                        <div>
-                            <label for="newsContent" class="block text-sm font-medium text-gray-700">Conteúdo da Notícia</label>
-                            <textarea id="newsContent" rows="4" class="input-field" required></textarea>
-                        </div>
-                        
-                        <div>
-                            <button type="submit" id="news-submit-button" class="btn-primary">Publicar Notícia</button>
-                            <button type="button" id="news-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
-                        </div>
-                        <div id="news-message" class="text-sm mt-2"></div>
-                    </form>
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-8" aria-label="Tabs" id="admin-tab-container">
+                        <button data-tab-target="admin-tab-news" class="admin-tab active">
+                            Notícias
+                        </button>
+                        <button data-tab-target="admin-tab-events" class="admin-tab">
+                            Eventos
+                        </button>
+                        <button data-tab-target="admin-tab-exhibitors" class="admin-tab">
+                            Expositores
+                        </button>
+                        <button data-tab-target="admin-tab-info" class="admin-tab">
+                            Info Gerais
+                        </button>
+                    </nav>
                 </div>
 
-                <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Notícias Publicadas</h3>
-                    <div id="admin-news-list" class="space-y-3 max-h-96 overflow-y-auto">
-                        <p class="text-gray-500">Nenhuma notícia publicada ou carregando...</p>
+                <div id="admin-tabs-content">
+
+                    <div id="admin-tab-news" class="admin-tab-panel active">
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Notícia</h3>
+                            <form id="news-form" class="space-y-4">
+                                <input type="hidden" id="newsIdToUpdate">
+                                <div>
+                                    <label for="newsTitle" class="block text-sm font-medium text-gray-700">Título da Notícia</label>
+                                    <input type="text" id="newsTitle" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="newsContent" class="block text-sm font-medium text-gray-700">Conteúdo da Notícia</label>
+                                    <textarea id="newsContent" rows="4" class="input-field" required></textarea>
+                                </div>
+                                <div>
+                                    <button type="submit" id="news-submit-button" class="btn-primary">Publicar Notícia</button>
+                                    <button type="button" id="news-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                                </div>
+                                <div id="news-message" class="text-sm mt-2"></div>
+                            </form>
+                        </div>
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Notícias Publicadas</h3>
+                            <div id="admin-news-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Carregando...</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Palestra ou Evento</h3>
-                    <form id="event-form" class="space-y-4">
-                        <input type="hidden" id="eventIdToUpdate"> <div>
-                            <label for="eventTitle" class="block text-sm font-medium text-gray-700">Título</label>
-                            <input type="text" id="eventTitle" class="input-field" required>
+                    <div id="admin-tab-events" class="admin-tab-panel">
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Palestra ou Evento</h3>
+                            <form id="event-form" class="space-y-4">
+                                <input type="hidden" id="eventIdToUpdate">
+                                <div>
+                                    <label for="eventTitle" class="block text-sm font-medium text-gray-700">Título</label>
+                                    <input type="text" id="eventTitle" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="eventType" class="block text-sm font-medium text-gray-700">Tipo</label>
+                                    <select id="eventType" class="input-field" required>
+                                        <option value="Palestra">Palestra</option>
+                                        <option value="Workshop">Workshop</option>
+                                        <option value="Demonstração">Demonstração</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="eventDate" class="block text-sm font-medium text-gray-700">Data (DD/MM/AAAA)</label>
+                                    <input type="text" id="eventDate" placeholder="DD/MM/AAAA" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="eventTime" class="block text-sm font-medium text-gray-700">Horário (HH:MM)</label>
+                                    <input type="text" id="eventTime" placeholder="Selecione ou digite o horário..." class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="eventLocation" class="block text-sm font-medium text-gray-700">Local</label>
+                                    <input type="text" id="eventLocation" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="eventDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+                                    <textarea id="eventDescription" rows="3" class="input-field" required></textarea>
+                                </div>
+                                <button type="submit" id="event-submit-button" class="btn-primary">Adicionar Evento</button>
+                                <button type="button" id="event-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                                <div id="event-message" class="text-sm mt-2"></div>
+                            </form>
                         </div>
-                        <div>
-                            <label for="eventType" class="block text-sm font-medium text-gray-700">Tipo</label>
-                             <select id="eventType" class="input-field" required>
-                                <option value="Palestra">Palestra</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Demonstração">Demonstração</option>
-                                <option value="Outro">Outro</option>
-                            </select>
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Eventos Cadastrados</h3>
+                            <div id="admin-events-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Carregando...</p>
+                            </div>
                         </div>
-                        <div>
-                            <label for="eventDate" class="block text-sm font-medium text-gray-700">Data (DD/MM/AAAA)</label>
-                            <input type="text" id="eventDate" placeholder="DD/MM/AAAA" class="input-field" required>
-                        </div>
-                        <div>
-                            <label for="eventTime" class="block text-sm font-medium text-gray-700">Horário (HH:MM)</label>
-                            <input type="text" id="eventTime" placeholder="HH:MM" class="input-field" required>
-                        </div>
-                        <div>
-                            <label for="eventLocation" class="block text-sm font-medium text-gray-700">Local</label>
-                            <input type="text" id="eventLocation" class="input-field" required>
-                        </div>
-                        <div>
-                            <label for="eventDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
-                            <textarea id="eventDescription" rows="3" class="input-field" required></textarea>
-                        </div>
-                        <button type="submit" id="event-submit-button" class="btn-primary">Adicionar Evento</button>
-                        <button type="button" id="event-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
-                        <div id="event-message" class="text-sm mt-2"></div>
-                    </form>
-                </div>
-                <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Eventos Cadastrados</h3>
-                    <div id="admin-events-list" class="space-y-3 max-h-96 overflow-y-auto">
-                        <p class="text-gray-500">Nenhum evento cadastrado ou carregando...</p>
                     </div>
-                </div>
 
-                <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Gerenciar Informações de Expositores</h3>
-                    <form id="expositor-info-form" class="space-y-4">
-                         <input type="hidden" id="expositorIdToUpdate"> <div>
-                            <label for="expositorName" class="block text-sm font-medium text-gray-700">Nome do Expositor</label>
-                            <input type="text" id="expositorName" class="input-field" placeholder="Ex: AgroTech Solutions" required>
+                    <div id="admin-tab-exhibitors" class="admin-tab-panel">
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Gerenciar Informações de Expositores</h3>
+                            <form id="expositor-info-form" class="space-y-4">
+                                <input type="hidden" id="expositorIdToUpdate">
+                                <div>
+                                    <label for="expositorName" class="block text-sm font-medium text-gray-700">Nome do Expositor</label>
+                                    <input type="text" id="expositorName" class="input-field" placeholder="Ex: AgroTech Solutions" required>
+                                </div>
+                                <div>
+                                    <label for="expositorCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
+                                    <input type="text" id="expositorCategory" class="input-field" placeholder="Ex: Pecuária, Agricultura">
+                                </div>
+                                <div>
+                                    <label for="expositorDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
+                                    <textarea id="expositorDescription" rows="3" class="input-field" placeholder="Breve descrição"></textarea>
+                                </div>
+                                <div>
+                                    <label for="expositorLogoUrl" class="block text-sm font-medium text-gray-700">URL do Logo (opcional)</label>
+                                    <input type="url" id="expositorLogoUrl" class="input-field" placeholder="https://exemplo.com/logo.png">
+                                </div>
+                                <button type="submit" id="expositor-info-submit-button" class="btn-primary">Adicionar Expositor</button>
+                                <button type="button" id="expositor-info-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                                <div id="expositor-info-message" class="text-sm mt-2"></div>
+                            </form>
                         </div>
-                        <div>
-                            <label for="expositorCategory" class="block text-sm font-medium text-gray-700">Categoria</label>
-                            <input type="text" id="expositorCategory" class="input-field" placeholder="Ex: Pecuária, Agricultura">
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Expositores Cadastrados</h3>
+                            <div id="admin-expositors-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Carregando...</p>
+                            </div>
                         </div>
-                        <div>
-                            <label for="expositorDescription" class="block text-sm font-medium text-gray-700">Descrição</label>
-                            <textarea id="expositorDescription" rows="3" class="input-field" placeholder="Breve descrição"></textarea>
-                        </div>
-                        <div>
-                            <label for="expositorLogoUrl" class="block text-sm font-medium text-gray-700">URL do Logo (opcional)</label>
-                            <input type="url" id="expositorLogoUrl" class="input-field" placeholder="https://exemplo.com/logo.png">
-                        </div>
-                        <button type="submit" id="expositor-info-submit-button" class="btn-primary">Adicionar Expositor</button>
-                         <button type="button" id="expositor-info-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
-                        <div id="expositor-info-message" class="text-sm mt-2"></div>
-                    </form>
-                </div>
-                 <div class="card p-6 mb-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Expositores Cadastrados (Informações)</h3>
-                    <div id="admin-expositors-list" class="space-y-3 max-h-96 overflow-y-auto">
-                        <p class="text-gray-500">Nenhum expositor cadastrado ou carregando...</p>
                     </div>
-                </div>
 
+                    <div id="admin-tab-info" class="admin-tab-panel">
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar/Editar Informação Geral</h3>
+                            <form id="info-form" class="space-y-4">
+                                <input type="hidden" id="infoIdToUpdate">
+                                <div>
+                                    <label for="infoTitle" class="block text-sm font-medium text-gray-700">Título da Informação</label>
+                                    <input type="text" id="infoTitle" class="input-field" required>
+                                </div>
+                                <div>
+                                    <label for="infoContent" class="block text-sm font-medium text-gray-700">Conteúdo da Informação</label>
+                                    <textarea id="infoContent" rows="4" class="input-field" required></textarea>
+                                </div>
+                                <div>
+                                    <button type="submit" id="info-submit-button" class="btn-primary">Publicar Informação</button>
+                                    <button type="button" id="info-cancel-edit-button" class="btn-accent hidden ml-2">Cancelar Edição</button>
+                                </div>
+                                <div id="info-message" class="text-sm mt-2"></div>
+                            </form>
+                        </div>
+                        <div class="card p-6 mb-6">
+                            <h3 class="text-xl font-semibold mb-4 text-green-700">Informações Gerais Publicadas</h3>
+                            <div id="admin-info-list" class="space-y-3 max-h-96 overflow-y-auto">
+                                <p class="text-gray-500">Carregando...</p>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="card p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-green-700">Cadastrar Informação Geral do Evento</h3>
-                    <form id="info-form" class="space-y-4">
-                        <div>
-                            <label for="infoTitle" class="block text-sm font-medium text-gray-700">Título da Informação</label>
-                            <input type="text" id="infoTitle" class="input-field" required>
-                        </div>
-                        <div>
-                            <label for="infoContent" class="block text-sm font-medium text-gray-700">Conteúdo da Informação</label>
-                            <textarea id="infoContent" rows="4" class="input-field" required></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary">Publicar Informação</button>
-                        <div id="info-message" class="text-sm mt-2"></div>
-                    </form>
                 </div>
             </section>
 
-
             <section id="stand-details" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Detalhes da Estande</h2>
                     <p class="mt-2 text-gray-600">Informações detalhadas sobre a estande.</p>
@@ -500,7 +541,7 @@
             </section>
 
             <footer>
-                <p>Site desenvolvido por estudantes da UFRA</p>
+                <p>© <span id="footer-year"></span> Agropec - Todos os direitos reservados. | Desenvolvido por <a href="https://github.com/wesleysantos-31" target="_blank" rel="noopener noreferrer">Wesley Santos</a>, <a href="https://github.com/Isabella-Pompeo" target="_blank" rel="noopener noreferrer">Isabella Pompeo</a> e <a href="">Anthonny Mesquita</a></p>
             </footer>
         </div>
     </main>
