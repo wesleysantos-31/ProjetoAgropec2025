@@ -1124,6 +1124,34 @@ async function handleDeleteExpositor(expositorId) {
     }
 }
 
+// --- Funções de Configuração de Abas do Admin ---
+function setupAdminTabs() {
+    const tabsContainer = document.querySelector('[aria-label="Tabs"]');
+    if (!tabsContainer) return;
+
+    const tabButtons = tabsContainer.querySelectorAll('.admin-tab');
+    const tabPanels = document.querySelectorAll('.admin-tab-panel');
+
+    tabsContainer.addEventListener('click', (e) => {
+        const clickedTab = e.target.closest('.admin-tab');
+        if (!clickedTab) return;
+
+        // Remove a classe 'active' de todas as abas e painéis
+        tabButtons.forEach(button => button.classList.remove('active'));
+        tabPanels.forEach(panel => panel.classList.remove('active'));
+
+        // Adiciona a classe 'active' na aba clicada
+        clickedTab.classList.add('active');
+
+        // Mostra o painel de conteúdo correspondente
+        const targetPanelId = clickedTab.dataset.tabTarget;
+        const activePanel = document.getElementById(targetPanelId);
+        if (activePanel) {
+            activePanel.classList.add('active');
+        }
+    });
+}
+
 
 // --- Funções de Autenticação ---
 // (handleRegister, handleLogin, handleVisitorLogin, handleLogout - adaptadas)
@@ -1150,6 +1178,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
         return; 
     }
+
+    //chamar a função de abas do admin
+    setupAdminTabs();
 
     // Listener para a lista de notícias do admin (Editar/Excluir)
     const adminNewsList = document.getElementById('admin-news-list');
@@ -1675,7 +1706,6 @@ async function addNewLocation(locationData) { // Para o form de admin-dashboard 
     }
 }
 
-// Funções de QR Code, Gráficos (Chart.js), Detalhes da Estande (sem grandes alterações, mas revisadas para consistência)
 // (generateAndShowQrCode, updateAgendaChart, updateExpositoresChart, loadStandDetails - adaptadas do seu script original)
 function generateAndShowQrCode(stand) {
     const qrCodeModal = document.getElementById('qrCodeModal');

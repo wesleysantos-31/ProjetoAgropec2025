@@ -441,3 +441,32 @@ footer {
     width: 100%;
     left: 0;
 }
+
+/* Estilos para as abas do painel de admin */
+.admin-tab {
+    padding: 0.5rem 1rem;
+    border-bottom: 3px solid transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4B5563; /* text-gray-600 */
+    transition: all 0.2s ease-in-out;
+}
+
+.admin-tab:hover {
+    color: #166534; /* text-green-800 */
+    border-bottom-color: #D1D5DB; /* border-gray-300 */
+}
+
+.admin-tab.active {
+    color: #15803d; /* text-green-700 */
+    border-bottom-color: #15803d; /* border-green-700 */
+}
+
+/* Painéis de conteúdo das abas */
+.admin-tab-panel {
+    display: none; /* Todos os painéis começam ocultos */
+}
+
+.admin-tab-panel.active {
+    display: block; /* Apenas o painel ativo é exibido */
+}
