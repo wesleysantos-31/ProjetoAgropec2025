@@ -271,7 +271,7 @@
                         </div>
                         <canvas id="fairMapCanvas"></canvas>
                     </div>
-                    <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes.</p>
+                    <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes. Tem a possibilidade de dar zoom no mapa.</p>
                 </div>
             </section>
 
@@ -294,12 +294,13 @@
                             <div id="adminMapScrollbarV" class="custom-scrollbar vertical">
                                 <div id="adminMapThumbV" class="scrollbar-thumb"></div>
                             </div>
+                            <canvas id="adminMapThumbV"></canvas>
                         </div>
                         <p class="text-center mt-4 text-gray-500">Use a roda do mouse para zoom. Clique e arraste para mover.</p>
                         <form id="location-form" class="space-y-4 mt-4">
                             <div>
                                 <label for="standId" class="block text-sm font-medium text-gray-700">ID da Estande</label>
-                                <input type="text" id="standId" class="input-field" placeholder="Ex: A-01, Setor B" required>
+                                <input type="text" id="standId" class="input-field" placeholder="Ex: Setor 03 - Estande 01" required>
                             </div>
                             <div>
                                 <label for="standOccupant" class="block text-sm font-medium text-gray-700">Ocupante da Estande (Nome do Expositor)</label>
@@ -506,7 +507,8 @@
             </section>
 
             <footer>
-                <p>© <span id="footer-year"></span> Agropec - Todos os direitos reservados. | Desenvolvido por <a href="https://github.com/wesleysantos-31" target="_blank" rel="noopener noreferrer">Wesley Santos</a>, <a href="https://github.com/Isabella-Pompeo" target="_blank" rel="noopener noreferrer">Isabella Pompeo</a> e <a href="">Anthonny Mesquita</a></p>
+                <p>© <span id="footer-year"></span> Agropec - Todos os direitos reservados.<br>
+                Desenvolvido por <a href="https://github.com/wesleysantos-31" target="_blank" rel="noopener noreferrer">Wesley Santos</a>, <a href="https://github.com/Isabella-Pompeo" target="_blank" rel="noopener noreferrer">Isabella Pompeo</a> e <a href="">Anthonny Mesquita</a></p>
             </footer>
         </div>
     </main>

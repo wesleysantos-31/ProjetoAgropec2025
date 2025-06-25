@@ -40,7 +40,7 @@ const mapImageURL = 'img/mapa-agropec-2025.svg'; // Caminho para a sua imagem SV
 
 // Elementos da UI do Mapa
 let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
-let stands = []; 
+let stands = [];
 let adminMapTemporaryMarker = null;
 
 // Estado de transformação do mapa (zoom e pan)
@@ -75,11 +75,39 @@ const mapaSection = document.getElementById('mapa');
 if (mapaSection) {
     const observer = new MutationObserver(() => {
         if (mapaSection.classList.contains('active')) {
-            setTimeout(resizeFairMapCanvas, 50);
+            setTimeout(() => {
+                // Redimensiona o canvas do mapa público quando a seção se torna ativa
+                handleMapResize('fairMapCanvas');
+            }, 100);
         }
     });
     observer.observe(mapaSection, { attributes: true, attributeFilter: ['class'] });
 }
+
+// detectar quando a seção do painel de administração se torna visível.
+const adminDashboardSection = document.getElementById('admin-dashboard');
+
+if (adminDashboardSection) {
+    // Cria um observador que reage a mudanças nos atributos da seção.
+    const adminMapObserver = new MutationObserver(() => {
+        // Verifica se a seção agora está ativa (visível).
+        if (adminDashboardSection.classList.contains('active')) {
+            // Se estiver ativa, chama a função 'handleMapResize' para o canvas do admin.
+            // Um pequeno atraso (100ms) garante que a animação de transição da tela
+            // termine e o canvas tenha o tamanho correto para ser desenhado.
+            setTimeout(() => {
+                handleMapResize('adminMapCanvas');
+            }, 100);
+        }
+    });
+
+    // Configura o observador para monitorar especificamente o atributo 'class'.
+    adminMapObserver.observe(adminDashboardSection, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+}
+
 // Também ajusta ao redimensionar a janela
 window.addEventListener('resize', resizeFairMapCanvas);
 // Ajuste dos pinos (bolinhas) verdes/vermelhas
@@ -127,12 +155,12 @@ window.showSection = function(sectionId, clickedLink) {
     // --- ESTA É A PARTE MAIS IMPORTANTE PARA CORRIGIR A SOBREPOSIÇÃO ---
     // Este seletor encontra TODAS as seções, não importa a estrutura do HTML
     const sections = document.querySelectorAll('main > div > section, main > section');
-    
+
     // Primeiro, ele esconde TODAS as seções
     sections.forEach(section => {
         section.classList.remove('active');
     });
-    
+
     // Depois, ele mostra APENAS a seção correta
     const activeSection = document.getElementById(sectionId);
     if (activeSection) {
@@ -209,7 +237,7 @@ function startPulseAnimation() {
 function initMap(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) { console.error(`Canvas '${canvasId}' não encontrado.`); return; }
-    
+
     // Carrega a imagem do mapa (apenas uma vez para todo o app)
     if (!mapImage) {
         mapImage = new Image();
@@ -236,7 +264,7 @@ function initMap(canvasId) {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
-    
+
 // app.js (Adicione estas linhas dentro da função initMap)
 
 // ...
@@ -246,7 +274,7 @@ function initMap(canvasId) {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
-    
+
     // --- INÍCIO DO CÓDIGO A SER ADICIONADO ---
     // Adiciona os listeners para eventos de toque (celulares e tablets)
     canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
@@ -260,7 +288,7 @@ function initMap(canvasId) {
 // ...
 
     // Listener de clique específico para cada tipo de mapa
-    
+
     window.addEventListener('resize', () => handleMapResize(canvasId));
     handleMapResize(canvasId); // Configuração inicial do tamanho
 }
@@ -270,15 +298,15 @@ function handleMapResize(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const dpr = window.devicePixelRatio || 1;
     // Pega o tamanho do .map-wrapper, que agora controla as dimensões
-    const rect = canvas.parentElement.getBoundingClientRect(); 
+    const rect = canvas.parentElement.getBoundingClientRect();
 
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
-    
+
     drawMap(canvasId, ctx, rect.width, rect.height);
 }
 
@@ -296,12 +324,12 @@ function drawAllMaps() {
 function drawMap(canvasId, ctx, cssWidth, cssHeight) {
     if (!ctx) return;
     if (!mapImage || !mapImage.complete) return;
-    
+
     ctx.clearRect(0, 0, cssWidth, cssHeight);
-    
+
     // Salva o estado original do canvas (sem zoom ou pan)
     ctx.save();
-    
+
     // Aplica as transformações de Pan e Zoom ao canvas
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
@@ -311,7 +339,7 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         // Desenha a imagem do mapa na sua posição e orientação originais
         ctx.drawImage(mapImage, 0, 0);
     }
-    
+
     // Desenha os hotspots (estandes) com o novo visual
     stands.forEach(stand => {
         // Ajusta o tamanho do hotspot com base no zoom para que pareça ter um tamanho constante
@@ -323,7 +351,7 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         ctx.arc(stand.x, stand.y, pulseRadius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(22, 163, 74, ${0.5 * (1 - pulseValue)})`; // Verde com opacidade variável
         ctx.fill();
-        
+
         // Desenha o ponto central (sólido)
         ctx.beginPath();
         ctx.arc(stand.x, stand.y, baseRadius, 0, Math.PI * 2);
@@ -344,7 +372,7 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         ctx.fill();
         ctx.stroke();
     }
-    
+
     // Restaura o estado do canvas para o original (remove o pan e zoom)
     ctx.restore();
     updateCustomScrollbars(canvasId);
@@ -364,7 +392,7 @@ function handleWheel(event) {
     } else { // Zoom Out
         newScale = Math.max(minZoom, scale / scaleAmount);
     }
-    
+
     // Ajusta o offset para que o zoom seja centrado no mouse
     offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
     offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
@@ -375,24 +403,24 @@ function handleWheel(event) {
 
 function handleMouseDown(event) {
     if (event.button !== 0) return; // Apenas botão esquerdo
-    
+
     // Armazena a posição exata do início do clique
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-    
+
     isDragging = false; // Começa como 'não arrastando'
     event.target.style.cursor = 'grabbing';
 }
 
 function handleMouseMove(event) {
     // A verificação 'buttons' é mais confiável que uma flag booleana
-    if (event.buttons !== 1) return; 
+    if (event.buttons !== 1) return;
 
     isDragging = true; // Marca que um arraste está ocorrendo
 
     const dx = event.clientX - dragStartX;
     const dy = event.clientY - dragStartY;
-    
+
     let newOffsetX = offsetX + dx;
     let newOffsetY = offsetY + dy;
 
@@ -406,19 +434,19 @@ function handleMouseMove(event) {
         // Limite máximo (não arrastar para a direita/baixo demais, deixando espaço em branco)
         const maxOffsetX = 0;
         const maxOffsetY = 0;
-        
+
         // Limite mínimo (não arrastar para a esquerda/cima demais)
         const minOffsetX = canvasWidth - mapRenderedWidth;
         const minOffsetY = canvasHeight - mapRenderedHeight;
-        
+
         // Aplica os limites
         newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, maxOffsetX));
         newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, maxOffsetY));
     }
-    
+
     offsetX = newOffsetX;
     offsetY = newOffsetY;
-    
+
     dragStartX = event.clientX;
     dragStartY = event.clientY;
 
@@ -441,7 +469,7 @@ function handleMouseUp(event) {
         }
     }
     // Reseta o estado de 'isDragging' ao final
-    isDragging = false; 
+    isDragging = false;
 }
 
 // --- Funções de Clique Atualizadas ---
@@ -466,7 +494,7 @@ function handleAdminMapClick(event) {
 }
 
 function handleFairMapClick(event) {
-    
+
     if (isDragging) return; // Ignora cliques que foram parte de um arraste
 
     const rect = event.target.getBoundingClientRect();
@@ -519,7 +547,7 @@ function updateCustomScrollbars(canvasId) {
     if (!canvas || !mapImage || !mapImage.complete) return;
 
     // CORREÇÃO: Remove a parte 'Canvas' do ID para encontrar os elementos corretos.
-    const baseId = canvasId.replace('Canvas', ''); 
+    const baseId = canvasId.replace('Canvas', '');
 
     const scrollbarH = document.getElementById(`${baseId}ScrollbarH`);
     const thumbH = document.getElementById(`${baseId}ThumbH`);
@@ -637,7 +665,7 @@ function handleTouchMove(event) {
         // Calcula o ponto médio entre os dedos para centralizar o zoom
         const midX = (touches[0].clientX + touches[1].clientX) / 2;
         const midY = (touches[0].clientY + touches[1].clientY) / 2;
-        
+
         // Ajusta o offset para que o zoom pareça vir do centro dos dedos
         offsetX = midX - (midX - offsetX) * (newScale / scale);
         offsetY = midY - (midY - offsetY) * (newScale / scale);
@@ -697,7 +725,7 @@ if(infoModal) {
 async function submitNewsForm(newsData, newsIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('news-message');
-    
+
     try {
         if (newsIdToUpdate) {
             // ATUALIZAR notícia existente
@@ -710,7 +738,7 @@ async function submitNewsForm(newsData, newsIdToUpdate = null) {
             await addDoc(newsCollectionRef, { ...newsData, publishedAt: serverTimestamp(), authorId: currentUserId });
             messageEl.textContent = 'Notícia publicada!';
         }
-        
+
         messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('news-form').reset();
         document.getElementById('newsIdToUpdate').value = ''; // Limpa o ID
@@ -727,7 +755,7 @@ async function submitEventForm(eventData, eventIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('event-message');
     const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
-    
+
     try {
         if (eventIdToUpdate) { // Atualizando evento existente
             const eventDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`, eventIdToUpdate);
@@ -752,7 +780,7 @@ async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('expositor-info-message');
     const expositorsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
-    
+
     try {
         if (expositorIdToUpdate) {
             const expositorDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`, expositorIdToUpdate);
@@ -789,7 +817,7 @@ async function submitInfoForm(infoData, infoIdToUpdate = null) {
             await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
             messageEl.textContent = 'Informação publicada!';
         }
-        
+
         messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('info-form').reset();
         document.getElementById('infoIdToUpdate').value = '';
@@ -807,10 +835,10 @@ function loadPublicNews() {
     if (!window.db) return;
     const newsContainer = document.getElementById('public-news-container');
     if (!newsContainer) return;
-    
+
     // Referência à coleção, sem filtros de data
     const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
-    
+
     // Usamos a referência direta, que busca todos os documentos da coleção
     onSnapshot(newsCollectionRef, (snapshot) => {
         newsContainer.innerHTML = '';
@@ -818,7 +846,7 @@ function loadPublicNews() {
             newsContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia recente.</p>';
             return;
         }
-        
+
         let newsList = [];
         snapshot.forEach(doc => {
             newsList.push({ id: doc.id, ...doc.data() });
@@ -900,7 +928,7 @@ function populateInfoFormForEdit(infoId) {
             document.getElementById('infoIdToUpdate').value = infoId;
             document.getElementById('infoTitle').value = info.title;
             document.getElementById('infoContent').value = info.content;
-            
+
             document.getElementById('info-submit-button').textContent = 'Atualizar Informação';
             document.getElementById('info-cancel-edit-button').classList.remove('hidden');
 
@@ -915,7 +943,7 @@ function loadPublicGeneralInfo() {
     if (!window.db) return;
     const infoContainer = document.getElementById('public-info-container');
     const infoCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/generalInfo`);
-    
+
     onSnapshot(infoCollectionRef, (snapshot) => {
         let infoList = [];
         snapshot.forEach(doc => {
@@ -924,7 +952,7 @@ function loadPublicGeneralInfo() {
 
         // Ordena por data de criação
         infoList.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-        
+
         // ATUALIZA A LISTA NO PAINEL DE ADMIN
         displayAdminInfoList(infoList);
 
@@ -1007,10 +1035,10 @@ function populateNewsFormForEdit(newsId) {
             document.getElementById('newsIdToUpdate').value = newsId;
             document.getElementById('newsTitle').value = news.title;
             document.getElementById('newsContent').value = news.content;
-            
+
             const submitButton = document.getElementById('news-submit-button');
             const cancelButton = document.getElementById('news-cancel-edit-button');
-            
+
             submitButton.textContent = 'Atualizar Notícia';
             cancelButton.classList.remove('hidden');
 
@@ -1177,7 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Erro CRUCIAL ao inicializar Firebase:", error);
         if(firebaseErrorDetails) firebaseErrorDetails.textContent = error.message;
         if(firebaseErrorMessage) firebaseErrorMessage.classList.remove('hidden');
-        return; 
+        return;
     }
 
     //chamar a função de abas do admin
@@ -1228,7 +1256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 }
-    
+
     initMap('fairMapCanvas');
     initMap('adminMapCanvas');
 
@@ -1255,11 +1283,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         if(userProfileSnap.exists()) userRole = userProfileSnap.data().role || 'visitor';
                     } catch (e) { console.error("Erro perfil:", e); }
                 }
-                
+
                 const isAdmin = userRole === 'admin';
                 if(adminDashboardLink) adminDashboardLink.classList.toggle('hidden', !isAdmin);
                 if(organizadoresLink) organizadoresLink.classList.toggle('hidden', !isAdmin);
-                
+
                 const adminRoleText = `Logado como: Administrador (${user.email || 'N/A'})`;
                 if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = isAdmin ? adminRoleText : '';
                 if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = isAdmin ? adminRoleText : '';
@@ -1293,7 +1321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(organizadoresLink) organizadoresLink.classList.add('hidden');
                 if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = '';
                 if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = '';
-                
+
                 const hash = window.location.hash;
                 if (hash.startsWith('#stand-details?id=')) {
                     window.showSection('stand-details', null); loadStandDetails(hash.split('id=')[1]);
@@ -1310,14 +1338,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const newsForm = document.getElementById('news-form');
     if (newsForm) newsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const newsIdToUpdate = document.getElementById('newsIdToUpdate').value;
         const formattedDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-        await submitNewsForm({ 
-            title: document.getElementById('newsTitle').value, 
-            content: document.getElementById('newsContent').value, 
-            date: formattedDate 
+        await submitNewsForm({
+            title: document.getElementById('newsTitle').value,
+            content: document.getElementById('newsContent').value,
+            date: formattedDate
         }, newsIdToUpdate || null);
     });
 
@@ -1391,12 +1419,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (infoForm) infoForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const infoIdToUpdate = document.getElementById('infoIdToUpdate').value;
-        await submitInfoForm({ 
-            title: document.getElementById('infoTitle').value, 
-            content: document.getElementById('infoContent').value 
+        await submitInfoForm({
+            title: document.getElementById('infoTitle').value,
+            content: document.getElementById('infoContent').value
         }, infoIdToUpdate || null);
     });
-    
+
     // Outros Listeners (login, logout, forms de estande, etc.)
     // ... (código de listeners de handleRegister, handleLogin, etc. do seu script original)
 
@@ -1430,13 +1458,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(standX) || isNaN(standY)) {
             messageEl.textContent = 'Clique no mapa para coords.'; messageEl.className = 'text-red-500 text-sm mt-2'; return;
         }
-        await addNewLocation({ 
-            id: document.getElementById('standId').value, 
-            occupant: document.getElementById('standOccupant').value, 
-            x: standX, y: standY 
+        await addNewLocation({
+            id: document.getElementById('standId').value,
+            occupant: document.getElementById('standOccupant').value,
+            x: standX, y: standY
         });
     });
-    
+
     window.addEventListener('hashchange', () => {
         const hash = window.location.hash;
         console.log("Hash alterado para:", hash);
@@ -1578,7 +1606,7 @@ function loadPublicEvents() {
                 globalEventsCache.forEach(event => { // Usa o cache global
                     const eventCard = `
                         <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
+                            <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
                             <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
                             <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
@@ -1636,13 +1664,13 @@ async function loadPublicLocations() {
     if (!window.db) return;
     const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
     onSnapshot(locationsCollectionRef, (snapshot) => {
-        stands = []; 
+        stands = [];
         snapshot.forEach((doc) => stands.push({ docId: doc.id, ...doc.data() }));
         console.log("Localizações carregadas:", stands);
 
         if (fairMapCanvas && fairMapCtx) drawMap('fairMapCanvas', fairMapCtx, fairMapCanvas.clientWidth, fairMapCanvas.clientHeight);
         if (adminMapCanvas && adminMapCtx) drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
-        displayCollectedData(); 
+        displayCollectedData();
 
         if (stands.length === 0 && firebaseConfig.projectId === "agropec-2025-app") {
              // seedInitialMapData(); // Descomente para popular dados iniciais se necessário
@@ -1694,7 +1722,7 @@ async function addNewLocation(locationData) { // Para o form de admin-dashboard 
             const expoSnapshot = await getDocs(qExpo);
             if (!expoSnapshot.empty) description = expoSnapshot.docs[0].data().description || '';
         }
-        
+
         await addDoc(locationsCollectionRef, { ...locationData, description });
         messageEl.textContent = 'Localização salva!'; messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('location-form').reset();
@@ -1713,15 +1741,15 @@ function generateAndShowQrCode(stand) {
     const qrcodeDiv = document.getElementById('qrcode');
     if (!qrCodeModal || !qrcodeDiv) return;
 
-    qrcodeDiv.innerHTML = ''; 
+    qrcodeDiv.innerHTML = '';
     const standDetailsUrl = `${window.location.origin}${window.location.pathname}#stand-details?id=${stand.id}`;
     console.log("Gerando QR para URL:", standDetailsUrl);
 
     try {
-        new window.QRCode(qrcodeDiv, { 
+        new window.QRCode(qrcodeDiv, {
             text: standDetailsUrl, width: 200, height: 200,
             colorDark : "#000000", colorLight : "#ffffff",
-            correctLevel : window.QRCode.CorrectLevel.H 
+            correctLevel : window.QRCode.CorrectLevel.H
         });
         qrCodeModal.style.display = 'flex';
     } catch (e) {
@@ -1751,7 +1779,7 @@ function updateAgendaChart(events) {
 
     //tipos no SINGULAR para corresponder aos dados do banco.
     const eventTypes = ['Palestra', 'Workshop', 'Demonstração', 'Outro'];
-    
+
     // Objeto para mapear o tipo singular para o plural (para a legenda do gráfico)
     const typeLabels = {
         'Palestra': 'Palestras',
@@ -1771,7 +1799,7 @@ function updateAgendaChart(events) {
         const eventType = eventTypes.includes(event.type) ? event.type : 'Outro';
         days[date][eventType]++;
     });
-    
+
     const sortedDates = Object.keys(days).sort((a, b) => {
         if (a === 'Data Desconhecida') return 1;
         if (b === 'Data Desconhecida') return -1;
@@ -1865,7 +1893,7 @@ if (applyEventFiltersButton) {
     applyEventFiltersButton.addEventListener('click', () => {
         const dateFilter = document.getElementById('filterEventDate').value;
         const typeFilter = document.getElementById('filterEventType').value;
-        
+
         let filteredEvents = globalEventsCache;
 
         if (dateFilter) {
@@ -1889,7 +1917,7 @@ if (applyEventFiltersButton) {
                 filteredEvents.forEach(event => {
                     const eventCard = `
                         <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-600">${event.title || 'N/A'}</h4>
+                            <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
                             <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
                             <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
@@ -1907,7 +1935,7 @@ if (applyEventFiltersButton) {
             const termo = this.value.trim().toLowerCase();
             const container = document.getElementById('expositores-container');
             if (!container) return;
-    
+
             // Usa o cache global já carregado
             let filtrados = globalExpositorsCache;
             if (termo) {
@@ -1917,7 +1945,7 @@ if (applyEventFiltersButton) {
                     (expo.description && expo.description.toLowerCase().includes(termo))
                 );
             }
-    
+
             container.innerHTML = '';
             if (filtrados.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 col-span-full">Nenhum expositor encontrado.</p>';
