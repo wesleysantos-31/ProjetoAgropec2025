@@ -470,3 +470,29 @@ footer {
 .admin-tab-panel.active {
     display: block; /* Apenas o painel ativo é exibido */
 }
+
+/* --- Responsividade para Abas do Admin --- */
+/* Por padrão (mobile), a navegação das abas terá scroll horizontal */
+#admin-tab-container {
+    overflow-x: auto; /* Habilita o scroll horizontal quando o conteúdo ultrapassa a largura */
+    -webkit-overflow-scrolling: touch; /* Melhora a experiência de "deslizar" no iOS */
+    
+    /* As linhas abaixo escondem a barra de scroll visualmente mas mantêm a funcionalidade */
+    scrollbar-width: none; /* Para Firefox */
+}
+
+#admin-tab-container::-webkit-scrollbar {
+    display: none; /* Para Chrome, Safari e Opera */
+}
+
+/* Garante que os botões das abas não encolham e mantenham seu tamanho */
+#admin-tab-container .admin-tab {
+    flex-shrink: 0;
+}
+
+/* Em telas de PC (768px ou mais), desativamos o scroll horizontal */
+@media (min-width: 768px) {
+    #admin-tab-container {
+        overflow-x: visible; /* Restaura o comportamento padrão, sem scroll */
+    }
+}
