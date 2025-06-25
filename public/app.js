@@ -1484,6 +1484,67 @@ async function loadPublicLocations() {
     }, (error) => console.error("Erro ao carregar localizações:", error));
 }
 
+/*
+// 1. Carrega estandes do Firestore
+async function loadStands() {
+    if (!window.db) return;
+    // Certifique-se de que firebaseConfig.appId está definido e acessível
+    const snapshot = await getDocs(collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/stands`));
+    stands = []; // Limpa o array antes de preencher
+    snapshot.forEach(doc => {
+        stands.push({ id: doc.id, ...doc.data() });
+    });
+    renderStandsList(stands); // Chama a função para renderizar após carregar
+}
+
+// 2. Exibe os estandes com botão "Excluir"
+function renderStandsList(stands) {
+    const container = document.getElementById('registered-stands-display'); // 
+    if (!container) return; // Garante que o container existe
+    container.innerHTML = ''; // 
+
+    if (stands.length === 0) { // 
+        container.innerHTML = '<p class="text-gray-500">Nenhuma estande cadastrada.</p>'; // 
+        return; // 
+    }
+
+    const ul = document.createElement('ul'); // Cria uma lista não ordenada para manter a estrutura similar à original
+    ul.className = 'divide-y divide-gray-200'; // Mantém as classes de estilo
+
+    stands.forEach(stand => { // 
+        const li = document.createElement('li');
+        li.className = 'py-3 flex justify-between items-center';
+        li.innerHTML = `
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-green-700 truncate">ID: ${stand.id || 'N/A'}</p>
+                <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
+                <p class="text-xs text-gray-500 truncate">Coords: (X:${stand.x || 'N/A'}, Y:${stand.y || 'N/A'})</p>
+            </div>
+            <button class="btn-accent text-xs py-1 px-2 rounded" onclick="deleteStand('${stand.id}')">Excluir Estande</button>
+        `;
+        ul.appendChild(li); // Adiciona o item da lista à lista não ordenada
+    });
+    container.appendChild(ul); // Adiciona a lista completa ao container
+}
+
+// 3. Exclui estande do Firestore
+async function deleteStand(standId) {
+    if (!window.db || !standId) return; // 
+
+    if (confirm('Tem certeza que deseja excluir esta estande?')) { // 
+        try { // 
+            const standRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/stands`, standId); // 
+            await deleteDoc(standRef); // 
+            alert('Estande excluída com sucesso!'); // 
+            loadStands(); // Recarrega lista após a exclusão 
+        } catch (error) { // 
+            console.error('Erro ao excluir estande:', error); // 
+            alert('Erro ao excluir estande.'); // 
+        }
+    }
+} */
+
+// Modificação da função displayCollectedData para usar as novas funções
 function displayCollectedData() { // Estandes cadastradas no painel admin
     const displayArea = document.getElementById('registered-stands-display');
     if (!displayArea) return;
@@ -1502,11 +1563,11 @@ function displayCollectedData() { // Estandes cadastradas no painel admin
                     <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
                     <p class="text-xs text-gray-500 truncate">Coords: (X:${stand.x || 'N/A'}, Y:${stand.y || 'N/A'})</p>
                 </div>
-                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Gerar QR</button>
+                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Excluir Estande</button>
             `;
             ul.appendChild(li);
         });
-        displayArea.appendChild(ul);
+            displayArea.appendChild(ul);
         document.querySelectorAll('.generate-qr-btn').forEach(button => {
             button.addEventListener('click', (event) => {
                 const stand = stands.find(s => s.docId === event.target.dataset.standDocId);
@@ -1515,6 +1576,7 @@ function displayCollectedData() { // Estandes cadastradas no painel admin
         });
     }
 }
+
 
 async function addNewLocation(locationData) { // Para o form de admin-dashboard (estandes)
     if (!currentUserId || !window.db) return;
@@ -1740,7 +1802,6 @@ if (applyEventFiltersButton) {
     }
 }
 
-//Estandes
 // 1. Carrega estandes do Firestore
 async function loadStands() {
   if (!window.db) return;

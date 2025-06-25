@@ -58,6 +58,45 @@ body {
     text-shadow: 0.5px 0.5px 1px #222;
 }
 
+#login {
+    background-image: url(img/bg-login.JPG);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height:  100vh; /* Ocupa toda a altura da tela */
+    background-color: rgba(0, 0, 0, 0.5); /* reduzido para deixar a imagem mais clara */
+    background-blend-mode: overlay;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10vh; /* levanta um pouco o conteúdo */
+}
+
+.meu-card {
+  max-width: 28rem;       /* Equivalente ao max-w-md (448px) */
+  margin-left: auto;      /* Equivalente ao mx-auto */
+  margin-right: auto;
+  padding: 2rem;          /* Equivalente ao p-8 (32px) */
+  /* Se a classe 'card' tiver outros estilos, adicione abaixo */
+  /* Exemplo genérico para aparência de card: */
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.45); /* borda branca translúcida */
+}
+
+.meu-div {
+  margin-bottom: 16px;
+}
+
+.meu-paragrafo {
+  text-align: center;
+  color: #FFFFFF; /* cinza equivalente ao Tailwind gray-600 */
+  margin-bottom: 2rem; /* mb-8 = 32px */
+}
+
+
 .main-content section {
     display: none;
 }
@@ -162,6 +201,8 @@ h1, h2, h3, h4, h5, h6 {
        em conjunto com as transformações do Tailwind.
     */
 }
+
+
 
 /* Carrossel */
 #carousel-container {
