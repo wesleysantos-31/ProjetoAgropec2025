@@ -40,7 +40,7 @@ const mapImageURL = 'img/mapa-agropec-2025.svg'; // Caminho para a sua imagem SV
 
 // Elementos da UI do Mapa
 let fairMapCanvas, fairMapCtx, adminMapCanvas, adminMapCtx;
-let stands = [];
+let stands = []; 
 let adminMapTemporaryMarker = null;
 
 // Estado de transformação do mapa (zoom e pan)
@@ -237,7 +237,7 @@ function startPulseAnimation() {
 function initMap(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) { console.error(`Canvas '${canvasId}' não encontrado.`); return; }
-
+    
     // Carrega a imagem do mapa (apenas uma vez para todo o app)
     if (!mapImage) {
         mapImage = new Image();
@@ -289,6 +289,7 @@ function initMap(canvasId) {
 
     // Listener de clique específico para cada tipo de mapa
 
+
     window.addEventListener('resize', () => handleMapResize(canvasId));
     handleMapResize(canvasId); // Configuração inicial do tamanho
 }
@@ -298,6 +299,7 @@ function handleMapResize(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+
 
     const dpr = window.devicePixelRatio || 1;
     // Pega o tamanho do .map-wrapper, que agora controla as dimensões
@@ -324,9 +326,9 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
     if (!ctx) return;
     if (!mapImage || !mapImage.complete) return;
 
+
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
-    // Salva o estado original do canvas (sem zoom ou pan)
     ctx.save();
 
     // Aplica as transformações de Pan e Zoom ao canvas
@@ -406,7 +408,6 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         // --- FIM DA LÓGICA DE DESENHO DAS COORDENADAS ---
     }
 
-    // Restaura o estado do canvas para o original (remove o pan e zoom)
     ctx.restore();
     updateCustomScrollbars(canvasId);
 }
@@ -440,7 +441,7 @@ function handleMouseDown(event) {
     // Armazena a posição exata do início do clique
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-
+    
     isDragging = false; // Começa como 'não arrastando'
     event.target.style.cursor = 'grabbing';
 }
@@ -2029,5 +2030,3 @@ async function deleteStand(standId) {
 // funçao de carregar estandes
      loadStands();
 
-// Atualiza o ano no rodapé
-document.getElementById('footer-year').textContent = new Date().getFullYear();
