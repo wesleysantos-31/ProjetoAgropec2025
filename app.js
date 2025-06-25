@@ -107,51 +107,49 @@ document.getElementById('closeSidebarBtn').onclick = function() {
 
 // Função para exibir/ocultar seções
 window.showSection = function(sectionId, clickedLink) {
-    console.log(`Exibindo seção: ${sectionId}`);
-    const sections = document.querySelectorAll('.main-content section');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const currentSectionTitle = document.getElementById('currentSectionTitle');
+    const header = document.querySelector('header');
+    const mainContentArea = document.querySelector('.main-content');
+    const sidebar = document.querySelector('.sidebar'); // Selecionamos a sidebar
 
-    sections.forEach(section => section.classList.remove('active'));
-    const activeSection = document.getElementById(sectionId);
-    if (activeSection) activeSection.classList.add('active');
-
-    const titleMap = {
-        'inicio': 'Painel Principal',
-        'admin-dashboard': 'Gerenciar Estandes',
-        'organizadores': 'Gerenciar Conteúdo do Evento',
-        'stand-details': 'Detalhes da Estande',
-        'welcome-role-selection': 'Bem-vindo!',
-        'login': 'Acesso ao Evento',
-        'agenda': 'Agenda do Evento',
-        'expositores': 'Lista de Expositores',
-        'mapa': 'Mapa da Feira'
-    };
-    if(currentSectionTitle) currentSectionTitle.textContent = titleMap[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-
-    navLinks.forEach(link => {
-        link.classList.remove('active', 'bg-green-700', 'text-white'); // Classes mais escuras para ativo na sidebar
-        if (sidebar.contains(link)) {
-            link.classList.add('text-gray-300'); // Cor padrão para links da sidebar
-            link.classList.remove('bg-green-500'); // Tailwind classe que pode ter sido adicionada antes
+    // Verificamos se todos os elementos principais existem
+    if (header && mainContentArea && sidebar) {
+        
+        // Se a seção for a de boas-vindas ou login...
+        if (sectionId === 'welcome-role-selection' || sectionId === 'login') {
+            header.classList.add('hidden');           // Esconde o header
+            sidebar.classList.add('hidden');          // << Esconde a sidebar
+            mainContentArea.classList.remove('pt-20'); // Remove o espaçamento do topo
+        } else {
+            // Para todas as outras seções...
+            header.classList.remove('hidden');         // Mostra o header
+            sidebar.classList.remove('hidden');        // << Mostra a sidebar
+            mainContentArea.classList.add('pt-20');    // Adiciona o espaçamento do topo
         }
+    }
+
+    // O resto da função continua como antes, para trocar as seções e ativar os links
+    const sections = document.querySelectorAll('.main-content section');
+    sections.forEach(section => section.classList.remove('active'));
+    
+    const activeSection = document.getElementById(sectionId);
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active', 'bg-green-700');
     });
 
     if (clickedLink) {
-        clickedLink.classList.add('active');
-        if (sidebar.contains(clickedLink)) {
-            clickedLink.classList.add('bg-green-700'); // Verde mais escuro para ativo na sidebar
-            clickedLink.classList.add('text-white');
-        } else {
-            // Para links fora da sidebar, se houver (não é o caso atual)
-            // clickedLink.classList.add('bg-green-500', 'text-white');
-        }
+        clickedLink.classList.add('active', 'bg-green-700');
     }
     
+    // Fecha o menu lateral no mobile após clicar em um link
     if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
     }
-}
+};
 
 // Função para passar as imagens do carrossel
 let carouselIndex = 0;
