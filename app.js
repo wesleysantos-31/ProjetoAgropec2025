@@ -1218,9 +1218,7 @@ function setupAdminTabs() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM carregado. App Agropec inicializando...");
 
-    const qrCodeModal = document.getElementById('qrCodeModal');
-    if (qrCodeModal) qrCodeModal.style.display = 'none';
-
+    
     let app, db, auth; // analytics;
     try {
         app = initializeApp(firebaseConfig);
@@ -1409,31 +1407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, expositorIdToUpdate || null);
     });
 
-     // funçao de carregar estandes
-     loadStands();
-
-     // Listener para a lista de Informações Gerais do admin
-    const adminInfoList = document.getElementById('admin-info-list');
-    if (adminInfoList) {
-        adminInfoList.addEventListener('click', (e) => {
-            const target = e.target;
-            if (target.classList.contains('edit-info-btn')) {
-                populateInfoFormForEdit(target.dataset.infoId);
-            }
-            if (target.classList.contains('delete-info-btn')) {
-                handleDeleteInfo(target.dataset.infoId);
-            }
-        });
-    }
-
-    // Listener para o botão "Cancelar Edição" do formulário de informações
-    const infoCancelEditBtn = document.getElementById('info-cancel-edit-button');
-    if (infoCancelEditBtn) infoCancelEditBtn.addEventListener('click', () => {
-        document.getElementById('info-form').reset();
-        document.getElementById('infoIdToUpdate').value = '';
-        document.getElementById('info-submit-button').textContent = 'Publicar Informação';
-        infoCancelEditBtn.classList.add('hidden');
-    });
+    
 
     const expositorCancelEditBtn = document.getElementById('expositor-info-cancel-edit-button');
     if(expositorCancelEditBtn) expositorCancelEditBtn.addEventListener('click', () => {
@@ -1467,6 +1441,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+
 
     const registerLink = document.getElementById('register-link');
     if (registerLink) registerLink.addEventListener('click', (e) => { e.preventDefault(); handleRegister(); });
@@ -1725,11 +1701,11 @@ function displayCollectedData() { // Estandes cadastradas no painel admin
                     <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
                     <p class="text-xs text-gray-500 truncate">Coords: (X:${stand.x || 'N/A'}, Y:${stand.y || 'N/A'})</p>
                 </div>
-                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Gerar QR</button>
+                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Excluir Estande</button>
             `;
             ul.appendChild(li);
         });
-        displayArea.appendChild(ul);
+            displayArea.appendChild(ul);
         document.querySelectorAll('.generate-qr-btn').forEach(button => {
             button.addEventListener('click', (event) => {
                 const stand = stands.find(s => s.docId === event.target.dataset.standDocId);
@@ -2046,6 +2022,6 @@ async function deleteStand(standId) {
     }
   }
 }
+// funçao de carregar estandes
+     loadStands();
 
-// Atualiza o ano no rodapé
-document.getElementById('footer-year').textContent = new Date().getFullYear();
