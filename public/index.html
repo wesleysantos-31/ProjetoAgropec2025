@@ -61,17 +61,18 @@
         </nav>
     </aside>
 
-    <header class="bg-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-10 shadow-none border-b border-gray-200 md:pl-80 pl-5">
+    <header class="bg-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-10 shadow-sm border-b border-gray-200 md:pl-80 pl-5">
         <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 hover:text-green-600">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
         </button>
-        <div class="flex items-center ml-auto"></div>
-            <div id="user-id-display" class="text-sm text-gray-500 hidden md:block mr-4"></div>
+        <div class="flex items-center ml-auto space-x-4">
+            <div id="user-id-display" class="text-sm text-gray-500 hidden md:block"></div>
             <button id="logout-button" class="btn-accent text-sm py-1 px-3 rounded-md hidden">Sair</button>
         </div>
     </header>
-
-    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 main-content pt-20">
+    
+    <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 main-content">
+    
         <section id="welcome-role-selection" class="p-6 active">
             <div class="max-w-md mx-auto card-inicio p-8 text-center">
                 <div class="flex justify-center mb-8">
@@ -108,6 +109,7 @@
 
         <div class="flex-1 flex flex-col overflow-hidden">
             <section id="inicio" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Painel Principal</h2>
                     <p class="mt-2 text-gray-600">Bem-vindo ao aplicativo oficial da AGROPEC 2025! Explore as últimas notícias, palestras em destaque e informações importantes sobre o evento.</p>
@@ -193,6 +195,7 @@
             </section>
 
             <section id="agenda" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Agenda AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Confira a programação completa de palestras, workshops e demonstrações. Planeje seu dia e não perca nada!</p>
@@ -231,6 +234,7 @@
             </section>
 
             <section id="expositores" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Expositores AGROPEC 2025</h2>
                     <p class="mt-2 text-gray-600">Conheça as empresas e instituições que estão apresentando suas novidades e soluções para o agronegócio.</p>
@@ -251,6 +255,7 @@
             </section>
 
             <section id="mapa" class="p-2">
+                <div style="height: 72px;"></div>
                 <h2 class="text-3xl font-semibold text-gray-800">Mapa do AGROPEC 2025</h2>
                 <p class="mt-2 text-gray-600">Navegue pelo mapa interativo para encontrar estandes, auditórios, praça de alimentação e outros pontos de interesse. O mapa é atualizado em tempo real com as últimas informações!</p>
                 <div class="card p-6">
@@ -270,7 +275,9 @@
                 </div>
             </section>
 
-            <section id="admin-dashboard" class="p-2"> <div class="mb-6">
+            <section id="admin-dashboard" class="p-2">
+                <div style="height: 72px;"></div>
+                <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Gerenciar Estandes</h2>
                     <p class="mt-2 text-gray-600">Adicione e gerencie as localizações das estandes no mapa.</p>
                     <p id="admin-user-role-display-estandes" class="text-sm text-gray-500 mt-2"></p>
@@ -317,8 +324,9 @@
                 </div>
             </section>
 
-            <section id="organizadores" class="p-2">
+            <section id="organizadores" class="space p-2">
                 <div class="mb-6">
+                    <div style="height: 72px;"></div>
                     <h2 class="text-3xl font-semibold text-gray-800">Painel do Organizador - Conteúdo</h2>
                     <p class="mt-2 text-gray-600">Gerencie notícias, palestras, expositores e informações gerais do evento.</p>
                     <p id="admin-user-role-display-organizadores" class="text-sm text-gray-500 mt-2"></p>
@@ -484,6 +492,7 @@
             </section>
 
             <section id="stand-details" class="p-2">
+                <div style="height: 72px;"></div>
                 <div class="mb-6">
                     <h2 class="text-3xl font-semibold text-gray-800">Detalhes da Estande</h2>
                     <p class="mt-2 text-gray-600">Informações detalhadas sobre a estande.</p>
@@ -497,7 +506,7 @@
             </section>
 
             <footer>
-                <p>Site desenvolvido por estudantes da UFRA</p>
+                <p>© <span id="footer-year"></span> Agropec - Todos os direitos reservados. | Desenvolvido por <a href="https://github.com/wesleysantos-31" target="_blank" rel="noopener noreferrer">Wesley Santos</a>, <a href="https://github.com/Isabella-Pompeo" target="_blank" rel="noopener noreferrer">Isabella Pompeo</a> e <a href="">Anthonny Mesquita</a></p>
             </footer>
         </div>
     </main>

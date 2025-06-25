@@ -106,36 +106,40 @@ document.getElementById('closeSidebarBtn').onclick = function() {
 };
 
 // Função para exibir/ocultar seções
-window.showSection = function(sectionId, clickedLink) {
-    const header = document.querySelector('header');
-    const mainContentArea = document.querySelector('.main-content');
-    const sidebar = document.querySelector('.sidebar'); // Selecionamos a sidebar
+// app.js (SUBSTITUA sua função window.showSection por esta)
 
-    // Verificamos se todos os elementos principais existem
-    if (header && mainContentArea && sidebar) {
-        
-        // Se a seção for a de boas-vindas ou login...
-        if (sectionId === 'welcome-role-selection' || sectionId === 'login') {
-            header.classList.add('hidden');           // Esconde o header
-            sidebar.classList.add('hidden');          // << Esconde a sidebar
-            mainContentArea.classList.remove('pt-20'); // Remove o espaçamento do topo
-        } else {
-            // Para todas as outras seções...
-            header.classList.remove('hidden');         // Mostra o header
-            sidebar.classList.remove('hidden');        // << Mostra a sidebar
-            mainContentArea.classList.add('pt-20');    // Adiciona o espaçamento do topo
-        }
+// app.js (SUBSTITUA SUA FUNÇÃO ATUAL PELA VERSÃO CORRIGIDA ABAIXO)
+
+window.showSection = function(sectionId, clickedLink) {
+    // Seleciona os elementos de layout principais
+    const header = document.querySelector('header');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContentArea = document.querySelector('.main-content');
+
+    const isAuthScreen = sectionId === 'welcome-role-selection' || sectionId === 'login';
+
+    // Controla a visibilidade do header, sidebar e do espaçamento do topo
+    if (header && sidebar && mainContentArea) {
+        header.classList.toggle('hidden', isAuthScreen);
+        sidebar.classList.toggle('hidden', isAuthScreen);
     }
 
-    // O resto da função continua como antes, para trocar as seções e ativar os links
-    const sections = document.querySelectorAll('.main-content section');
-    sections.forEach(section => section.classList.remove('active'));
+    // --- ESTA É A PARTE MAIS IMPORTANTE PARA CORRIGIR A SOBREPOSIÇÃO ---
+    // Este seletor encontra TODAS as seções, não importa a estrutura do HTML
+    const sections = document.querySelectorAll('main > div > section, main > section');
     
+    // Primeiro, ele esconde TODAS as seções
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Depois, ele mostra APENAS a seção correta
     const activeSection = document.getElementById(sectionId);
     if (activeSection) {
         activeSection.classList.add('active');
     }
 
+    // O resto da lógica para os links do menu continua igual
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.classList.remove('active', 'bg-green-700');
@@ -144,8 +148,7 @@ window.showSection = function(sectionId, clickedLink) {
     if (clickedLink) {
         clickedLink.classList.add('active', 'bg-green-700');
     }
-    
-    // Fecha o menu lateral no mobile após clicar em um link
+
     if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
     }
@@ -1986,3 +1989,6 @@ async function deleteStand(standId) {
     }
   }
 }
+
+// Atualiza o ano no rodapé
+document.getElementById('footer-year').textContent = new Date().getFullYear();

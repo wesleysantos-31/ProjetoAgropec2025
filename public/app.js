@@ -106,61 +106,53 @@ document.getElementById('closeSidebarBtn').onclick = function() {
 };
 
 // Função para exibir/ocultar seções
+// app.js (SUBSTITUA sua função window.showSection por esta)
+
+// app.js (SUBSTITUA SUA FUNÇÃO ATUAL PELA VERSÃO CORRIGIDA ABAIXO)
+
 window.showSection = function(sectionId, clickedLink) {
+    // Seleciona os elementos de layout principais
     const header = document.querySelector('header');
-    if (header) {
-        // Esconde o header nas telas de boas-vindas e login
-        if (sectionId === 'welcome-role-selection' || sectionId === 'login') {
-            header.classList.add('hidden');
-        } else {
-            header.classList.remove('hidden');
-        }
+    const sidebar = document.querySelector('.sidebar');
+    const mainContentArea = document.querySelector('.main-content');
+
+    const isAuthScreen = sectionId === 'welcome-role-selection' || sectionId === 'login';
+
+    // Controla a visibilidade do header, sidebar e do espaçamento do topo
+    if (header && sidebar && mainContentArea) {
+        header.classList.toggle('hidden', isAuthScreen);
+        sidebar.classList.toggle('hidden', isAuthScreen);
     }
-    console.log(`Exibindo seção: ${sectionId}`);
-    const sections = document.querySelectorAll('.main-content section');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const currentSectionTitle = document.getElementById('currentSectionTitle');
 
-    sections.forEach(section => section.classList.remove('active'));
+    // --- ESTA É A PARTE MAIS IMPORTANTE PARA CORRIGIR A SOBREPOSIÇÃO ---
+    // Este seletor encontra TODAS as seções, não importa a estrutura do HTML
+    const sections = document.querySelectorAll('main > div > section, main > section');
+    
+    // Primeiro, ele esconde TODAS as seções
+    sections.forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Depois, ele mostra APENAS a seção correta
     const activeSection = document.getElementById(sectionId);
-    if (activeSection) activeSection.classList.add('active');
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
 
-    const titleMap = {
-        'inicio': 'Painel Principal',
-        'admin-dashboard': 'Gerenciar Estandes',
-        'organizadores': 'Gerenciar Conteúdo do Evento',
-        'stand-details': 'Detalhes da Estande',
-        'welcome-role-selection': 'Bem-vindo!',
-        'login': 'Acesso ao Evento',
-        'agenda': 'Agenda do Evento',
-        'expositores': 'Lista de Expositores',
-        'mapa': 'Mapa da Feira'
-    };
-    if(currentSectionTitle) currentSectionTitle.textContent = titleMap[sectionId] || sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-
+    // O resto da lógica para os links do menu continua igual
+    const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
-        link.classList.remove('active', 'bg-green-700', 'text-white'); // Classes mais escuras para ativo na sidebar
-        if (sidebar.contains(link)) {
-            link.classList.add('text-gray-300'); // Cor padrão para links da sidebar
-            link.classList.remove('bg-green-500'); // Tailwind classe que pode ter sido adicionada antes
-        }
+        link.classList.remove('active', 'bg-green-700');
     });
 
     if (clickedLink) {
-        clickedLink.classList.add('active');
-        if (sidebar.contains(clickedLink)) {
-            clickedLink.classList.add('bg-green-700'); // Verde mais escuro para ativo na sidebar
-            clickedLink.classList.add('text-white');
-        } else {
-            // Para links fora da sidebar, se houver (não é o caso atual)
-            // clickedLink.classList.add('bg-green-500', 'text-white');
-        }
+        clickedLink.classList.add('active', 'bg-green-700');
     }
-    
+
     if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
     }
-}
+};
 
 // Função para passar as imagens do carrossel
 let carouselIndex = 0;
@@ -1997,3 +1989,6 @@ async function deleteStand(standId) {
     }
   }
 }
+
+// Atualiza o ano no rodapé
+document.getElementById('footer-year').textContent = new Date().getFullYear();
