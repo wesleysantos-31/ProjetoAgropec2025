@@ -158,6 +158,43 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
 }
 
+/* Modificando o .sidebar para ter um gradiente */
+.sidebar {
+    background: linear-gradient(180deg, #2E7D32 0%, #1B5E20 100%); /* Gradiente de verde escuro */
+    color: #E8F5E9;
+    width: 22rem; 
+    min-width: 12rem;
+    /* Adicionando flexbox para o alinhamento do rodapé (sugestão 4) */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Efeito de hover mais suave e moderno */
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo branco semitransparente */
+    color: #FFFFFF;
+}
+
+/* Indicador de item ativo mais forte */
+.sidebar a.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+    font-weight: 600;
+    border-left: 4px solid #FFC107; /* Borda lateral com a cor de destaque (amarelo) */
+}
+
+/* Ajuste no padding do link para alinhar com a nova borda */
+.sidebar a {
+    /* ... outros estilos ... */
+    padding: 0.75rem 1rem; /* Aumenta o padding vertical e ajusta o horizontal */
+}
+
+/* Alinhamento do ícone e texto */
+.sidebar a svg {
+    flex-shrink: 0; /* Impede que o ícone seja espremido */
+}
+
 .sidebar-initial-hidden {
     content: ''; /* Apenas para o linter não reclamar */
     /* A visibilidade inicial é controlada por -translate-x-full no HTML via Tailwind.
