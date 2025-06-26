@@ -1490,6 +1490,44 @@ document.addEventListener('DOMContentLoaded', () => {
             window.showSection('welcome-role-selection', null);
         }
     });
+
+    if (locationForm) {
+        locationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleSubmitStandForm(); // Chama a nova função unificada
+        });
+    }
+
+    // botões de editar e excluir
+    const standsListContainer = document.getElementById('registered-stands-display');
+    if (standsListContainer) {
+        standsListContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit-stand-btn')) {
+                populateStandFormForEdit(e.target);
+            }
+            if (e.target.classList.contains('delete-stand-btn')) {
+                handleDeleteStand(e.target.dataset.docId);
+            }
+        });
+    }
+
+    // botão "Cancelar Edição"
+    const cancelEditButton = document.getElementById('stand-cancel-edit-button');
+    if (cancelEditButton) {
+        cancelEditButton.addEventListener('click', () => {
+            // Limpa e reseta o formulário
+            document.getElementById('location-form').reset();
+            document.getElementById('standDocIdToUpdate').value = '';
+            document.getElementById('standCoordinatesDisplay').value = '';
+            document.getElementById('stand-submit-button').textContent = 'Salvar Localização';
+            cancelEditButton.classList.add('hidden');
+            document.getElementById('location-message').textContent = '';
+            
+            adminMapTemporaryMarker = null; // Limpa marcador temporário do mapa
+            drawAllMaps();
+        });
+    }
+
 });
 
 
@@ -1683,60 +1721,147 @@ async function loadPublicLocations() {
     }, (error) => console.error("Erro ao carregar localizações:", error));
 }
 
-function displayCollectedData() { // Estandes cadastradas no painel admin
+function displayCollectedData() {
     const displayArea = document.getElementById('registered-stands-display');
     if (!displayArea) return;
-    displayArea.innerHTML = '';
+    displayArea.innerHTML = ''; // Limpa a lista antes de recriar
+
     if (stands.length === 0) {
         displayArea.innerHTML = '<p class="text-gray-500">Nenhuma estande cadastrada.</p>';
-    } else {
-        const ul = document.createElement('ul');
-        ul.className = 'divide-y divide-gray-200';
-        stands.forEach(stand => {
-            const li = document.createElement('li');
-            li.className = 'py-3 flex justify-between items-center';
-            li.innerHTML = `
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-green-700 truncate">ID: ${stand.id || 'N/A'}</p>
-                    <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
-                    <p class="text-xs text-gray-500 truncate">Coords: (X:${stand.x || 'N/A'}, Y:${stand.y || 'N/A'})</p>
-                </div>
-                <button class="btn-accent text-xs py-1 px-2 rounded generate-qr-btn" data-stand-doc-id="${stand.docId}">Excluir Estande</button>
-            `;
-            ul.appendChild(li);
-        });
-            displayArea.appendChild(ul);
-        document.querySelectorAll('.generate-qr-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const stand = stands.find(s => s.docId === event.target.dataset.standDocId);
-                if (stand) generateAndShowQrCode(stand);
-            });
-        });
+        return;
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'divide-y divide-gray-200';
+
+    // Ordena as estandes pelo ID para uma visualização mais consistente
+    const sortedStands = [...stands].sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
+
+    sortedStands.forEach(stand => {
+        const li = document.createElement('li');
+        li.className = 'py-3 flex justify-between items-center';
+        // Adicionamos os botões de Editar e Excluir com data-attributes
+        li.innerHTML = `
+            <div class="flex-1 min-w-0 pr-2">
+                <p class="text-sm font-medium text-green-700 truncate">ID: ${stand.id || 'N/A'}</p>
+                <p class="text-sm text-gray-600 truncate">Ocupante: ${stand.occupant || 'N/A'}</p>
+                <p class="text-xs text-gray-500 truncate">Coords: (X:${stand.x || 'N/A'}, Y:${stand.y || 'N/A'})</p>
+            </div>
+            <div class="flex-shrink-0">
+                <button class="text-blue-500 hover:text-blue-700 text-sm mr-3 edit-stand-btn" 
+                        data-doc-id="${stand.docId}" 
+                        data-id="${stand.id}" 
+                        data-occupant="${stand.occupant}" 
+                        data-x="${stand.x}" 
+                        data-y="${stand.y}">Editar</button>
+                <button class="text-red-500 hover:text-red-700 text-sm delete-stand-btn" 
+                        data-doc-id="${stand.docId}">Excluir</button>
+            </div>
+        `;
+        ul.appendChild(li);
+    });
+
+    displayArea.appendChild(ul);
+}
+
+// ADICIONE ESTAS DUAS NOVAS FUNÇÕES
+
+/**
+ * Preenche o formulário de estande com os dados de um item existente para edição.
+ */
+function populateStandFormForEdit(button) {
+    // Pega os dados armazenados no botão "Editar"
+    const docId = button.dataset.docId;
+    const id = button.dataset.id;
+    const occupant = button.dataset.occupant;
+    const x = button.dataset.x;
+    const y = button.dataset.y;
+
+    // Preenche os campos do formulário
+    document.getElementById('standDocIdToUpdate').value = docId;
+    document.getElementById('standId').value = id;
+    document.getElementById('standOccupant').value = occupant;
+    document.getElementById('standX').value = x;
+    document.getElementById('standY').value = y;
+    document.getElementById('standCoordinatesDisplay').value = `X: ${x}, Y: ${y}`;
+
+    // Atualiza a UI do formulário para o modo de edição
+    document.getElementById('stand-submit-button').textContent = 'Atualizar Localização';
+    document.getElementById('stand-cancel-edit-button').classList.remove('hidden');
+
+    // Remove o marcador temporário do mapa, se houver
+    adminMapTemporaryMarker = null;
+    drawAllMaps();
+
+    // Rola a página para o formulário
+    document.getElementById('location-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Exclui uma estande do Firestore após confirmação.
+async function handleDeleteStand(standDocId) {
+    if (!window.db || !standDocId) return;
+
+    if (confirm('Tem certeza que deseja excluir esta estande? Esta ação não pode ser desfeita.')) {
+        try {
+            const standDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`, standDocId);
+            await deleteDoc(standDocRef);
+            // A lista na tela será atualizada automaticamente pelo onSnapshot.
+        } catch (error) {
+            console.error('Erro ao excluir estande:', error);
+            alert('Ocorreu um erro ao excluir a estande.');
+        }
     }
 }
 
-async function addNewLocation(locationData) { // Para o form de admin-dashboard (estandes)
+async function handleSubmitStandForm() {
     if (!currentUserId || !window.db) return;
+
     const messageEl = document.getElementById('location-message');
+    const docIdToUpdate = document.getElementById('standDocIdToUpdate').value;
+
+    const standData = {
+        id: document.getElementById('standId').value,
+        occupant: document.getElementById('standOccupant').value,
+        x: parseInt(document.getElementById('standX').value, 10),
+        y: parseInt(document.getElementById('standY').value, 10)
+    };
+
+    if (isNaN(standData.x) || isNaN(standData.y)) {
+        messageEl.textContent = 'Clique no mapa para obter as coordenadas.';
+        messageEl.className = 'text-red-500 text-sm mt-2';
+        return;
+    }
+
     try {
-        const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
-        // Busca descrição do expositor associado, se houver
-        let description = '';
-        if (locationData.occupant) {
-            const qExpo = query(collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`), where("name", "==", locationData.occupant));
-            const expoSnapshot = await getDocs(qExpo);
-            if (!expoSnapshot.empty) description = expoSnapshot.docs[0].data().description || '';
+        if (docIdToUpdate) {
+            // --- LÓGICA DE ATUALIZAÇÃO ---
+            const standDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`, docIdToUpdate);
+            await updateDoc(standDocRef, standData);
+            messageEl.textContent = 'Localização atualizada com sucesso!';
+        } else {
+            // --- LÓGICA DE ADIÇÃO (como antes) ---
+            const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+            await addDoc(locationsCollectionRef, standData);
+            messageEl.textContent = 'Localização salva!';
         }
 
-        await addDoc(locationsCollectionRef, { ...locationData, description });
-        messageEl.textContent = 'Localização salva!'; messageEl.className = 'text-green-600 text-sm mt-2';
+        messageEl.className = 'text-green-600 text-sm mt-2';
+        
+        // Reseta o formulário para o estado inicial
         document.getElementById('location-form').reset();
+        document.getElementById('standDocIdToUpdate').value = '';
         document.getElementById('standCoordinatesDisplay').value = '';
+        document.getElementById('stand-submit-button').textContent = 'Salvar Localização';
+        document.getElementById('stand-cancel-edit-button').classList.add('hidden');
+        
+        // Limpa o marcador temporário do mapa
         adminMapTemporaryMarker = null;
-        drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight); // Redesenha para limpar marcador
+        drawAllMaps();
+
     } catch (error) {
-        console.error("Erro ao adicionar localização:", error);
-        messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
+        console.error("Erro ao salvar localização:", error);
+        messageEl.textContent = 'Erro ao salvar. Verifique o console.';
+        messageEl.className = 'text-red-500 text-sm mt-2';
     }
 }
 

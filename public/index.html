@@ -159,11 +159,16 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <div class="card p-6">
+                    <div class="card p-6" id="next-event-card">
                         <h3 class="text-xl font-semibold mb-2 text-green-700">🐄 Próxima Palestra Imperdível</h3>
-                        <p class="text-gray-600 mb-1"><span class="font-medium">Título:</span> Inovações na Pecuária Sustentável</p>
-                        <p class="text-gray-600 mb-1"><span class="font-medium">Palestrante:</span> Dr. João Silva</p>
-                        <p class="text-gray-600 mb-3"><span class="font-medium">Horário:</span> Hoje, 14:00 - Auditório Principal</p>
+                        <p class="text-gray-600 mb-1">
+                            <span class="font-medium">Título:</span> 
+                            <span id="next-event-title">Carregando...</span>
+                        </p>
+                        <p class="text-gray-600 mb-3">
+                            <span class="font-medium">Horário:</span> 
+                            <span id="next-event-details">Carregando...</span>
+                        </p>
                         <button class="btn-accent text-sm py-2 px-3 rounded-md">Ver Detalhes</button>
                     </div>
                     <div class="card p-6">
@@ -298,7 +303,7 @@
                         </div>
                         <p class="text-center mt-4 text-gray-500">Use a roda do mouse para zoom. Clique e arraste para mover.</p>
                         <form id="location-form" class="space-y-4 mt-4">
-                            <div>
+                            <input type="hidden" id="standDocIdToUpdate"> <div>
                                 <label for="standId" class="block text-sm font-medium text-gray-700">ID da Estande</label>
                                 <input type="text" id="standId" class="input-field" placeholder="Ex: Setor 03 - Estande 01" required>
                             </div>
@@ -312,7 +317,8 @@
                                 <input type="hidden" id="standX">
                                 <input type="hidden" id="standY">
                             </div>
-                            <button type="submit" class="btn-primary py-2 px-4 rounded-md">Salvar Localização</button>
+                            <div> <button type="submit" id="stand-submit-button" class="btn-primary py-2 px-4 rounded-md">Salvar Localização</button>
+                                <button type="button" id="stand-cancel-edit-button" class="btn-accent hidden ml-2 py-2 px-4 rounded-md">Cancelar Edição</button> </div>
                             <div id="location-message" class="text-sm mt-2"></div>
                         </form>
                     </div>
