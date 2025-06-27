@@ -133,11 +133,6 @@ document.getElementById('closeSidebarBtn').onclick = function() {
     document.querySelector('.sidebar').classList.add('-translate-x-full');
 };
 
-// Função para exibir/ocultar seções
-// app.js (SUBSTITUA sua função window.showSection por esta)
-
-// app.js (SUBSTITUA SUA FUNÇÃO ATUAL PELA VERSÃO CORRIGIDA ABAIXO)
-
 window.showSection = function(sectionId, clickedLink) {
     // Seleciona os elementos de layout principais
     const header = document.querySelector('header');
@@ -265,9 +260,6 @@ function initMap(canvasId) {
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
 
-// app.js (Adicione estas linhas dentro da função initMap)
-
-// ...
     // Adiciona os listeners de eventos para zoom e pan no canvas
     canvas.addEventListener('wheel', handleWheel);
     canvas.addEventListener('mousedown', handleMouseDown);
@@ -275,13 +267,11 @@ function initMap(canvasId) {
     canvas.addEventListener('mouseup', handleMouseUp);
     canvas.addEventListener('mouseleave', handleMouseUp); // Cancela o arrastar se o mouse sair
 
-    // --- INÍCIO DO CÓDIGO A SER ADICIONADO ---
     // Adiciona os listeners para eventos de toque (celulares e tablets)
     canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
     canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
     canvas.addEventListener('touchend', handleTouchEnd);
     canvas.addEventListener('touchcancel', handleTouchEnd); // Cancela se o toque for interrompido
-    // --- FIM DO CÓDIGO A SER ADICIONADO ---
 
     // A lógica de clique que existia aqui foi movida para o handleMouseUp/handleTouchEnd
     // ...
@@ -1312,7 +1302,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const isAdmin = userRole === 'admin';
-                if(adminDashboardLink) adminDashboardLink.classList.toggle('hidden', !isAdmin);
+                const adminNavSection = document.getElementById('admin-nav-section');
+                // Em vez de mostrar/ocultar cada link individualmente, mostre/oculte a seção inteira
+                if (adminNavSection) {
+                    adminNavSection.classList.toggle('hidden', !isAdmin);
+                }
                 if(organizadoresLink) organizadoresLink.classList.toggle('hidden', !isAdmin);
 
                 const adminRoleText = `Logado como: Administrador (${user.email || 'N/A'})`;
@@ -1660,11 +1654,53 @@ function loadPublicEvents() {
         }
         updateAgendaChart(globalEventsCache); // Usa o cache global
         displayAdminEventsList(globalEventsCache); // Atualiza lista no painel de organizadores
+
+        // Chama a função para atualizar o card da próxima palestra na tela inicial.
+        displayNextUpcomingEvent();
+
     }, (error) => {
         console.error("Erro ao carregar eventos:", error);
         const container = document.getElementById('agenda-events-container');
         if (container) container.innerHTML = '<p class="text-center text-red-500 col-span-full">Erro ao carregar eventos.</p>';
     });
+
+    //Encontra o próximo evento futuro e atualiza o card na página inicial.
+    //Se nenhum evento for encontrado, o card permanece oculto.
+    function displayNextUpcomingEvent() {
+        const cardEl = document.getElementById('next-event-card');
+        const titleEl = document.getElementById('next-event-title');
+        const detailsEl = document.getElementById('next-event-details');
+
+        if (!cardEl || !titleEl || !detailsEl) {
+            console.error("Elementos do card 'Próximo Evento' não foram encontrados. Verifique os IDs no HTML.");
+            return;
+        }
+
+        const now = new Date();
+        const upcomingEvents = globalEventsCache
+            .map(event => {
+                if (!event.date || !event.time) return null;
+                const [day, month, year] = event.date.split('/');
+                const [hours, minutes] = event.time.split(':');
+                if (isNaN(day) || isNaN(month) || isNaN(year) || isNaN(hours) || isNaN(minutes)) {
+                    return null;
+                }
+                return { ...event, eventDate: new Date(year, month - 1, day, hours, minutes) };
+            })
+            .filter(event => event && event.eventDate > now)
+            .sort((a, b) => a.eventDate - b.eventDate);
+
+        if (upcomingEvents.length > 0) {
+            const nextEvent = upcomingEvents[0];
+            
+            titleEl.textContent = nextEvent.title;
+            detailsEl.textContent = `${nextEvent.date}, ${nextEvent.time} - ${nextEvent.location}`;
+            cardEl.style.display = 'block'; // Garante que o card esteja visível
+        } else {
+            // Se não houver eventos futuros, garante que o card permaneça oculto.
+            cardEl.style.display = 'none'; 
+        }
+    }
 }
 
 function loadPublicExpositores() {
@@ -2150,3 +2186,5 @@ async function deleteStand(standId) {
 // funçao de carregar estandes
      loadStands();
 
+// Atualiza o ano no rodapé
+document.getElementById('footer-year').textContent = new Date().getFullYear();

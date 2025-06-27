@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AGROPEC 2025</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     
@@ -13,52 +12,63 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <link href="./dist/output.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <aside class="sidebar w-24 md:w-80 space-y-6 py-7 px-2 md:px-6 fixed md:relative inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out sidebar-initial-hidden z-30">
-        <!-- Botão X visível só no mobile -->
-        <button id="closeSidebarBtn" class="absolute top-4 left-6 md:hidden text-white-600 hover:text-red-600 text-2xl font-bold z-40" aria-label="Fechar menu">
-            &times;
-        </button>
-        <div class="px-0 py-0 flex items-center justify-center md:justify-start">
-            <img src="img/logo-agropec.png" alt="[Ícone do Logo AGROPEC]" class="h-100 w-100 inline">
-            <span class="agropec-logo-text hidden md:block ml-2">
-            </span>
+    <aside class="sidebar w-64 flex-shrink-0 bg-gray-800 text-white flex flex-col h-full fixed md:relative transform -translate-x-full md:translate-x-0 transition duration-200 ease-in-out z-30 bg-gradient-to-b from-green-700 to-green-900">
+        <!-- CABEÇALHO DO SIDEBAR -->
+        <div class="p-4 flex justify-end">
+            <button id="closeSidebarBtn" class="md:hidden text-gray-300 hover:text-white text-4xl leading-none">&times;</button>
+        </div>
+        <div class="px-6 pb-6 flex justify-center">
+            <img src="img/logo-agropec.webp" alt="[Ícone do Logo AGROPEC]" class="h-13 w-auto">
         </div>
 
-        <nav class="mt-10">
-            <a href="#login" id="nav-login-link" onclick="window.showSection('login', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h5a3 3 0 013 3v1"></path></svg>
-            <span class="ml-2">Login</span>
+        <!-- NAVEGAÇÃO -->
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="#inicio" onclick="window.showSection('inicio', this)" class="nav-link">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span>Início</span>
             </a>
-            <a href="#inicio" onclick="window.showSection('inicio', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="ml-2">Início</span>
+            <a href="#agenda" onclick="window.showSection('agenda', this)" class="nav-link">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span>Agenda</span>
             </a>
-            <a href="#agenda" onclick="window.showSection('agenda', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            <span class="ml-2">Agenda</span>
+            <a href="#expositores" onclick="window.showSection('expositores', this)" class="nav-link">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                <span>Expositores</span>
             </a>
-            <a href="#expositores" onclick="window.showSection('expositores', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-            <span class="ml-2">Expositores</span>
+            <a href="#mapa" onclick="window.showSection('mapa', this)" class="nav-link">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 13v-6m0 6l-6-3"></path></svg>
+                <span>Mapa</span>
             </a>
-            <a href="#mapa" onclick="window.showSection('mapa', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 13v-6m0 6l-6-3"></path></svg>
-            <span class="ml-2">Mapa</span>
-            </a>
-            <a href="#admin-dashboard" id="admin-dashboard-link" onclick="window.showSection('admin-dashboard', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700 hidden">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.562.344 1.25.513 1.943.513z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            <span class="ml-2">Gerenciar Estandes</span>
-            </a>
-            <a href="#organizadores" id="organizadores-link" onclick="window.showSection('organizadores', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700 hidden">
-            <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            <span class="ml-2">Gerenciar Conteúdo</span>
-            </a>
+            
+            <!-- Seção de Administração -->
+            <div id="admin-nav-section" class="hidden pt-4">
+                <span class="px-3 text-xs font-semibold uppercase text-green-200">Administração</span>
+                <div class="mt-2 space-y-2">
+                    <a href="#admin-dashboard" onclick="window.showSection('admin-dashboard', this)" class="nav-link">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.562.344 1.25.513 1.943.513z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>Gerenciar Estandes</span>
+                    </a>
+                    <a href="#organizadores" onclick="window.showSection('organizadores', this)" class="nav-link">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <span>Gerenciar Conteúdo</span>
+                    </a>
+                </div>
+            </div>
         </nav>
+        
+        <!-- RODAPÉ DO SIDEBAR -->
+        <div class="p-4">
+            <a href="#" id="logout-button" class="nav-link hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span>Sair</span>
+            </a>
+        </div>
     </aside>
 
     <header class="bg-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-10 shadow-sm border-b border-gray-200 md:pl-80 pl-5">
@@ -76,7 +86,7 @@
         <section id="welcome-role-selection" class="p-6 active">
             <div class="max-w-md mx-auto card-inicio p-8 text-center">
                 <div class="flex justify-center mb-8">
-                    <img src="img/logo-agropec.png" alt="[Logo AGROPEC 2025]" class="h-auto">
+                    <img src="img/logo-agropec.webp" alt="[Logo AGROPEC 2025]" class="h-auto">
                 </div>
                 <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Bem-vindo!</h2>
                 <p class="text-center text-white mb-8">Eu sou</p>
@@ -88,7 +98,7 @@
         <section id="login" class="p-2">
             <div class="max-w-md mx-auto card p-8">
                 <div class="flex justify-center mb-8">
-                    <img src="img/logo-agropec.png" alt="[Logo AGROPEC 2025]" class="h-auto">
+                    <img src="img/logo-agropec.webp" alt="[Logo AGROPEC 2025]" class="h-auto">
                 </div>
                 <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Acesse sua conta</h2>
                 <p class="text-center text-gray-600 mb-8">Para explorar o evento AGROPEC.</p>
@@ -116,18 +126,18 @@
                     <div class="relative w-full max-w-5xl mx-auto mt-6 overflow-hidden rounded-lg shadow-lg mb-8">
                         <div id="carousel-container">
                            <div id="carousel-images" class="whitespace-nowrap transition-transform duration-700 ease-in-out">                     
-                                <img src="img/img1.jpg" class="inline-block w-full" />
-                                <img src="img/img2.jpg" class="inline-block w-full" />
-                                <img src="img/img3.jpg" class="inline-block w-full" />
-                                <img src="img/img4.jpg" class="inline-block w-full" />
-                                <img src="img/img5.jpg" class="inline-block w-full" />
-                                <img src="img/img6.jpg" class="inline-block w-full" />
-                                <img src="img/img7.jpg" class="inline-block w-full" />
-                                <img src="img/img8.jpg" class="inline-block w-full" />
-                                <img src="img/img9.jpg" class="inline-block w-full" />
-                                <img src="img/img10.jpg" class="inline-block w-full" />
-                                <img src="img/img11.jpg" class="inline-block w-full" />
-                                <img src="img/img12.jpg" class="inline-block w-full" />
+                                <img src="img/img1.webp" class="inline-block w-full" />
+                                <img src="img/img2.webp" class="inline-block w-full" />
+                                <img src="img/img3.webp" class="inline-block w-full" />
+                                <img src="img/img4.webp" class="inline-block w-full" />
+                                <img src="img/img5.webp" class="inline-block w-full" />
+                                <img src="img/img6.webp" class="inline-block w-full" />
+                                <img src="img/img7.webp" class="inline-block w-full" />
+                                <img src="img/img8.webp" class="inline-block w-full" />
+                                <img src="img/img9.webp" class="inline-block w-full" />
+                                <img src="img/img10.webp" class="inline-block w-full" />
+                                <img src="img/img11.webp" class="inline-block w-full" />
+                                <img src="img/img12 .webp" class="inline-block w-full" />
                             </div>
                         </div>
 
@@ -160,7 +170,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                     <div class="card p-6" id="next-event-card">
-                        <h3 class="text-xl font-semibold mb-2 text-green-700">🐄 Próxima Palestra Imperdível</h3>
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">📢 Próxima Palestra Imperdível</h3>
                         <p class="text-gray-600 mb-1">
                             <span class="font-medium">Título:</span> 
                             <span id="next-event-title">Carregando...</span>
@@ -514,7 +524,7 @@
 
             <footer>
                 <p>© <span id="footer-year"></span> Agropec - Todos os direitos reservados.<br>
-                Desenvolvido por <a href="https://github.com/wesleysantos-31" target="_blank" rel="noopener noreferrer">Wesley Santos</a>, <a href="https://github.com/Isabella-Pompeo" target="_blank" rel="noopener noreferrer">Isabella Pompeo</a> e <a href="">Anthonny Mesquita</a></p>
+                Desenvolvido por <a href="https://github.com/wesleysantos-31" target="_blank" rel="noopener noreferrer">Wesley Santos</a>, <a href="https://github.com/Isabella-Pompeo" target="_blank" rel="noopener noreferrer">Isabella Pompeo</a> e <a href="https://www.instagram.com/4nth0nnyy_3103/">Anthonny Mesquita</a></p>
             </footer>
         </div>
     </main>

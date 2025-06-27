@@ -2186,3 +2186,5 @@ async function deleteStand(standId) {
 // funçao de carregar estandes
      loadStands();
 
+// Atualiza o ano no rodapé
+document.getElementById('footer-year').textContent = new Date().getFullYear();
