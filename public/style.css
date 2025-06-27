@@ -544,3 +544,21 @@ footer {
         overflow-x: visible; /* Restaura o comportamento padrão, sem scroll */
     }
 }
+
+.div-centralizada {
+  max-width: 768px;   /* equivalente a max-w-3xl (~48rem) */
+  margin-left: auto;  /* mx-auto centraliza horizontalmente */
+  margin-right: auto;
+  padding: 32px;      /* p-8 = 2rem = 32px */
+  background: white;  /* se .card adicionava fundo, ajuste aqui */
+  border-radius: 0.5rem; /* ajuste opcional se .card tiver bordas arredondadas */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* ajuste opcional se .card tiver sombra */
+  text-align: center;
+}
+
+.img-pequena {
+  width: 550px;
+  height: auto;
+  padding-bottom: 25px;
+  border-radius: 12px;
+}
