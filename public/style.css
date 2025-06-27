@@ -551,8 +551,8 @@ footer {
   margin-right: auto;
   padding: 32px;      /* p-8 = 2rem = 32px */
   background: white;  /* se .card adicionava fundo, ajuste aqui */
-  border-radius: 0.5rem; /* ajuste opcional se .card tiver bordas arredondadas */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* ajuste opcional se .card tiver sombra */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   text-align: center;
 }
 
