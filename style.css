@@ -69,6 +69,37 @@ body {
     text-shadow: 0.5px 0.5px 1px #222;
 }
 
+#login {
+    background-image: url(img/bg-login.webp);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height:  100vh; /* Ocupa toda a altura da tela */
+    background-color: rgba(0, 0, 0, 0.5); /* reduzido para deixar a imagem mais clara */
+    background-blend-mode: overlay;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10vh; /* levanta um pouco o conteúdo */
+}
+
+.meu-card {
+  max-width: 28rem;       /* Equivalente ao max-w-md (448px) */
+  margin-left: auto;      /* Equivalente ao mx-auto */
+  margin-right: auto;
+  padding: 2rem;          /* Equivalente ao p-8 (32px) */
+  /* Se a classe 'card' tiver outros estilos, adicione abaixo */
+  /* Exemplo genérico para aparência de card: */
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1); /* fundo branco translúcido estilo glass */
+  border-radius: 1.3rem;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.45); /* borda branca translúcida */
+}
+
+
 .main-content section {
     display: none;
 }
@@ -512,4 +543,22 @@ footer {
     #admin-tab-container {
         overflow-x: visible; /* Restaura o comportamento padrão, sem scroll */
     }
+}
+
+.div-centralizada {
+  max-width: 768px;   /* equivalente a max-w-3xl (~48rem) */
+  margin-left: auto;  /* mx-auto centraliza horizontalmente */
+  margin-right: auto;
+  padding: 32px;      /* p-8 = 2rem = 32px */
+  background: white;  /* se .card adicionava fundo, ajuste aqui */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.img-pequena {
+  width: 550px;
+  height: auto;
+  padding-bottom: 25px;
+  border-radius: 12px;
 }

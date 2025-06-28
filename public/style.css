@@ -69,6 +69,37 @@ body {
     text-shadow: 0.5px 0.5px 1px #222;
 }
 
+#login {
+    background-image: url(img/bg-login.webp);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height:  100vh; /* Ocupa toda a altura da tela */
+    background-color: rgba(0, 0, 0, 0.5); /* reduzido para deixar a imagem mais clara */
+    background-blend-mode: overlay;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10vh; /* levanta um pouco o conteúdo */
+}
+
+.meu-card {
+  max-width: 28rem;       /* Equivalente ao max-w-md (448px) */
+  margin-left: auto;      /* Equivalente ao mx-auto */
+  margin-right: auto;
+  padding: 2rem;          /* Equivalente ao p-8 (32px) */
+  /* Se a classe 'card' tiver outros estilos, adicione abaixo */
+  /* Exemplo genérico para aparência de card: */
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1); /* fundo branco translúcido estilo glass */
+  border-radius: 1.3rem;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1.5px solid rgba(255, 255, 255, 0.45); /* borda branca translúcida */
+}
+
+
 .main-content section {
     display: none;
 }
@@ -248,7 +279,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #16a34a; /* equivalente ao bg-green-600 */
   padding: 1.5rem;           /* p-6 */
   margin-bottom: 1.5rem;     /* mb-6 */
-  border-radius: 0.5rem;     /* opcional, estilo de card */
+  border-radius: 0.5rem;     /* 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* sombra suave */
   color: white;             /* se o texto estiver claro */
   min-height: 300px; /* altura mínima aumentada */
@@ -515,19 +546,67 @@ footer {
 }
 
 .div-centralizada {
-  max-width: 768px;   /* equivalente a max-w-3xl (~48rem) */
-  margin-left: auto;  /* mx-auto centraliza horizontalmente */
+  /* - Define a largura máxima do card para 768 pixels.
+    - Em telas maiores que 768px, o card não ficará mais largo que isso, mantendo uma boa legibilidade.
+    - Em telas menores, o card se ajustará para caber na tela.
+  */
+  max-width: 768px;   
+
+  /* - As margens automáticas à esquerda e à direita (mx-auto) centralizam o card horizontalmente 
+    - dentro de seu elemento pai (a seção 'sobre').
+  */
+  margin-left: auto;  
   margin-right: auto;
-  padding: 32px;      /* p-8 = 2rem = 32px */
-  background: white;  /* se .card adicionava fundo, ajuste aqui */
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  text-align: center;
+
+  /* - Adiciona um espaçamento interno (padding) para que o conteúdo não toque as bordas.
+  */
+  padding: 1.5rem; /* Equivalente a p-6 no Tailwind */     
+  
+  /* - Define um fundo branco para o card.
+  */
+  background: white;
+
+  /* - Adiciona bordas arredondadas para um visual mais suave.
+  */
+  border-radius: 0.5rem; 
+
+  /* - Aplica uma sombra sutil para dar profundidade e destacar o card do fundo da página.
+  */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+}
+
+.div-centralizada h3 {
+    color: #409b43; /* Cor verde para o título */
+    font-size: large; /* Tamanho do título */
+    margin-bottom: 0.5rem; /* Espaçamento abaixo do título */
+    line-height: 1.2;
+    text-align: left; /* Alinha o título à esquerda */
+  }
+
+.div-centralizada p {
+    color: #666; /* Cor cinza para o parágrafo */
+    font-size: 0.875rem; /* Tamanho do texto do parágrafo */
+    margin-top: 0.5rem; /* Espaçamento acima do parágrafo */
+    line-height: 1.5; /* Espaçamento entre linhas */
+    margin-bottom: 1.2rem; /* Espaçamento abaixo do parágrafo */
+    text-align: justify; /* Justifica o texto para melhor legibilidade */
+}
+
+.div-centralizada li {
+    margin-bottom: 0.5rem; /* Espaçamento abaixo de cada item da lista */
+    margin-bottom: 1.2rem; /* Espaçamento abaixo de cada item da lista */
+    color: #666; /* Cor cinza para os itens da lista */
+    font-size: 0.875rem; /* Tamanho do texto dos itens da lista */
+    line-height: 1.5; /* Espaçamento entre linhas */
+    text-align: justify; /* Justifica o texto dos itens da lista */
+    list-style-type: disc; /* Define o estilo da lista como marcadores */
+    padding-left: 1.5rem; /* Adiciona espaço à esquerda para os marcadores */
 }
 
 .img-pequena {
-  width: 550px;
-  height: auto;
-  padding-bottom: 25px;
-  border-radius: 12px;
+    width: 550px;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;     /* adiciona espaço abaixo da imagem */
 }
+
