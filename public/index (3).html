@@ -28,7 +28,7 @@
         </div>
 
         <!-- NAVEGAÇÃO -->
-        <nav class="flex-1 px-4 space-y-2">
+        <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
             <a href="#inicio" onclick="window.showSection('inicio', this)" class="nav-link">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span>Início</span>
@@ -45,6 +45,17 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 13v-6m0 6l-6-3"></path></svg>
                 <span>Mapa</span>
             </a>
+            <a href="#noticias" onclick="window.showSection('noticias', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2zM7 10h10M7 14h10M7 18h6"></path>
+                </svg>
+            <span>Notícias</span>
+            </a>
+            <a href="#sobre" onclick="window.showSection('sobre', this)" class="nav-link flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-green-700">
+                <svg class="w-6 h-6 mr-0 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 4a8 8 0 100 16 8 8 0 000-16z"/></svg>
+                <span>Sobre</span>
+            </a>
+
+
             
             <!-- Seção de Administração -->
             <div id="admin-nav-section" class="hidden pt-4">
@@ -96,19 +107,19 @@
         </section>
 
         <section id="login" class="p-2">
-            <div class="max-w-md mx-auto card p-8">
+            <div class="meu-card">
                 <div class="flex justify-center mb-8">
                     <img src="img/logo-agropec.webp" alt="[Logo AGROPEC 2025]" class="h-auto">
                 </div>
                 <h2 class="text-3xl font-bold text-center mb-2 text-green-600">Acesse sua conta</h2>
-                <p class="text-center text-gray-600 mb-8">Para explorar o evento AGROPEC.</p>
+                <p class="text-center text-white mb-8">Para explorar o evento AGROPEC.</p>
                 <form>
                     <div class="mb-4">
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
+                        <label for="email" class="block text-sm font-medium text-white mb-1">E-mail</label>
                         <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" class="input-field">
                     </div>
                     <div class="mb-6">
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                        <label for="password" class="block text-sm font-medium text-white mb-1">Senha</label>
                         <input type="password" id="password" name="password" placeholder="********" class="input-field">
                     </div>
                     <button type="button" id="login-button" class="w-full btn-primary font-semibold py-2 px-4 rounded-md text-lg">Entrar</button>
@@ -289,6 +300,69 @@
                     <p class="text-center mt-4 text-gray-500">Clique em uma estande para ver os detalhes. Tem a possibilidade de dar zoom no mapa.</p>
                 </div>
             </section>
+
+            <section id="noticias" class="p-2 hidden">
+                <div style="height: 72px;"></div>
+                <div class="mb-6">
+                    <h2 class="text-3xl font-semibold text-gray-800">Notícias AGROPEC</h2>
+                    <p class="mt-2 text-gray-600">Leia as últimas notícias e atualizações do evento.</p>
+                    </div>
+                    <div id="news-archive" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <p class="text-gray-500 col-span-full">Carregando notícias...</p>
+                </div>
+            </section>
+
+            <section id="sobre" class="p-2">
+                <div style="height: 72px;"></div>
+
+                <div class="div-centralizada card">
+                    <div class="flex justify-center">
+                        <div class="bg-green-500 w-1/2">
+                            <h2 class="text-2xl text-green-700 mb-4 text-center">Sobre o evento</h2>
+                            <img src="img/img12.webp" class="inline-block img-pequena rounded-2xl">
+                        </div>
+                    </div>
+                    <h3>Agropec 2025:</h3>
+                    <p>
+                        A Exposição Feira Agropecuária de Paragominas, conhecida como Agropec, é o principal evento do agronegócio no município de Paragominas, no Pará, e uma das mais tradicionais e importantes feiras do estado. Organizada pelo Sindicato dos Produtores Rurais de Paragominas (SPRP), a Agropec se consolidou ao longo de mais de cinco décadas como um catalisador para o desenvolvimento econômico e social da região, além de ser um vibrante ponto de encontro cultural.
+                    </p>
+                    <h3>Um marco na história e na cultura local:</h3>
+                    <p>
+                        Com uma trajetória que ultrapassa 50 edições, a Agropec é mais do que uma feira de negócios. Em reconhecimento à sua relevância histórica e cultural para o município, o evento foi oficialmente reconhecido como Patrimônio Cultural de Natureza Imaterial de Paragominas. Esta honraria destaca a profunda conexão da feira com a identidade e as tradições da comunidade local. A Agropec é um reflexo da força e da resiliência do setor produtivo da região, evoluindo a cada ano e se firmando como uma vitrine de inovação e progresso.
+                    </p>
+                    <h3>Atrações para todos os públicos:</h3>
+                    <p>
+                        A Agropec oferece uma programação diversificada que atrai milhares de visitantes anualmente, incluindo produtores rurais, empresários, investidores e o público em geral. Entre as principais atrações, destacam-se:
+                    </p>
+                    <li><strong>Exposições Agropecuárias:</strong> <p>Apresentação de animais de elite, inovações em maquinário agrícola e tecnologias voltadas para o campo.</p></li>
+                    <li><strong>Leilões:</strong> <p>Grandes oportunidades de negócios com a comercialização de gado de alta linhagem e outros animais.</p></li>
+                    <li><strong>Rodeios:</strong> <p>Competições emocionantes que atraem competidores de diversas partes do país e animam o público.</p></li>
+                    <li><strong>Shows Nacionais:</strong> <p>Apresentações de renomados artistas da música brasileira, que garantem o entretenimento noturno.</p></li>
+                    <li><strong>Palestras e Cursos:</strong> <p>Disseminação de conhecimento técnico e científico, com a participação de especialistas que abordam temas relevantes para o agronegócio.</p></li>
+                    <li><strong>Feira de Negócios:</strong> <p>Espaço para empresas de diversos setores exporem seus produtos e serviços, fomentando o networking e a realização de negócios.</p></li>
+                    <h3>Impacto econômico e social:</h3>
+                    <p>A importância da Agropec transcende os portões do Parque de Exposições Amílcar Tocantins. O evento movimenta a economia local de forma significativa, impulsionando setores como o hoteleiro, de restaurantes, de transporte e o comércio em geral. Além disso, a feira gera empregos diretos e indiretos, contribui para o aumento da arrecadação de impostos e promove o turismo na região.
+                    <p>Para os produtores rurais, a Agropec é uma oportunidade ímpar para a troca de experiências, o acesso a novas tecnologias e a realização de negócios que impactam positivamente a produtividade e a sustentabilidade de suas atividades ao longo do ano.</p>
+                    <p>Em suma, a Agropec Paragominas é um evento multifacetado que celebra a força do agronegócio, promove o desenvolvimento sustentável e enriquece a vida cultural da cidade e de todo o estado do Pará.</p>
+                </div>
+
+                <div style="height: 25px;"></div>
+                <div class="div-centralizada card">
+                    <h2 class="text-2xl text-green-700 mb-2 text-center">Links</h2>
+                    <div style="height: 15px;"></div>
+                    <div class="flex justify-center space-x-4">
+                        <a href="https://www.instagram.com/agropec_pgm/" target="_blank" rel="noopener" class="social-link">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" alt="Instagram" class="w-5 h-5" style="filter: invert(43%) sepia(94%) saturate(1012%) hue-rotate(74deg) brightness(90%) contrast(92%);">
+                        </a>
+                        <a href="https://www.facebook.com/agropecpgm/" target="_blank" rel="noopener" class="social-link">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/facebook.svg" alt="Facebook" class="w-5 h-5" style="filter: invert(43%) sepia(94%) saturate(1012%) hue-rotate(74deg) brightness(90%) contrast(92%);">
+                        </a>      
+                        <a href="https://www.google.com/maps/place/Parque+de+Exposições+Amílcar+Tocantins,+Paragominas+-+PA" target="_blank" rel="noopener" class="social-link">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlemaps.svg" alt="Google Maps" class="w-5 h-5" style="filter: invert(43%) sepia(94%) saturate(1012%) hue-rotate(74deg) brightness(90%) contrast(92%);">
+                        </a>
+                </div>
+            </section>
+            <div style="height: 15px;"></div>
 
             <section id="admin-dashboard" class="p-2">
                 <div style="height: 72px;"></div>
