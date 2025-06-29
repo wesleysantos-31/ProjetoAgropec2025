@@ -1533,6 +1533,7 @@ async function handleLogin() {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const loginMessageDiv = document.getElementById('login-message');
+    const loginButton = document.getElementById('login-button'); // Obtenha o botão de login
     const email = emailInput.value.trim();
     const password = passwordInput.value;
 
@@ -1548,11 +1549,13 @@ async function handleLogin() {
         loginMessageDiv.className = 'text-red-500 text-center mt-4 text-sm font-medium'; return;
     }
 
+    // Mostrar spinner e desabilitar o botão
+    loginButton.innerHTML = '<span class="spinner"></span> Entrando...';
+    loginButton.disabled = true;
+
     try {
         await signInWithEmailAndPassword(window.auth, email, password);
         // Mensagem de sucesso não é mais necessária aqui, onAuthStateChanged cuidará do redirecionamento
-        // loginMessageDiv.textContent = "Login realizado com sucesso!";
-        // loginMessageDiv.className = 'text-green-600 text-center mt-4 text-sm font-medium';
     } catch (error) {
         console.error("Erro ao fazer login:", error);
         let msg = "Erro ao fazer login.";
@@ -1560,11 +1563,16 @@ async function handleLogin() {
         else if (error.code === 'auth/invalid-email') msg = "E-mail inválido.";
         loginMessageDiv.textContent = msg;
         loginMessageDiv.className = 'text-red-500 text-center mt-4 text-sm font-medium';
+    } finally {
+        // Remover spinner e reabilitar o botão
+        loginButton.innerHTML = 'Entrar';
+        loginButton.disabled = false;
     }
 }
 
 async function handleVisitorLogin() {
     if (!window.auth) { console.error("Firebase Auth não inicializado."); return; }
+    // Não é necessário spinner para login de visitante, pois é instantâneo na maioria dos casos
     try {
         await signInAnonymously(window.auth);
         console.log("Login de visitante (anônimo) realizado.");
