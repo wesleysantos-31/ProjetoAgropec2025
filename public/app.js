@@ -8,22 +8,16 @@ import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, upda
 const firebaseConfig = {
     // Chave de API que autoriza as requisições para os serviços do Google Cloud e Firebase.
     apiKey: "AIzaSyBLeqJsQdDVYX2zKlcs9tGzdgYsvYFDog4", // Esta chave precisa ser alterada para a chave real do projeto que é de suma importância para a conexão com o Firebase.
-
     // O domínio oficial do projeto no Firebase, usado para os fluxos de autenticação (Firebase Auth).
     authDomain: "agropec-2025-app.firebaseapp.com", // Este domínio deve ser o mesmo que o do projeto no Firebase Console. Por tanto, esse domímio precisa ser alterado para o domínio real do projeto.
-
     // Identificador único e imutável do projeto no console do Google Cloud e Firebase.
     projectId: "agropec-2025-app", // Este ID é gerado precisa ser o mesmo que o do projeto no Firebase Console. Portanto, esse ID precisa ser alterado para o ID real do projeto.
-
     // URL do bucket padrão no Cloud Storage, utilizado para armazenar arquivos como imagens e vídeos.
     storageBucket: "agropec-2025-app.firebaseapp.com", // Este bucket é usado para armazenar arquivos e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse bucket precisa ser alterado para o bucket real do projeto.
-
     // ID do remetente para o Firebase Cloud Messaging (FCM), serviço de envio de notificações push.
     messagingSenderId: "203743696437", // Este ID é usado para identificar o remetente de mensagens e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse ID precisa ser alterado para o ID real do projeto.
-
     // Identificador único para esta aplicação web específica dentro do projeto Firebase.
     appId: "1:203743696437:web:0332c09896cc34eb14437c", // Este appId é usado para identificar a aplicação no Firebase e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse appId precisa ser alterado para o appId real do projeto.
-
     // ID de medição para o Google Analytics, usado para coletar dados de uso e eventos da aplicação.
     measurementId: "G-40JHQ2RPEQ" // Este measurementId é usado para identificar a aplicação no Google Analytics e deve ser o mesmo que o do projeto no Firebase Console. Portanto, esse measurementId precisa ser alterado para o measurementId real do projeto.
 };
@@ -59,7 +53,6 @@ let pulseDirection = 1;
 let initialPinchDistance = null;
 // --- Fim das Novas Variáveis ---
 
-
 // Força o redimensionamento do canvas ao mostrar a guia do mapa
 function resizeFairMapCanvas() {
     const canvas = document.getElementById('fairMapCanvas');
@@ -70,6 +63,7 @@ function resizeFairMapCanvas() {
     // Redesenhe o mapa aqui se necessário
     if (window.drawFairMap) window.drawFairMap();
 }
+
 // Detecta quando a seção do mapa é exibida
 const mapaSection = document.getElementById('mapa');
 if (mapaSection) {
@@ -86,7 +80,6 @@ if (mapaSection) {
 
 // detectar quando a seção do painel de administração se torna visível.
 const adminDashboardSection = document.getElementById('admin-dashboard');
-
 if (adminDashboardSection) {
     // Cria um observador que reage a mudanças nos atributos da seção.
     const adminMapObserver = new MutationObserver(() => {
@@ -100,7 +93,6 @@ if (adminDashboardSection) {
             }, 100);
         }
     });
-
     // Configura o observador para monitorar especificamente o atributo 'class'.
     adminMapObserver.observe(adminDashboardSection, {
         attributes: true,
@@ -110,6 +102,7 @@ if (adminDashboardSection) {
 
 // Também ajusta ao redimensionar a janela
 window.addEventListener('resize', resizeFairMapCanvas);
+
 // Ajuste dos pinos (bolinhas) verdes/vermelhas
 window.FAIR_MAP_PIN_RADIUS = 10; // Diminua para 10px (antes era maior)
 
@@ -126,8 +119,6 @@ const firebaseErrorMessage = document.getElementById('firebase-error-message');
 const firebaseErrorDetails = document.getElementById('firebase-error-details');
 const mobileMenuButton = document.getElementById('mobileMenuButton');
 
-
-
 // Função para exibir/ocultar a sidebar no mobile
 document.getElementById('closeSidebarBtn').onclick = function() {
     document.querySelector('.sidebar').classList.add('-translate-x-full');
@@ -138,7 +129,6 @@ window.showSection = function(sectionId, clickedLink) {
     const header = document.querySelector('header');
     const sidebar = document.querySelector('.sidebar');
     const mainContentArea = document.querySelector('.main-content');
-
     const isAuthScreen = sectionId === 'welcome-role-selection' || sectionId === 'login';
 
     // Controla a visibilidade do header, sidebar e do espaçamento do topo
@@ -180,7 +170,6 @@ window.showSection = function(sectionId, clickedLink) {
 // Função para passar as imagens do carrossel
 let carouselIndex = 0;
 const totalSlides = 12; // atualize se mudar o número de imagens
-
 let carouselInterval = null;
 const intervalTime = 5000;
 
@@ -204,12 +193,10 @@ function resetCarouselInterval() {
 
 // Inicia o carrossel ao carregar a página
 startCarouselInterval();
-
 //mover as imagens do carrossel
 window.moveCarousel = moveCarousel;
 
 // --- INÍCIO DO NOVO BLOCO DE FUNÇÕES DO MAPA ---
-
 // Inicia a animação de pulsação que será usada para os hotspots
 function startPulseAnimation() {
     function animate() {
@@ -272,13 +259,11 @@ function initMap(canvasId) {
     canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
     canvas.addEventListener('touchend', handleTouchEnd);
     canvas.addEventListener('touchcancel', handleTouchEnd); // Cancela se o toque for interrompido
-
     // A lógica de clique que existia aqui foi movida para o handleMouseUp/handleTouchEnd
     // ...
+
 // ...
-
     // Listener de clique específico para cada tipo de mapa
-
     window.addEventListener('resize', () => handleMapResize(canvasId));
     handleMapResize(canvasId); // Configuração inicial do tamanho
 }
@@ -288,11 +273,10 @@ function handleMapResize(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-
     const dpr = window.devicePixelRatio || 1;
+
     // Pega o tamanho do .map-wrapper, que agora controla as dimensões
     const rect = canvas.parentElement.getBoundingClientRect();
-
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
@@ -315,7 +299,6 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
     if (!mapImage || !mapImage.complete) return;
 
     ctx.clearRect(0, 0, cssWidth, cssHeight);
-
     ctx.save();
     ctx.translate(offsetX, offsetY);
     ctx.scale(scale, scale);
@@ -392,7 +375,6 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         ctx.fillText(coordText, adminMapTemporaryMarker.x + markerRadius + (5 / scale), adminMapTemporaryMarker.y + (fontSize / 3));
         // --- FIM DA LÓGICA DE DESENHO DAS COORDENADAS ---
     }
-
     ctx.restore();
     updateCustomScrollbars(canvasId);
 }
@@ -416,17 +398,14 @@ function handleWheel(event) {
     offsetX = mouseX - (mouseX - offsetX) * (newScale / scale);
     offsetY = mouseY - (mouseY - offsetY) * (newScale / scale);
     scale = newScale;
-
     drawAllMaps();
 }
 
 function handleMouseDown(event) {
     if (event.button !== 0) return; // Apenas botão esquerdo
-
     // Armazena a posição exata do início do clique
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-
     isDragging = false; // Começa como 'não arrastando'
     event.target.style.cursor = 'grabbing';
 }
@@ -434,7 +413,6 @@ function handleMouseDown(event) {
 function handleMouseMove(event) {
     // A verificação 'buttons' é mais confiável que uma flag booleana
     if (event.buttons !== 1) return;
-
     isDragging = true; // Marca que um arraste está ocorrendo
 
     const dx = event.clientX - dragStartX;
@@ -465,16 +443,13 @@ function handleMouseMove(event) {
 
     offsetX = newOffsetX;
     offsetY = newOffsetY;
-
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-
     drawAllMaps(); // Redesenha o mapa na nova posição
 }
 
 function handleMouseUp(event) {
     event.target.style.cursor = 'grab';
-
     const dx = Math.abs(event.clientX - dragStartX);
     const dy = Math.abs(event.clientY - dragStartY);
 
@@ -494,6 +469,7 @@ function handleMouseUp(event) {
 // --- Funções de Clique Atualizadas ---
 function handleAdminMapClick(event) {
     if (isDragging) return; // Ignora cliques que foram parte de um arraste
+
     const rect = event.target.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
@@ -513,7 +489,6 @@ function handleAdminMapClick(event) {
 }
 
 function handleFairMapClick(event) {
-
     if (isDragging) return; // Ignora cliques que foram parte de um arraste
 
     const rect = event.target.getBoundingClientRect();
@@ -525,7 +500,6 @@ function handleFairMapClick(event) {
     for (const stand of [...stands].reverse()) {
         const radius = 12 / scale; // Área de clique um pouco maior que o ponto visual
         const distance = Math.sqrt(Math.pow(clickX - stand.x, 2) + Math.pow(clickY - stand.y, 2));
-
         if (distance <= radius) {
             clickedStand = stand;
             break;
@@ -560,14 +534,12 @@ function showInfoModal(data) {
 // Função para atualizar as barras de rolagem personalizadas
 // Esta função deve ser chamada sempre que o mapa for desenhado ou redimensionado
 // app.js (SUBSTITUA a função updateCustomScrollbars inteira)
-
 function updateCustomScrollbars(canvasId) {
     const canvas = document.getElementById(canvasId);
     if (!canvas || !mapImage || !mapImage.complete) return;
 
     // CORREÇÃO: Remove a parte 'Canvas' do ID para encontrar os elementos corretos.
     const baseId = canvasId.replace('Canvas', '');
-
     const scrollbarH = document.getElementById(`${baseId}ScrollbarH`);
     const thumbH = document.getElementById(`${baseId}ThumbH`);
     const scrollbarV = document.getElementById(`${baseId}ScrollbarV`);
@@ -607,17 +579,14 @@ function updateCustomScrollbars(canvasId) {
         scrollbarV.style.display = 'none';
     }
 }
-
 // --- FIM DO NOVO BLOCO DE FUNÇÕES DO MAPA ---
 
 // app.js (Adicione este novo bloco de funções)
-
 // --- INÍCIO DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
-
 function handleTouchStart(event) {
     event.preventDefault(); // Previne o comportamento padrão do navegador (como rolar a página)
-
     const touches = event.touches;
+
     if (touches.length === 1) {
         // Início de um arraste com um dedo
         dragStartX = touches[0].clientX;
@@ -641,7 +610,6 @@ function handleTouchMove(event) {
         // Lógica para arrastar (pan) com um dedo
         if (isDragging || Math.abs(touches[0].clientX - dragStartX) > 5 || Math.abs(touches[0].clientY - dragStartY) > 5) {
             isDragging = true;
-
             const dx = touches[0].clientX - dragStartX;
             const dy = touches[0].clientY - dragStartY;
 
@@ -655,8 +623,10 @@ function handleTouchMove(event) {
                 const canvasHeight = canvas.clientHeight;
                 const mapRenderedWidth = mapImage.width * scale;
                 const mapRenderedHeight = mapImage.height * scale;
+
                 const minOffsetX = canvasWidth - mapRenderedWidth;
                 const minOffsetY = canvasHeight - mapRenderedHeight;
+
                 newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, 0));
                 newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, 0));
             }
@@ -688,10 +658,9 @@ function handleTouchMove(event) {
         // Ajusta o offset para que o zoom pareça vir do centro dos dedos
         offsetX = midX - (midX - offsetX) * (newScale / scale);
         offsetY = midY - (midY - offsetY) * (newScale / scale);
-
         scale = newScale;
-        initialPinchDistance = currentPinchDistance; // Atualiza para o próximo movimento
 
+        initialPinchDistance = currentPinchDistance; // Atualiza para o próximo movimento
         drawAllMaps();
     }
 }
@@ -711,7 +680,6 @@ function handleTouchEnd(event) {
             clientX: touch.clientX,
             clientY: touch.clientY
         });
-
         // Chama a função de clique apropriada baseada no canvas
         if (event.target.id === 'fairMapCanvas') {
             handleFairMapClick(fakeMouseEvent);
@@ -722,11 +690,10 @@ function handleTouchEnd(event) {
 }
 // --- FIM DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
 
-// Listeners para fechar o modal
+// Listener para fechar o modal
 const infoModal = document.getElementById('info-modal');
 if(infoModal) {
     const modalCloseBtn = document.getElementById('modal-close-btn');
-
     // Fecha ao clicar no botão 'X'
     modalCloseBtn.addEventListener('click', () => {
         infoModal.style.display = 'none';
@@ -740,11 +707,12 @@ if(infoModal) {
     });
 }
 
+
 // --- Funções de Gerenciamento de Conteúdo (Organizadores) ---
+
 async function submitNewsForm(newsData, newsIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('news-message');
-
     try {
         if (newsIdToUpdate) {
             // ATUALIZAR notícia existente
@@ -757,13 +725,11 @@ async function submitNewsForm(newsData, newsIdToUpdate = null) {
             await addDoc(newsCollectionRef, { ...newsData, publishedAt: serverTimestamp(), authorId: currentUserId });
             messageEl.textContent = 'Notícia publicada!';
         }
-
         messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('news-form').reset();
         document.getElementById('newsIdToUpdate').value = ''; // Limpa o ID
         document.getElementById('news-submit-button').textContent = 'Publicar Notícia';
         document.getElementById('news-cancel-edit-button').classList.add('hidden');
-
     } catch (error) {
         console.error("Erro ao salvar notícia:", error);
         messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
@@ -774,7 +740,6 @@ async function submitEventForm(eventData, eventIdToUpdate = null) {
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('event-message');
     const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
-
     try {
         if (eventIdToUpdate) { // Atualizando evento existente
             const eventDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`, eventIdToUpdate);
@@ -799,7 +764,6 @@ async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null
     if (!currentUserId || !window.db) { console.error("Usuário ou DB não disponível"); return; }
     const messageEl = document.getElementById('expositor-info-message');
     const expositorsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
-
     try {
         if (expositorIdToUpdate) {
             const expositorDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`, expositorIdToUpdate);
@@ -820,7 +784,6 @@ async function submitExpositorInfoForm(expositorData, expositorIdToUpdate = null
     }
 }
 
-
 async function submitInfoForm(infoData, infoIdToUpdate = null) {
     if (!currentUserId || !window.db) return;
     const messageEl = document.getElementById('info-message');
@@ -836,13 +799,11 @@ async function submitInfoForm(infoData, infoIdToUpdate = null) {
             await addDoc(infoCollectionRef, { ...infoData, createdAt: serverTimestamp(), authorId: currentUserId });
             messageEl.textContent = 'Informação publicada!';
         }
-
         messageEl.className = 'text-green-600 text-sm mt-2';
         document.getElementById('info-form').reset();
         document.getElementById('infoIdToUpdate').value = '';
         document.getElementById('info-submit-button').textContent = 'Publicar Informação';
         document.getElementById('info-cancel-edit-button').classList.add('hidden');
-
     } catch (error) {
         console.error("Erro ao salvar informação:", error);
         messageEl.textContent = 'Erro ao salvar.'; messageEl.className = 'text-red-500 text-sm mt-2';
@@ -850,6 +811,7 @@ async function submitInfoForm(infoData, infoIdToUpdate = null) {
 }
 
 // --- Funções de Carregamento de Dados Públicos ---
+
 function loadPublicNews() {
     if (!window.db) return;
     const newsContainer = document.getElementById('public-news-container');
@@ -878,13 +840,8 @@ function loadPublicNews() {
         displayAdminNewsList(newsList);
 
         newsList.forEach(news => {
-            // ... (código existente para exibir notícias na tela inicial) ...
-        });
-
-        newsList.forEach(news => {
             // Se a data estiver no formato "DD/MM/AAAA", ela será exibida corretamente.
             const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-BR');
-
             const newsCard = `
                 <div class="card p-6">
                     <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
@@ -893,19 +850,20 @@ function loadPublicNews() {
                 </div>`;
             newsContainer.innerHTML += newsCard;
         });
+
     }, error => {
         console.error("Erro ao carregar notícias:", error);
         newsContainer.innerHTML = '<p class="text-red-500 col-span-full">Erro ao carregar notícias.</p>';
     });
 }
 
-// app.js (Adicione estas 3 novas funções)
 
+// app.js (Adicione estas 3 novas funções)
 function displayAdminInfoList(infoList) {
     const listContainer = document.getElementById('admin-info-list');
     if (!listContainer) return;
-    listContainer.innerHTML = '';
 
+    listContainer.innerHTML = '';
     if (infoList.length === 0) {
         listContainer.innerHTML = '<p class="text-gray-500">Nenhuma informação publicada.</p>';
         return;
@@ -947,16 +905,15 @@ function populateInfoFormForEdit(infoId) {
             document.getElementById('infoIdToUpdate').value = infoId;
             document.getElementById('infoTitle').value = info.title;
             document.getElementById('infoContent').value = info.content;
-
             document.getElementById('info-submit-button').textContent = 'Atualizar Informação';
             document.getElementById('info-cancel-edit-button').classList.remove('hidden');
-
             document.getElementById('info-form').scrollIntoView({ behavior: 'smooth' });
         } else {
             alert('Erro: informação não encontrada.');
         }
     });
 }
+
 
 function loadPublicGeneralInfo() {
     if (!window.db) return;
@@ -968,7 +925,6 @@ function loadPublicGeneralInfo() {
         snapshot.forEach(doc => {
             infoList.push({ id: doc.id, ...doc.data() });
         });
-
         // Ordena por data de criação
         infoList.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
 
@@ -997,16 +953,16 @@ function loadPublicGeneralInfo() {
     });
 }
 
+
 function displayAdminNewsList(newsList) {
     const listContainer = document.getElementById('admin-news-list');
     if (!listContainer) return;
-    listContainer.innerHTML = '';
 
+    listContainer.innerHTML = '';
     if (newsList.length === 0) {
         listContainer.innerHTML = '<p class="text-gray-500">Nenhuma notícia publicada.</p>';
         return;
     }
-
     // Ordena para mostrar as mais recentes primeiro
     const sortedNews = newsList.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
 
@@ -1027,7 +983,6 @@ function displayAdminNewsList(newsList) {
 }
 
 // app.js (Adicione estas duas novas funções)
-
 async function handleDeleteNews(newsId) {
     if (!window.db || !newsId) return;
     if (confirm('Tem certeza que deseja excluir esta notícia? Esta ação não pode ser desfeita.')) {
@@ -1057,7 +1012,6 @@ function populateNewsFormForEdit(newsId) {
 
             const submitButton = document.getElementById('news-submit-button');
             const cancelButton = document.getElementById('news-cancel-edit-button');
-
             submitButton.textContent = 'Atualizar Notícia';
             cancelButton.classList.remove('hidden');
 
@@ -1069,16 +1023,18 @@ function populateNewsFormForEdit(newsId) {
     });
 }
 
+
 // --- Funções de Carregamento e Exibição (Agenda, Expositores, Estandes) ---
 // (loadPublicEvents, loadPublicExpositores, loadPublicLocations, displayCollectedData, etc., adaptadas)
-
 function displayAdminEventsList(events) {
     const listContainer = document.getElementById('admin-events-list');
     if (!listContainer) return;
+
     listContainer.innerHTML = '';
     if (events.length === 0) {
         listContainer.innerHTML = '<p class="text-gray-500">Nenhum evento cadastrado.</p>'; return;
     }
+
     events.forEach(event => {
         const item = document.createElement('div');
         item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
@@ -1093,6 +1049,7 @@ function displayAdminEventsList(events) {
             </div>`;
         listContainer.appendChild(item);
     });
+
     // Adicionar listeners para botões de editar/excluir
     listContainer.querySelectorAll('.edit-event-btn').forEach(btn => btn.addEventListener('click', (e) => populateEventFormForEdit(e.target.dataset.eventId)));
     listContainer.querySelectorAll('.delete-event-btn').forEach(btn => btn.addEventListener('click', (e) => handleDeleteEvent(e.target.dataset.eventId)));
@@ -1101,6 +1058,7 @@ function displayAdminEventsList(events) {
 function populateEventFormForEdit(eventId) {
     const event = globalEventsCache.find(e => e.id === eventId);
     if (!event) return;
+
     document.getElementById('eventIdToUpdate').value = event.id;
     document.getElementById('eventTitle').value = event.title;
     document.getElementById('eventType').value = event.type;
@@ -1108,8 +1066,10 @@ function populateEventFormForEdit(eventId) {
     document.getElementById('eventTime').value = event.time;
     document.getElementById('eventLocation').value = event.location;
     document.getElementById('eventDescription').value = event.description;
+
     document.getElementById('event-submit-button').textContent = 'Atualizar Evento';
     document.getElementById('event-cancel-edit-button').classList.remove('hidden');
+
     document.getElementById('event-form').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1127,10 +1087,12 @@ async function handleDeleteEvent(eventId) {
 function displayAdminExpositorsList(expositors) {
     const listContainer = document.getElementById('admin-expositors-list');
     if (!listContainer) return;
+
     listContainer.innerHTML = '';
     if (expositors.length === 0) {
         listContainer.innerHTML = '<p class="text-gray-500">Nenhum expositor cadastrado.</p>'; return;
     }
+
     expositors.forEach(expo => {
         const item = document.createElement('div');
         item.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
@@ -1145,6 +1107,7 @@ function displayAdminExpositorsList(expositors) {
             </div>`;
         listContainer.appendChild(item);
     });
+
     listContainer.querySelectorAll('.edit-expositor-btn').forEach(btn => btn.addEventListener('click', (e) => populateExpositorFormForEdit(e.target.dataset.expositorId)));
     listContainer.querySelectorAll('.delete-expositor-btn').forEach(btn => btn.addEventListener('click', (e) => handleDeleteExpositor(e.target.dataset.expositorId)));
 }
@@ -1152,13 +1115,16 @@ function displayAdminExpositorsList(expositors) {
 function populateExpositorFormForEdit(expositorId) {
     const expo = globalExpositorsCache.find(e => e.id === expositorId);
     if (!expo) return;
+
     document.getElementById('expositorIdToUpdate').value = expo.id;
     document.getElementById('expositorName').value = expo.name;
     document.getElementById('expositorCategory').value = expo.category || '';
     document.getElementById('expositorDescription').value = expo.description || '';
     document.getElementById('expositorLogoUrl').value = expo.logoUrl || '';
+
     document.getElementById('expositor-info-submit-button').textContent = 'Atualizar Expositor';
     document.getElementById('expositor-info-cancel-edit-button').classList.remove('hidden');
+
     document.getElementById('expositor-info-form').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -1207,7 +1173,6 @@ function setupAdminTabs() {
 // --- Inicialização e Listeners Globais ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM carregado. App Agropec inicializando...");
-
     
     let app, db, auth; // analytics;
     try {
@@ -1255,24 +1220,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ativa o calendário (date picker) no campo de data
     const eventDateInput = document.getElementById('eventDate');
     if (eventDateInput) {
-    flatpickr(eventDateInput, {
-        "locale": "pt", // Usa a tradução para Português que importamos
-        "dateFormat": "d/m/Y", // Define o formato da data como DD/MM/AAAA
-        "allowInput": true // Permite que o usuário também digite a data
-    });
-
-    const eventTimeInput = document.getElementById('eventTime');
-    if (eventTimeInput) {
-        flatpickr(eventTimeInput, {
-            enableTime: true,      // Habilita a seleção de hora
-            noCalendar: true,      // Desabilita o calendário, mostrando APENAS o seletor de hora
-            dateFormat: "H:i",     // Define o formato para 24 horas (ex: 14:30)
-            time_24hr: true,       // Força o uso do formato 24h
-            minuteIncrement: 15,   // Opcional: faz os minutos pularem de 15 em 15, facilitando a seleção
-            allowInput: true       // Permite que o usuário também digite a hora
+        flatpickr(eventDateInput, {
+            "locale": "pt", // Usa a tradução para Português que importamos
+            "dateFormat": "d/m/Y", // Define o formato da data como DD/MM/AAAA
+            "allowInput": true // Permite que o usuário também digite a data
         });
+        const eventTimeInput = document.getElementById('eventTime');
+        if (eventTimeInput) {
+            flatpickr(eventTimeInput, {
+                enableTime: true,      // Habilita a seleção de hora
+                noCalendar: true,      // Desabilita o calendário, mostrando APENAS o seletor de hora
+                dateFormat: "H:i",     // Define o formato para 24 horas (ex: 14:30)
+                time_24hr: true,       // Força o uso do formato 24h
+                minuteIncrement: 15,   // Opcional: faz os minutos pularem de 15 em 15, facilitando a seleção
+                allowInput: true       // Permite que o usuário também digite a hora
+            });
+        }
     }
-}
 
     initMap('fairMapCanvas');
     initMap('adminMapCanvas');
@@ -1288,7 +1252,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(navLoginLink) navLoginLink.classList.add('hidden'); // Esconde link de login
                 if(sidebar) { sidebar.classList.remove('sidebar-initial-hidden', '-translate-x-full'); }
                 if(logoutButton) logoutButton.classList.remove('hidden');
-
                 loadPublicEvents(); loadPublicExpositores(); loadPublicLocations();
                 loadPublicNews(); loadPublicGeneralInfo(); // Carrega novo conteúdo
 
@@ -1308,11 +1271,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     adminNavSection.classList.toggle('hidden', !isAdmin);
                 }
                 if(organizadoresLink) organizadoresLink.classList.toggle('hidden', !isAdmin);
-
                 const adminRoleText = `Logado como: Administrador (${user.email || 'N/A'})`;
                 if(adminUserRoleDisplayEstandes) adminUserRoleDisplayEstandes.textContent = isAdmin ? adminRoleText : '';
                 if(adminUserRoleDisplayOrganizadores) adminUserRoleDisplayOrganizadores.textContent = isAdmin ? adminRoleText : '';
-
+                
                 const hash = window.location.hash;
                 if (hash.startsWith('#stand-details?id=')) {
                     window.showSection('stand-details', null); loadStandDetails(hash.split('id=')[1]);
@@ -1355,14 +1317,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Listeners de Formulários de Conteúdo (Organizadores) ---
     // app.js
-
     const newsForm = document.getElementById('news-form');
     if (newsForm) newsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const newsIdToUpdate = document.getElementById('newsIdToUpdate').value;
         const formattedDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
         await submitNewsForm({
             title: document.getElementById('newsTitle').value,
             content: document.getElementById('newsContent').value,
@@ -1380,6 +1339,7 @@ document.addEventListener('DOMContentLoaded', () => {
             location: document.getElementById('eventLocation').value, description: document.getElementById('eventDescription').value
         }, eventIdToUpdate || null);
     });
+
     const eventCancelEditBtn = document.getElementById('event-cancel-edit-button');
     if(eventCancelEditBtn) eventCancelEditBtn.addEventListener('click', () => {
         document.getElementById('event-form').reset();
@@ -1387,7 +1347,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('event-submit-button').textContent = 'Adicionar Evento';
         eventCancelEditBtn.classList.add('hidden');
     });
-
 
     const expositorInfoForm = document.getElementById('expositor-info-form');
     if (expositorInfoForm) expositorInfoForm.addEventListener('submit', async (e) => {
@@ -1400,9 +1359,7 @@ document.addEventListener('DOMContentLoaded', () => {
             logoUrl: document.getElementById('expositorLogoUrl').value
         }, expositorIdToUpdate || null);
     });
-
     
-
     const expositorCancelEditBtn = document.getElementById('expositor-info-cancel-edit-button');
     if(expositorCancelEditBtn) expositorCancelEditBtn.addEventListener('click', () => {
         document.getElementById('expositor-info-form').reset();
@@ -1410,7 +1367,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('expositor-info-submit-button').textContent = 'Adicionar Expositor';
         expositorCancelEditBtn.classList.add('hidden');
     });
-
 
     const infoForm = document.getElementById('info-form');
     if (infoForm) infoForm.addEventListener('submit', async (e) => {
@@ -1428,6 +1384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(mobileMenuButton && sidebar) {
         mobileMenuButton.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
     }
+
     document.addEventListener('click', function(event) {
         if(sidebar && mobileMenuButton && window.innerWidth < 768 && !sidebar.classList.contains('-translate-x-full')) {
             if (!sidebar.contains(event.target) && !mobileMenuButton.contains(event.target)) {
@@ -1436,16 +1393,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-
     const registerLink = document.getElementById('register-link');
     if (registerLink) registerLink.addEventListener('click', (e) => { e.preventDefault(); handleRegister(); });
+
     const loginButtonEl = document.getElementById('login-button');
     if (loginButtonEl) loginButtonEl.addEventListener('click', (e) => { e.preventDefault(); handleLogin(); });
+
     const visitorButton = document.getElementById('visitor-button');
     if (visitorButton) visitorButton.addEventListener('click', (e) => { e.preventDefault(); registrationContext = 'visitor'; handleVisitorLogin(); });
+
     const adminButton = document.getElementById('admin-button');
     if (adminButton) adminButton.addEventListener('click', (e) => { e.preventDefault(); registrationContext = 'admin'; window.showSection('login', document.querySelector('a[href="#login"]')); });
+
     if (logoutButton) logoutButton.addEventListener('click', handleLogout);
 
     const locationForm = document.getElementById('location-form');
@@ -1454,9 +1413,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const standX = parseInt(document.getElementById('standX').value, 10);
         const standY = parseInt(document.getElementById('standY').value, 10);
         const messageEl = document.getElementById('location-message');
+
         if (isNaN(standX) || isNaN(standY)) {
             messageEl.textContent = 'Clique no mapa para coords.'; messageEl.className = 'text-red-500 text-sm mt-2'; return;
         }
+
         await addNewLocation({
             id: document.getElementById('standId').value,
             occupant: document.getElementById('standOccupant').value,
@@ -1521,7 +1482,6 @@ document.addEventListener('DOMContentLoaded', () => {
             drawAllMaps();
         });
     }
-
 });
 
 
@@ -1532,12 +1492,14 @@ async function handleRegister() {
     const loginMessageDiv = document.getElementById('login-message');
     const email = emailInput.value.trim();
     const password = passwordInput.value;
+
     loginMessageDiv.textContent = '';
 
     if (!email || !password) {
         loginMessageDiv.textContent = "Preencha e-mail e senha para criar conta.";
         loginMessageDiv.className = 'text-red-500 text-center mt-4 text-sm font-medium'; return;
     }
+
     if (!window.auth || !window.db) {
         loginMessageDiv.textContent = "Erro: Autenticação não disponível.";
         loginMessageDiv.className = 'text-red-500 text-center mt-4 text-sm font-medium'; return;
@@ -1546,11 +1508,13 @@ async function handleRegister() {
     try {
         const userCredential = await createUserWithEmailAndPassword(window.auth, email, password);
         const user = userCredential.user;
+
         // Salva o perfil do usuário com a role definida por registrationContext
         const userProfileDocRef = doc(window.db, `artifacts/${firebaseConfig.appId}/users/${user.uid}/profile/details`);
         await setDoc(userProfileDocRef, {
             uid: user.uid, email: user.email, createdAt: serverTimestamp(), role: registrationContext // Usa registrationContext
         });
+
         loginMessageDiv.textContent = "Conta criada! Você já pode entrar.";
         loginMessageDiv.className = 'text-green-600 text-center mt-4 text-sm font-medium';
         emailInput.value = ''; passwordInput.value = '';
@@ -1571,12 +1535,14 @@ async function handleLogin() {
     const loginMessageDiv = document.getElementById('login-message');
     const email = emailInput.value.trim();
     const password = passwordInput.value;
+
     loginMessageDiv.textContent = '';
 
     if (!email || !password) {
         loginMessageDiv.textContent = "Preencha e-mail e senha para login.";
         loginMessageDiv.className = 'text-red-500 text-center mt-4 text-sm font-medium'; return;
     }
+
     if (!window.auth) {
         loginMessageDiv.textContent = "Erro: Autenticação não disponível.";
         loginMessageDiv.className = 'text-red-500 text-center mt-4 text-sm font-medium'; return;
@@ -1626,9 +1592,80 @@ async function handleLogout() {
 // (loadPublicEvents, loadPublicExpositores, loadPublicLocations, etc.)
 // Certifique-se que elas usam `globalEventsCache` e `globalExpositorsCache` se necessário para edição.
 
+/**
+ * Adiciona um evento ao calendário do usuário usando o formato .ics.
+ * @param {object} event - O objeto do evento contendo title, description, date, time, location.
+ */
+function addToCalendar(event) {
+    const title = event.title || 'Evento';
+    const description = event.description || 'Descrição do evento';
+    const location = event.location || 'Local do Evento';
+    const eventDate = event.date; // Ex: "DD/MM/AAAA"
+    const eventTime = event.time; // Ex: "HH:MM"
+
+    if (!eventDate || !eventTime) {
+        console.error("Dados de data ou hora do evento ausentes.");
+        alert("Não foi possível adicionar ao calendário: dados de data ou hora incompletos.");
+        return;
+    }
+
+    // Formata a data e hora para o formato iCalendar (YYYYMMDDTHHMMSSZ)
+    const [day, month, year] = eventDate.split('/');
+    const [hours, minutes] = eventTime.split(':');
+
+    // Cria um objeto Date no fuso horário local e depois converte para UTC para o .ics
+    const startDateTime = new Date(year, month - 1, day, hours, minutes);
+    const endDateTime = new Date(startDateTime.getTime() + (60 * 60 * 1000)); // Adiciona 1 hora de duração
+
+    const formatDateForICS = (dateObj) => {
+        const pad = (num) => num < 10 ? '0' + num : num;
+        return [
+            dateObj.getUTCFullYear(),
+            pad(dateObj.getUTCMonth() + 1),
+            pad(dateObj.getUTCDate()),
+            'T',
+            pad(dateObj.getUTCHours()),
+            pad(dateObj.getUTCMinutes()),
+            pad(dateObj.getUTCSeconds()),
+            'Z' // Indica UTC
+        ].join('');
+    };
+
+    const dtstart = formatDateForICS(startDateTime);
+    const dtend = formatDateForICS(endDateTime);
+
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//AGROPEC 2025//NONSGML v1.0//EN
+BEGIN:VEVENT
+UID:${Date.now()}@agropec2025.com
+DTSTAMP:${formatDateForICS(new Date())}
+DTSTART:${dtstart}
+DTEND:${dtend}
+SUMMARY:${title}
+DESCRIPTION:${description}
+LOCATION:${location}
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.replace(/[^a-z0-9]/gi, '_')}.ics`; // Nome do arquivo seguro
+    document.body.appendChild(a);
+    a.click(); // Simula um clique para iniciar o download/abertura
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url); // Limpa a URL do objeto após o uso
+    
+    alert(`Evento "${title}" preparado para ser adicionado ao seu calendário.`);
+}
+
 function loadPublicEvents() {
     if (!window.db) return;
     const eventsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/events`);
+
     onSnapshot(eventsCollectionRef, (snapshot) => {
         globalEventsCache = []; // Limpa cache
         snapshot.forEach((doc) => globalEventsCache.push({ id: doc.id, ...doc.data() }));
@@ -1641,23 +1678,27 @@ function loadPublicEvents() {
                 container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento disponível.</p>';
             } else {
                 globalEventsCache.forEach(event => { // Usa o cache global
-                    const eventCard = `
-                        <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
-                            <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
-                            <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
-                        </div>`;
-                    container.innerHTML += eventCard;
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'card p-6';
+                    eventCard.innerHTML = `
+                        <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
+                        <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
+                        <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
+                        <button class="btn-accent text-sm py-1 px-3 rounded-md add-to-calendar-btn">Adicionar ao Calendário</button>
+                    `;
+                    // Adiciona o event listener ao botão "Adicionar ao Calendário"
+                    const addToCalendarBtn = eventCard.querySelector('.add-to-calendar-btn');
+                    if (addToCalendarBtn) {
+                        addToCalendarBtn.addEventListener('click', () => addToCalendar(event));
+                    }
+                    container.appendChild(eventCard);
                 });
             }
         }
         updateAgendaChart(globalEventsCache); // Usa o cache global
         displayAdminEventsList(globalEventsCache); // Atualiza lista no painel de organizadores
-
         // Chama a função para atualizar o card da próxima palestra na tela inicial.
         displayNextUpcomingEvent();
-
     }, (error) => {
         console.error("Erro ao carregar eventos:", error);
         const container = document.getElementById('agenda-events-container');
@@ -1706,6 +1747,7 @@ function loadPublicEvents() {
 function loadPublicExpositores() {
     if (!window.db) return;
     const expositoresCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/expositores`);
+
     onSnapshot(expositoresCollectionRef, (snapshot) => {
         globalExpositorsCache = []; // Limpa cache
         snapshot.forEach((doc) => globalExpositorsCache.push({ id: doc.id, ...doc.data() }));
@@ -1742,6 +1784,7 @@ function loadPublicExpositores() {
 async function loadPublicLocations() {
     if (!window.db) return;
     const locationsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`);
+
     onSnapshot(locationsCollectionRef, (snapshot) => {
         stands = [];
         snapshot.forEach((doc) => stands.push({ docId: doc.id, ...doc.data() }));
@@ -1749,17 +1792,19 @@ async function loadPublicLocations() {
 
         if (fairMapCanvas && fairMapCtx) drawMap('fairMapCanvas', fairMapCtx, fairMapCanvas.clientWidth, fairMapCanvas.clientHeight);
         if (adminMapCanvas && adminMapCtx) drawMap('adminMapCanvas', adminMapCtx, adminMapCanvas.clientWidth, adminMapCanvas.clientHeight);
-        displayCollectedData();
 
+        displayCollectedData();
         if (stands.length === 0 && firebaseConfig.projectId === "agropec-2025-app") {
              // seedInitialMapData(); // Descomente para popular dados iniciais se necessário
         }
+
     }, (error) => console.error("Erro ao carregar localizações:", error));
 }
 
 function displayCollectedData() {
     const displayArea = document.getElementById('registered-stands-display');
     if (!displayArea) return;
+
     displayArea.innerHTML = ''; // Limpa a lista antes de recriar
 
     if (stands.length === 0) {
@@ -1796,12 +1841,11 @@ function displayCollectedData() {
         `;
         ul.appendChild(li);
     });
-
     displayArea.appendChild(ul);
 }
 
-// ADICIONE ESTAS DUAS NOVAS FUNÇÕES
 
+// ADICIONE ESTAS DUAS NOVAS FUNÇÕES
 /**
  * Preenche o formulário de estande com os dados de um item existente para edição.
  */
@@ -1833,6 +1877,7 @@ function populateStandFormForEdit(button) {
     document.getElementById('location-form').scrollIntoView({ behavior: 'smooth' });
 }
 
+
 // Exclui uma estande do Firestore após confirmação.
 async function handleDeleteStand(standDocId) {
     if (!window.db || !standDocId) return;
@@ -1849,12 +1894,12 @@ async function handleDeleteStand(standDocId) {
     }
 }
 
+
 async function handleSubmitStandForm() {
     if (!currentUserId || !window.db) return;
 
     const messageEl = document.getElementById('location-message');
     const docIdToUpdate = document.getElementById('standDocIdToUpdate').value;
-
     const standData = {
         id: document.getElementById('standId').value,
         occupant: document.getElementById('standOccupant').value,
@@ -1880,7 +1925,6 @@ async function handleSubmitStandForm() {
             await addDoc(locationsCollectionRef, standData);
             messageEl.textContent = 'Localização salva!';
         }
-
         messageEl.className = 'text-green-600 text-sm mt-2';
         
         // Reseta o formulário para o estado inicial
@@ -1900,6 +1944,7 @@ async function handleSubmitStandForm() {
         messageEl.className = 'text-red-500 text-sm mt-2';
     }
 }
+
 
 // (generateAndShowQrCode, updateAgendaChart, updateExpositoresChart, loadStandDetails - adaptadas do seu script original)
 function generateAndShowQrCode(stand) {
@@ -1924,16 +1969,19 @@ function generateAndShowQrCode(stand) {
         qrCodeModal.style.display = 'flex';
     }
 }
+
 document.querySelector('.qr-modal-close').addEventListener('click', () => {
     const qrCodeModal = document.getElementById('qrCodeModal');
     if (qrCodeModal) qrCodeModal.style.display = 'none';
 });
+
 window.addEventListener('click', (event) => {
     const qrCodeModal = document.getElementById('qrCodeModal');
     if (qrCodeModal && event.target === qrCodeModal) {
         qrCodeModal.style.display = 'none';
     }
 });
+
 
 let agendaChartInstance = null;
 let expositoresChartInstance = null;
@@ -1945,7 +1993,6 @@ function updateAgendaChart(events) {
 
     //tipos no SINGULAR para corresponder aos dados do banco.
     const eventTypes = ['Palestra', 'Workshop', 'Demonstração', 'Outro'];
-
     // Objeto para mapear o tipo singular para o plural (para a legenda do gráfico)
     const typeLabels = {
         'Palestra': 'Palestras',
@@ -1993,6 +2040,7 @@ function updateAgendaChart(events) {
     });
 
     if (agendaChartInstance) agendaChartInstance.destroy();
+
     agendaChartInstance = new Chart(agendaCtx, {
         type: 'bar',
         data: { labels: sortedDates, datasets: datasets },
@@ -2022,10 +2070,12 @@ function updateExpositoresChart(expositores) {
         const category = expositor.category || 'Outros';
         categories[category] = (categories[category] || 0) + 1;
     });
+
     const labels = Object.keys(categories);
     const data = labels.map(label => categories[label]);
 
     if (expositoresChartInstance) expositoresChartInstance.destroy();
+
     expositoresChartInstance = new Chart(expositoresCtx, {
         type: 'pie',
         data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#9E9E9E', '#795548', '#FF5722'], borderWidth: 1 }] },
@@ -2036,12 +2086,14 @@ function updateExpositoresChart(expositores) {
 async function loadStandDetails(standId) {
     const contentEl = document.getElementById('stand-details-content');
     if (!contentEl) return;
+
     contentEl.innerHTML = '<p class="text-gray-500">Carregando...</p>';
     if (!window.db) { contentEl.innerHTML = '<p class="text-red-500">Erro: DB não disp.</p>'; return; }
 
     try {
         const q = query(collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/locations`), where("id", "==", standId));
         const snapshot = await getDocs(q);
+
         if (!snapshot.empty) {
             const data = snapshot.docs[0].data();
             contentEl.innerHTML = `
@@ -2069,6 +2121,7 @@ if (applyEventFiltersButton) {
             const formattedDateFilter = `${day}/${month}/${year}`;
             filteredEvents = filteredEvents.filter(event => event.date === formattedDateFilter);
         }
+
         if (typeFilter) {
             filteredEvents = filteredEvents.filter(event => event.type === typeFilter);
         }
@@ -2081,19 +2134,26 @@ if (applyEventFiltersButton) {
                 container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum evento encontrado com os filtros aplicados.</p>';
             } else {
                 filteredEvents.forEach(event => {
-                    const eventCard = `
-                        <div class="card p-6">
-                            <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
-                            <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
-                            <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Adicionar ao Calendário</button>
-                        </div>`;
-                    container.innerHTML += eventCard;
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'card p-6';
+                    eventCard.innerHTML = `
+                        <h4 class="font-semibold text-lg mb-1 text-green-700">${event.title || 'N/A'}</h4>
+                        <p class="text-sm text-gray-500 mb-2">${event.type || 'Tipo'} | ${event.date || 'Data'}, ${event.time || 'Hora'} | ${event.location || 'Local'}</p>
+                        <p class="text-gray-700 mb-3">${event.description || 'Sem descrição.'}</p>
+                        <button class="btn-accent text-sm py-1 px-3 rounded-md add-to-calendar-btn">Adicionar ao Calendário</button>
+                    `;
+                    // Adiciona o event listener ao botão "Adicionar ao Calendário"
+                    const addToCalendarBtn = eventCard.querySelector('.add-to-calendar-btn');
+                    if (addToCalendarBtn) {
+                        addToCalendarBtn.addEventListener('click', () => addToCalendar(event));
+                    }
+                    container.appendChild(eventCard);
                 });
             }
         }
         updateAgendaChart(filteredEvents);
     });
+
     // Busca dinâmica de expositores
     const searchExpositorInput = document.getElementById('searchExpositor');
     if (searchExpositorInput) {
@@ -2104,6 +2164,7 @@ if (applyEventFiltersButton) {
 
             // Usa o cache global já carregado
             let filtrados = globalExpositorsCache;
+
             if (termo) {
                 filtrados = globalExpositorsCache.filter(expo =>
                     (expo.name && expo.name.toLowerCase().includes(termo)) ||
@@ -2132,6 +2193,7 @@ if (applyEventFiltersButton) {
     }
 }
 
+
 //Estandes
 // 1. Carrega estandes do Firestore
 async function loadStands() {
@@ -2148,12 +2210,10 @@ async function loadStands() {
 function renderStandsList(stands) {
   const container = document.getElementById('registered-stands-display');
   container.innerHTML = '';
-
   if (stands.length === 0) {
     container.innerHTML = '<p>Nenhuma estande cadastrada ainda.</p>';
     return;
   }
-
   stands.forEach(stand => {
     const div = document.createElement('div');
     div.className = 'p-3 border rounded-md bg-gray-50 flex justify-between items-center';
@@ -2170,7 +2230,6 @@ function renderStandsList(stands) {
 // 3. Exclui estande do Firestore
 async function deleteStand(standId) {
   if (!window.db || !standId) return;
-
   if (confirm('Tem certeza que deseja excluir esta estande?')) {
     try {
       const standRef = doc(window.db, `artifacts/${firebaseConfig.appId}/public/data/stands`, standId);
@@ -2183,8 +2242,10 @@ async function deleteStand(standId) {
     }
   }
 }
+
 // funçao de carregar estandes
      loadStands();
 
 // Atualiza o ano no rodapé
 document.getElementById('footer-year').textContent = new Date().getFullYear();
+
