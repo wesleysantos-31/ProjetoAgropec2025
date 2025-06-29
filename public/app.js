@@ -1556,6 +1556,8 @@ async function handleLogin() {
     try {
         await signInWithEmailAndPassword(window.auth, email, password);
         // Mensagem de sucesso não é mais necessária aqui, onAuthStateChanged cuidará do redirecionamento
+        // loginMessageDiv.textContent = "Login realizado com sucesso!";
+        // loginMessageDiv.className = 'text-green-600 text-center mt-4 text-sm font-medium';
     } catch (error) {
         console.error("Erro ao fazer login:", error);
         let msg = "Erro ao fazer login.";
