@@ -813,47 +813,77 @@ async function submitInfoForm(infoData, infoIdToUpdate = null) {
 // --- Funções de Carregamento de Dados Públicos ---
 
 function loadPublicNews() {
+    // Garante que a conexão com o banco de dados esteja disponível.
     if (!window.db) return;
+
+    // Localiza o contêiner de notícias na página inicial.
     const newsContainer = document.getElementById('public-news-container');
     if (!newsContainer) return;
 
-    // Referência à coleção, sem filtros de data
+    // Referência à coleção de notícias no Firestore.
     const newsCollectionRef = collection(window.db, `artifacts/${firebaseConfig.appId}/public/data/news`);
 
-    // Usamos a referência direta, que busca todos os documentos da coleção
+    // Escuta por atualizações em tempo real na coleção de notícias.
     onSnapshot(newsCollectionRef, (snapshot) => {
+        // Limpa o contêiner da página inicial antes de adicionar o conteúdo atualizado.
         newsContainer.innerHTML = '';
         if (snapshot.empty) {
             newsContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia recente.</p>';
-            return;
         }
 
         let newsList = [];
+        // Converte os documentos do Firestore em uma lista de objetos.
         snapshot.forEach(doc => {
             newsList.push({ id: doc.id, ...doc.data() });
         });
 
-        // Ordena as notícias pela data de publicação do Firestore (mais recentes primeiro)
+        // Ordena as notícias da mais recente para a mais antiga.
         newsList.sort((a, b) => (b.publishedAt?.toMillis() || 0) - (a.publishedAt?.toMillis() || 0));
 
-        // ATUALIZA A LISTA NO PAINEL DE ADMIN
+        // Atualiza a lista de notícias no painel de administração.
         displayAdminNewsList(newsList);
 
-        newsList.forEach(news => {
-            // Se a data estiver no formato "DD/MM/AAAA", ela será exibida corretamente.
-            const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-BR');
-            const newsCard = `
-                <div class="card p-6">
-                    <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
-                    <p class="text-xs text-gray-400 mb-2">Publicado em: ${displayDate}</p>
-                    <p class="text-gray-600 text-sm">${news.content.substring(0,150)}${news.content.length > 150 ? '...' : ''}</p>
-                </div>`;
-            newsContainer.innerHTML += newsCard;
-        });
-
+        // Preenche o contêiner da página inicial com um resumo das notícias.
+        if (!snapshot.empty) {
+            newsList.forEach(news => {
+                const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-br');
+                const newsCard = `
+                    <div class="card p-6">
+                        <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
+                        <p class="text-xs text-gray-400 mb-2">Publicado em: ${displayDate}</p>
+                        <p class="text-gray-600 text-sm">${news.content.substring(0, 150)}${news.content.length > 150 ? '...' : ''}</p>
+                    </div>`;
+                newsContainer.innerHTML += newsCard;
+            });
+        }
+        
+        // Localiza o contêiner na página de arquivo de notícias.
+        const newsArchiveContainer = document.getElementById('news-archive');
+        if (newsArchiveContainer) {
+            newsArchiveContainer.innerHTML = '';
+            if (newsList.length === 0) {
+                newsArchiveContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia publicada.</p>';
+            } else {
+                // Preenche o arquivo de notícias com o conteúdo completo de cada notícia.
+                newsList.forEach(news => {
+                    const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-br');
+                    const newsCard = `
+                        <div class="card p-6">
+                            <h4 class="font-semibold text-lg mb-1 text-green-700">${news.title}</h4>
+                            <p class="text-xs text-gray-400 mb-2">Publicado em: ${displayDate}</p>
+                            <p class="text-gray-600 text-sm">${news.content}</p>
+                        </div>`;
+                    newsArchiveContainer.innerHTML += newsCard;
+                });
+            }
+        }
     }, error => {
         console.error("Erro ao carregar notícias:", error);
         newsContainer.innerHTML = '<p class="text-red-500 col-span-full">Erro ao carregar notícias.</p>';
+        const newsArchiveContainer = document.getElementById('news-archive');
+        if (newsArchiveContainer) {
+            newsArchiveContainer.innerHTML = '<p class="text-red-500 col-span-full">Erro ao carregar notícias.</p>';
+        }
     });
 }
 
