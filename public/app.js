@@ -1782,14 +1782,13 @@ function loadPublicExpositores() {
             if (globalExpositorsCache.length === 0) {
                 container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum expositor disponível.</p>';
             } else {
-                globalExpositorsCache.forEach(expositor => { // Usa o cache global
+                globalExpositorsCache.forEach(expositor => { 
                     const expositorCard = `
                         <div class="card p-6 text-center">
                             <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="[Logo do Expositor]" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
                             <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
-                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                            <p class="text-gray-700 text-sm mb-3 text-justify">${expositor.description || 'Sem descrição.'}</p>
                         </div>`;
                     container.innerHTML += expositorCard;
                 });
@@ -1868,7 +1867,6 @@ function displayCollectedData() {
 }
 
 
-// ADICIONE ESTAS DUAS NOVAS FUNÇÕES
 /**
  * Preenche o formulário de estande com os dados de um item existente para edição.
  */
@@ -2009,6 +2007,24 @@ window.addEventListener('click', (event) => {
 let agendaChartInstance = null;
 let expositoresChartInstance = null;
 
+/**
+ * Gera uma lista de cores distintas e vibrantes.
+ * @param {number} count - O número de cores a serem geradas.
+ * @returns {string[]} Uma lista de cores em formato HSL.
+ */
+function generateDistinctColors(count) {
+    const colors = [];
+    const saturation = 70; // Saturação em %
+    const lightness = 55;  // Luminosidade em %
+
+    for (let i = 0; i < count; i++) {
+        // Ciclamos pelo espectro de matiz (Hue) para obter cores diferentes
+        const hue = (i * (360 / (count + 1))) % 360;
+        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+    }
+    return colors;
+}
+
 function updateAgendaChart(events) {
     const agendaCtxEl = document.getElementById('agendaChart');
     if (!agendaCtxEl) return;
@@ -2097,12 +2113,30 @@ function updateExpositoresChart(expositores) {
     const labels = Object.keys(categories);
     const data = labels.map(label => categories[label]);
 
+    // Agora geramos uma lista de cores com o tamanho exato do número de categorias
+    const dynamicColors = generateDistinctColors(labels.length);
+
     if (expositoresChartInstance) expositoresChartInstance.destroy();
 
     expositoresChartInstance = new Chart(expositoresCtx, {
         type: 'pie',
-        data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#7DA548', '#FFC107', '#2196F3', '#9E9E9E', '#795548', '#FF5722'], borderWidth: 1 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        data: { 
+            labels: labels, 
+            datasets: [{ 
+                data: data, 
+                backgroundColor: dynamicColors, // Usamos as cores geradas dinamicamente
+                borderWidth: 1 
+            }] 
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    position: 'bottom' 
+                } 
+            } 
+        }
     });
 }
 
@@ -2206,8 +2240,7 @@ if (applyEventFiltersButton) {
                             <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="[Logo do Expositor]" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
                             <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
-                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                            <p class="text-gray-700 text-sm mb-3 text-justify">${expositor.description || 'Sem descrição.'}</p>
                         </div>`;
                     container.innerHTML += expositorCard;
                 });
