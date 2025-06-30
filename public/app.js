@@ -649,21 +649,32 @@ function handleTouchMove(event) {
 }
 
 function handleTouchEnd(event) {
-    // Se a ação de toque terminou, resetamos as variáveis de controle
+    // Verifica se a ação foi um arraste ou um gesto de pinça
     const wasDragging = isDragging;
+    const wasPinching = initialPinchDistance;
+
+    // Reseta as flags para o próximo evento de toque
     isDragging = false;
     initialPinchDistance = null;
 
-    // Lógica de clique: se o toque terminou sem ser um arraste, processa o clique
-    if (!wasDragging && event.changedTouches.length === 1) {
+    // Se foi um arrasto ou pinça, não faz mais nada.
+    if (wasDragging || wasPinching) {
+        return;
+    }
+
+    // Se não foi um arrasto, processa como um possível toque (clique)
+    if (event.changedTouches.length === 1) {
         const touch = event.changedTouches[0];
+        
+        // Simula um evento de clique com as coordenadas do toque
         const fakeMouseEvent = new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
             clientX: touch.clientX,
             clientY: touch.clientY
         });
-        // Chama a função de clique apropriada baseada no canvas
+
+        // Chama a função de clique apropriada para o canvas que recebeu o toque
         if (event.target.id === 'fairMapCanvas') {
             handleFairMapClick(fakeMouseEvent);
         } else if (event.target.id === 'adminMapCanvas') {
@@ -671,7 +682,6 @@ function handleTouchEnd(event) {
         }
     }
 }
-// --- FIM DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
 
 // Listener para fechar o modal
 const infoModal = document.getElementById('info-modal');
@@ -826,9 +836,11 @@ function loadPublicNews() {
         // Atualiza a lista de notícias no painel de administração.
         displayAdminNewsList(newsList);
 
-        // Preenche o contêiner da página inicial com um resumo das notícias.
+        // --- ALTERAÇÃO APLICADA AQUI ---
+        // Preenche o contêiner da página inicial com um resumo das 3 notícias mais recentes.
         if (!snapshot.empty) {
-            newsList.forEach(news => {
+            // Usa .slice(0, 3) para pegar apenas as três primeiras notícias da lista já ordenada.
+            newsList.slice(0, 3).forEach(news => {
                 const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-br');
                 const newsCard = `
                     <div class="card p-6">
@@ -840,6 +852,7 @@ function loadPublicNews() {
             });
         }
         
+        // --- MOSTRANDO TODAS AS NOTÍCIAS NA PÁGINA 'NOTÍCIAS' ---
         // Localiza o contêiner na página de arquivo de notícias.
         const newsArchiveContainer = document.getElementById('news-archive');
         if (newsArchiveContainer) {
@@ -847,7 +860,7 @@ function loadPublicNews() {
             if (newsList.length === 0) {
                 newsArchiveContainer.innerHTML = '<p class="text-gray-500 col-span-full">Nenhuma notícia publicada.</p>';
             } else {
-                // Preenche o arquivo de notícias com o conteúdo completo de cada notícia.
+                // Preenche o arquivo de notícias com o conteúdo completo de cada notícia (TODAS ELAS).
                 newsList.forEach(news => {
                     const displayDate = news.date || new Date(news.publishedAt?.toMillis() || Date.now()).toLocaleDateString('pt-br');
                     const newsCard = `
@@ -1774,6 +1787,10 @@ function loadPublicExpositores() {
     onSnapshot(expositoresCollectionRef, (snapshot) => {
         globalExpositorsCache = []; // Limpa cache
         snapshot.forEach((doc) => globalExpositorsCache.push({ id: doc.id, ...doc.data() }));
+        
+        // --- ADICIONE ESTA LINHA PARA ORDENAR ---
+        globalExpositorsCache.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
         console.log("Expositores carregados/atualizados:", globalExpositorsCache);
 
         const container = document.getElementById('expositores-container');
@@ -1782,20 +1799,21 @@ function loadPublicExpositores() {
             if (globalExpositorsCache.length === 0) {
                 container.innerHTML = '<p class="text-center text-gray-500 col-span-full">Nenhum expositor disponível.</p>';
             } else {
-                globalExpositorsCache.forEach(expositor => { 
+                globalExpositorsCache.forEach(expositor => { // Agora esta lista está ordenada
                     const expositorCard = `
                         <div class="card p-6 text-center">
                             <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="[Logo do Expositor]" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
                             <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
-                            <p class="text-gray-700 text-sm mb-3 text-justify">${expositor.description || 'Sem descrição.'}</p>
+                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
+                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
                         </div>`;
                     container.innerHTML += expositorCard;
                 });
             }
         }
-        updateExpositoresChart(globalExpositorsCache); // Usa o cache global
-        displayAdminExpositorsList(globalExpositorsCache); // Atualiza lista no painel de organizadores
+        updateExpositoresChart(globalExpositorsCache); 
+        displayAdminExpositorsList(globalExpositorsCache);
     }, (error) => {
         console.error("Erro ao carregar expositores:", error);
         const container = document.getElementById('expositores-container');
