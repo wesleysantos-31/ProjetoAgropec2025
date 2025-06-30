@@ -2048,13 +2048,13 @@ function updateAgendaChart(events) {
         let bgColor, brdColor;
         // Mantém as cores que você já tinha, mas usando a chave singular 'type'
         switch(type) {
-            case 'Palestra':      bgColor = 'rgba(76, 175, 80, 0.7)';  brdColor = 'rgba(76, 175, 80, 1)';   break;
+            case 'Palestra':      bgColor = 'rgba(30, 72, 68, 0.7)';  brdColor = 'rgba(138, 178, 72, 1)';   break;
             case 'Workshop':      bgColor = 'rgba(255, 193, 7, 0.7)';  brdColor = 'rgba(255, 193, 7, 1)';   break;
             case 'Demonstração':  bgColor = 'rgba(33, 150, 243, 0.7)'; brdColor = 'rgba(33, 150, 243, 1)';  break;
             default:              bgColor = 'rgba(158, 158, 158, 0.7)';brdColor = 'rgba(158, 158, 158, 1)';
         }
         return {
-            label: typeLabels[type], // CORREÇÃO: Usa o nome no plural para a legenda ficar mais bonita
+            label: typeLabels[type],
             data: sortedDates.map(date => days[date][type] || 0),
             backgroundColor: bgColor,
             borderColor: brdColor,
@@ -2101,7 +2101,7 @@ function updateExpositoresChart(expositores) {
 
     expositoresChartInstance = new Chart(expositoresCtx, {
         type: 'pie',
-        data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#4CAF50', '#FFC107', '#2196F3', '#9E9E9E', '#795548', '#FF5722'], borderWidth: 1 }] },
+        data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#7DA548', '#FFC107', '#2196F3', '#9E9E9E', '#795548', '#FF5722'], borderWidth: 1 }] },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 }

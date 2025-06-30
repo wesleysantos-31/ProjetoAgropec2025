@@ -3,7 +3,7 @@
 @import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap);
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: #F5F5F5; /* Cinza Claro */
     color: #424242; /* Cinza Escuro */
     overscroll-behavior: none; /* Previne "pull-to-refresh" em mobile */
@@ -28,7 +28,7 @@ body {
 
 /* Estilo do link ativo */
 .nav-link.active {
-    background-color: #4CAF50; /* bg-green-600 */
+    background-color: #7DA548; /* bg-green-600 */
     color: #FFFFFF; /* text-white */
     font-weight: 600;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -123,12 +123,12 @@ body {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .input-field:focus {
-    border-color: #4CAF50; /* focus:border-green-500 */
-    box-shadow: 0 0 0 2px #4CAF5066; /* focus:ring-green-500 (approximate) */
+    border-color: #7DA548; /* focus:border-green-500 */
+    box-shadow: 0 0 0 2px #1E4844; /* focus:ring-green-500 (approximate) */
 }
 
 .btn-primary {
-    background-color: #4CAF50;
+    background-color: #7DA548;
     color: #FFFFFF;
     transition: background-color 0.3s ease;
     padding: 0.625rem 1.25rem; /* 10px 20px */
@@ -137,7 +137,7 @@ body {
     line-height: 1.25; /* Para melhor alinhamento vertical do texto */
 }
 .btn-primary:hover {
-    background-color: #388E3C;
+    background-color: #7DA548;
 }
 .btn-accent {
     background-color: #FFC107;
@@ -189,11 +189,11 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600; 
 }
 .agropec-logo-text {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700; 
     font-size: 1.6rem; /* Aumentado um pouco */
     color: #FFFFFF; 
@@ -238,7 +238,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Botões do carrossel */
 .carousel-onclick {
-  background-color: #4CAF50;
+  background-color: #7DA548;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -258,7 +258,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .carousel-btn:hover {
-  background-color: #388E3C;
+  background-color: #1E4844;
   transform: translateY(-50%) scale(1.08);
 }
 
@@ -276,7 +276,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .custom-card {
-  background-color: #16a34a; /* equivalente ao bg-green-600 */
+  background-color: #7DA548; /* equivalente ao bg-green-600 */
   padding: 1.5rem;           /* p-6 */
   margin-bottom: 1.5rem;     /* mb-6 */
   border-radius: 0.5rem;     /* opcional, estilo de card */
@@ -428,7 +428,7 @@ div#img1 {
     margin-top: 0.5rem; /* mt-2 */
 }
 .form-message.success {
-    color: #388E3C; /* text-green-700 */
+    color: #7DA548;
 }
 .form-message.error {
     color: #D32F2F; /* text-red-700 */
@@ -436,13 +436,13 @@ div#img1 {
 
 /* Ajuste para o link de login na sidebar quando o usuário está deslogado */
 #nav-login-link.active {
-    background-color: #4CAF50 !important; /* Garante que o link de login fique verde quando ativo */
+    background-color: #7DA548 !important; /* Garante que o link de login fique verde quando ativo */
     color: #FFFFFF !important;
 }
 
 footer {
     font-size: 12px;
-    background-color: #388E3C;;
+    background-color: #7DA548;;
     color: white;
     text-align: center;
     padding: 20px;
@@ -474,7 +474,7 @@ footer {
     pointer-events: auto;
 }
 .scrollbar-thumb {
-    background: #4CAF50;
+    background: #7DA548;
     border-radius: 8px;
     opacity: 0.7;
     position: absolute;
@@ -501,13 +501,13 @@ footer {
 }
 
 .admin-tab:hover {
-    color: #166534; /* text-green-800 */
+    color: #1E4844; /* text-green-800 */
     border-bottom-color: #D1D5DB; /* border-gray-300 */
 }
 
 .admin-tab.active {
-    color: #15803d; /* text-green-700 */
-    border-bottom-color: #15803d; /* border-green-700 */
+    color: #7DA548; /* text-green-700 */
+    border-bottom-color: #7DA548; /* border-green-700 */
 }
 
 /* Painéis de conteúdo das abas */
@@ -576,7 +576,7 @@ footer {
 }
 
 .div-centralizada h3 {
-    color: #409b43; /* Cor verde para o título */
+    color: #7DA548; /* Cor verde para o título */
     font-size: large; /* Tamanho do título */
     margin-bottom: 0.5rem; /* Espaçamento abaixo do título */
     line-height: 1.2;
