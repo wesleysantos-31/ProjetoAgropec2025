@@ -326,23 +326,6 @@ function drawMap(canvasId, ctx, cssWidth, cssHeight) {
         ctx.lineWidth = 1.5 / scale;
         ctx.fill();
         ctx.stroke();
-        
-        // --- NOVO: LÓGICA PARA DESENHAR O ID DO ESTANDE ---
-        if (stand.id) {
-            // Configurações do texto
-            const fontSize = 10 / scale;
-            ctx.font = `bold ${fontSize}px Inter, sans-serif`;
-            ctx.textAlign = 'center';
-            
-            // Adiciona um contorno branco para legibilidade
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 2 / scale;
-            ctx.strokeText(stand.id, stand.x, stand.y - (baseRadius + 5 / scale));
-            
-            // Preenche o texto com cor escura
-            ctx.fillStyle = '#1E293B'; // Cor escura (slate-800)
-            ctx.fillText(stand.id, stand.x, stand.y - (baseRadius + 5 / scale));
-        }
         // --- FIM DA LÓGICA DE DESENHO DO ID ---
     });
 
