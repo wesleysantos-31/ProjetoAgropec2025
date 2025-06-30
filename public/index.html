@@ -28,7 +28,7 @@
         </div>
 
         <!-- NAVEGAÇÃO -->
-        <nav class="flex-1 px-4 space-y-2">
+        <nav class="flex-1 px-4 space-y-2 overflow-y-auto">
             <a href="#inicio" onclick="window.showSection('inicio', this)" class="nav-link">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span>Início</span>
@@ -306,21 +306,57 @@
                 </div>
             </section>
 
-            <section id="sobre" class="p-6">
+            <section id="sobre" class="p-2">
                 <div style="height: 72px;"></div>
-                <div class="div-centralizada">
-                    <h2 class="text-3xl font-semibold text-green-700 mb-4">Sobre o AGROPEC</h2>
-                    <img src="img/img12.webp" class="w-full max-w-2xl mb-4 rounded-lg shadow-lg" />
-                    <div style="text-align: justify;">
-                        <p class="text-gray-700 mb-4">
-                            A AGROPEC é um dos maiores eventos do setor agropecuário do Brasil, reunindo expositores, pesquisadores e visitantes para compartilhar conhecimento, inovação e oportunidades de negócios no campo.
-                        </p>
-                        <p class="text-gray-700">
-                            O evento é promovido por estudantes da UFRA com o objetivo de conectar produtores, empresas e instituições, impulsionando o desenvolvimento sustentável e a tecnologia no meio rural.
-                        </p>
+
+                <div class="div-centralizada card">
+                    <div class="flex justify-center">
+                        <div class="bg-green-500 w-1/2">
+                            <h2 class="text-2xl text-green-700 mb-4 text-center">Sobre o evento</h2>
+                            <img src="img/img12.webp" class="inline-block img-pequena rounded-2xl">
+                        </div>
                     </div>
+                    <h3>Agropec 2025:</h3>
+                    <p>
+                        A Exposição Feira Agropecuária de Paragominas, conhecida como Agropec, é o principal evento do agronegócio no município de Paragominas, no Pará, e uma das mais tradicionais e importantes feiras do estado. Organizada pelo Sindicato dos Produtores Rurais de Paragominas (SPRP), a Agropec se consolidou ao longo de mais de cinco décadas como um catalisador para o desenvolvimento econômico e social da região, além de ser um vibrante ponto de encontro cultural.
+                    </p>
+                    <h3>Um marco na história e na cultura local:</h3>
+                    <p>
+                        Com uma trajetória que ultrapassa 50 edições, a Agropec é mais do que uma feira de negócios. Em reconhecimento à sua relevância histórica e cultural para o município, o evento foi oficialmente reconhecido como Patrimônio Cultural de Natureza Imaterial de Paragominas. Esta honraria destaca a profunda conexão da feira com a identidade e as tradições da comunidade local. A Agropec é um reflexo da força e da resiliência do setor produtivo da região, evoluindo a cada ano e se firmando como uma vitrine de inovação e progresso.
+                    </p>
+                    <h3>Atrações para todos os públicos:</h3>
+                    <p>
+                        A Agropec oferece uma programação diversificada que atrai milhares de visitantes anualmente, incluindo produtores rurais, empresários, investidores e o público em geral. Entre as principais atrações, destacam-se:
+                    </p>
+                    <li><strong>Exposições Agropecuárias:</strong> <p>Apresentação de animais de elite, inovações em maquinário agrícola e tecnologias voltadas para o campo.</p></li>
+                    <li><strong>Leilões:</strong> <p>Grandes oportunidades de negócios com a comercialização de gado de alta linhagem e outros animais.</p></li>
+                    <li><strong>Rodeios:</strong> <p>Competições emocionantes que atraem competidores de diversas partes do país e animam o público.</p></li>
+                    <li><strong>Shows Nacionais:</strong> <p>Apresentações de renomados artistas da música brasileira, que garantem o entretenimento noturno.</p></li>
+                    <li><strong>Palestras e Cursos:</strong> <p>Disseminação de conhecimento técnico e científico, com a participação de especialistas que abordam temas relevantes para o agronegócio.</p></li>
+                    <li><strong>Feira de Negócios:</strong> <p>Espaço para empresas de diversos setores exporem seus produtos e serviços, fomentando o networking e a realização de negócios.</p></li>
+                    <h3>Impacto econômico e social:</h3>
+                    <p>A importância da Agropec transcende os portões do Parque de Exposições Amílcar Tocantins. O evento movimenta a economia local de forma significativa, impulsionando setores como o hoteleiro, de restaurantes, de transporte e o comércio em geral. Além disso, a feira gera empregos diretos e indiretos, contribui para o aumento da arrecadação de impostos e promove o turismo na região.
+                    <p>Para os produtores rurais, a Agropec é uma oportunidade ímpar para a troca de experiências, o acesso a novas tecnologias e a realização de negócios que impactam positivamente a produtividade e a sustentabilidade de suas atividades ao longo do ano.</p>
+                    <p>Em suma, a Agropec Paragominas é um evento multifacetado que celebra a força do agronegócio, promove o desenvolvimento sustentável e enriquece a vida cultural da cidade e de todo o estado do Pará.</p>
+                </div>
+
+                <div style="height: 25px;"></div>
+                <div class="div-centralizada card">
+                    <h2 class="text-2xl text-green-700 mb-2 text-center">Links</h2>
+                    <div style="height: 15px;"></div>
+                    <div class="flex justify-center space-x-4">
+                        <a href="https://www.instagram.com/agropec_pgm/" target="_blank" rel="noopener" class="social-link">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/instagram.svg" alt="Instagram" class="w-5 h-5" style="filter: invert(43%) sepia(94%) saturate(1012%) hue-rotate(74deg) brightness(90%) contrast(92%);">
+                        </a>
+                        <a href="https://www.facebook.com/agropecpgm/" target="_blank" rel="noopener" class="social-link">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/facebook.svg" alt="Facebook" class="w-5 h-5" style="filter: invert(43%) sepia(94%) saturate(1012%) hue-rotate(74deg) brightness(90%) contrast(92%);">
+                        </a>      
+                        <a href="https://maps.app.goo.gl/PbBK15cJVxinnzBf6" target="_blank" rel="noopener" class="social-link">
+                            <img src="https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/googlemaps.svg" alt="Google Maps" class="w-5 h-5" style="filter: invert(43%) sepia(94%) saturate(1012%) hue-rotate(74deg) brightness(90%) contrast(92%);">
+                        </a>
                 </div>
             </section>
+            <div style="height: 15px;"></div>
 
             <section id="admin-dashboard" class="p-2">
                 <div style="height: 72px;"></div>
