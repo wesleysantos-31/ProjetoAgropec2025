@@ -58,8 +58,9 @@ O sistema é dividido em duas grandes áreas, com funcionalidades específicas p
   * Chart.js: Para a criação dos gráficos de visualização de dados.
   * Flatpickr: Para os seletores de data e hora amigáveis nos formulários de administração.
 
-### 🔑 Credenciais para Teste (Administrador)
-Para acessar o painel de gerenciamento e testar as funcionalidades de administrador, utilize as seguintes credenciais na tela de login:
+### 🌐 Site e Credenciais para Teste
+Para acessar o painel de gerenciamento e testar as funcionalidades de administrador, acesse o site a baixo e utilize as seguintes credenciais na tela de login:
 
+* **🔗 Site:** https://agropec-2025-app.web.app/
 * **📬 E-mail:** contadeteste@gmail.com
 * **🔑 Senha:** contadeteste123
