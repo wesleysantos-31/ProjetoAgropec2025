@@ -437,33 +437,29 @@ function handleMouseUp(event) {
     const dx = Math.abs(event.clientX - dragStartX);
     const dy = Math.abs(event.clientY - dragStartY);
 
-    // Se o mouse se moveu menos que 5 pixels, considera um clique.
     if (dx < 5 && dy < 5) {
-        // Chama a função de clique apropriada com base no canvas
+        // Passamos 'event.target' como segundo argumento
         if (event.target.id === 'fairMapCanvas') {
-            handleFairMapClick(event);
+            handleFairMapClick(event, event.target);
         } else if (event.target.id === 'adminMapCanvas') {
-            handleAdminMapClick(event);
+            handleAdminMapClick(event, event.target);
         }
     }
-    // Reseta o estado de 'isDragging' ao final
     isDragging = false;
 }
 
 // --- Funções de Clique Atualizadas ---
-function handleAdminMapClick(event) {
-    if (isDragging) return; // Ignora cliques que foram parte de um arraste
+function handleAdminMapClick(event, canvasElement) { // Recebe 'canvasElement'
+    if (isDragging) return;
 
-    const rect = event.target.getBoundingClientRect();
+    // Usa 'canvasElement' em vez de 'event.target'
+    const rect = canvasElement.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    // Converte as coordenadas do clique (na tela) para coordenadas do "mundo" (no mapa)
-    // Esta é a fórmula crucial que corrige o posicionamento dos hotspots
     const worldX = (mouseX - offsetX) / scale;
     const worldY = (mouseY - offsetY) / scale;
 
-    // Atualiza o formulário com as coordenadas corretas e independentes do zoom
     document.getElementById('standX').value = Math.round(worldX);
     document.getElementById('standY').value = Math.round(worldY);
     document.getElementById('standCoordinatesDisplay').value = `X: ${Math.round(worldX)}, Y: ${Math.round(worldY)}`;
@@ -472,17 +468,17 @@ function handleAdminMapClick(event) {
     drawAllMaps();
 }
 
-function handleFairMapClick(event) {
-    if (isDragging) return; // Ignora cliques que foram parte de um arraste
+function handleFairMapClick(event, canvasElement) { // Recebe 'canvasElement'
+    if (isDragging) return;
 
-    const rect = event.target.getBoundingClientRect();
-    // Converte o clique na tela para coordenadas do "mundo" (mapa)
+    // Usa 'canvasElement' em vez de 'event.target'
+    const rect = canvasElement.getBoundingClientRect();
     const clickX = (event.clientX - rect.left - offsetX) / scale;
     const clickY = (event.clientY - rect.top - offsetY) / scale;
 
     let clickedStand = null;
     for (const stand of [...stands].reverse()) {
-        const radius = 12 / scale; // Área de clique um pouco maior que o ponto visual
+        const radius = 12 / scale;
         const distance = Math.sqrt(Math.pow(clickX - stand.x, 2) + Math.pow(clickY - stand.y, 2));
         if (distance <= radius) {
             clickedStand = stand;
@@ -646,7 +642,6 @@ function handleTouchMove(event) {
 function handleTouchEnd(event) {
     const touchDuration = Date.now() - touchStartTime;
     
-    // Um clique é um toque rápido que NÃO foi um arrasto e NEM um gesto de pinça.
     if (!isDragging && !initialPinchDistance && touchDuration < 500) {
          if (event.changedTouches.length === 1) {
             const touch = event.changedTouches[0];
@@ -657,15 +652,15 @@ function handleTouchEnd(event) {
                 clientY: touch.clientY
             });
 
+            // Passamos 'event.target' (o canvas original) como segundo argumento
             if (event.target.id === 'fairMapCanvas') {
-                handleFairMapClick(fakeMouseEvent);
+                handleFairMapClick(fakeMouseEvent, event.target);
             } else if (event.target.id === 'adminMapCanvas') {
-                handleAdminMapClick(fakeMouseEvent);
+                handleAdminMapClick(fakeMouseEvent, event.target);
             }
         }
     }
 
-    // Reseta o estado para a próxima interação
     isDragging = false;
     initialPinchDistance = null;
     touchStartTime = null;
