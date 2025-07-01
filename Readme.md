@@ -5,7 +5,14 @@ Este é um aplicativo web completo e interativo, desenvolvido para a feira AGROP
 O sistema é dividido em duas grandes áreas, com funcionalidades específicas para cada tipo de usuário.
 
 ### 🧍 Para Visitantes
-Painel Principal Dinâmico: A página inicial apresenta um resumo do evento com um carrossel de imagens, as 3 notícias mais recentes, o próximo evento da agenda e cartões de informações gerais.
+
+* **Painel Principal Dinâmico:** A página inicial apresenta um resumo...
+* **Agenda Completa do Evento:**
+  * Listagem de todas as palestras...
+  * Ferramenta para filtrar eventos...
+
+### 🧍 Para Visitantes
+* **Painel Principal Dinâmico:** A página inicial apresenta um resumo do evento com um carrossel de imagens, as 3 notícias mais recentes, o próximo evento da agenda e cartões de informações gerais.
 
 Agenda Completa do Evento:
 
