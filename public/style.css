@@ -367,7 +367,11 @@ div#img1 {
     width: 100%; 
     height: 100%; 
     display: block; 
-    cursor: grab; /* Cursor para indicar que o mapa pode ser arrastado */
+    cursor: grab;
+    touch-action: none;
+    z-index: 10;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 /* Muda o cursor quando o usuário está arrastando o mapa. */

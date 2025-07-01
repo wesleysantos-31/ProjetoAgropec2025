@@ -27,6 +27,7 @@ let currentUserId = null;
 let registrationContext = 'visitor'; // 'visitor' ou 'admin'
 let globalEventsCache = []; // Cache para eventos, usado para edição
 let globalExpositorsCache = []; // Cache para expositores, usado para edição
+let touchStartTime = null; // Adicione esta linha
 
 // --- Novas Variáveis para Mapa Interativo com Zoom/Pan ---
 let mapImage = null;
@@ -562,125 +563,112 @@ function updateCustomScrollbars(canvasId) {
         scrollbarV.style.display = 'none';
     }
 }
-// --- FIM DO NOVO BLOCO DE FUNÇÕES DO MAPA ---
 
-// app.js (Adicione este novo bloco de funções)
-// --- INÍCIO DAS NOVAS FUNÇÕES DE TOQUE PARA O MAPA ---
 function handleTouchStart(event) {
-    event.preventDefault(); // Previne o comportamento padrão do navegador (como rolar a página)
+    event.preventDefault();
     const touches = event.touches;
+    touchStartTime = Date.now();
+    isDragging = false;
 
     if (touches.length === 1) {
-        // Início de um arraste com um dedo
         dragStartX = touches[0].clientX;
         dragStartY = touches[0].clientY;
-        isDragging = false; // Começa como não arrastando, será 'true' se mover
+        initialPinchDistance = null;
     } else if (touches.length === 2) {
-        // Início de um gesto de pinça com dois dedos
         initialPinchDistance = Math.hypot(
             touches[0].clientX - touches[1].clientX,
             touches[0].clientY - touches[1].clientY
         );
-        isDragging = true; // Um gesto de pinça é considerado um "arraste" para não virar clique
     }
 }
 
 function handleTouchMove(event) {
     event.preventDefault();
+    if (!touchStartTime) return;
+
     const touches = event.touches;
-
+    
+    // Se for um gesto de pinça para zoom
+    if (touches.length === 2 && initialPinchDistance) {
+        isDragging = true; // Um zoom é um tipo de arrasto, previne o clique.
+        const currentPinchDistance = Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+        const zoomFactor = currentPinchDistance / initialPinchDistance;
+        const newScale = Math.max(minZoom, Math.min(maxZoom, scale * zoomFactor));
+        const midX = (touches[0].clientX + touches[1].clientX) / 2;
+        const midY = (touches[0].clientY + touches[1].clientY) / 2;
+        offsetX = midX - (midX - offsetX) * (newScale / scale);
+        offsetY = midY - (midY - offsetY) * (newScale / scale);
+        scale = newScale;
+        initialPinchDistance = currentPinchDistance;
+        drawAllMaps();
+        return;
+    }
+    
+    // Se for um arrasto com um dedo
     if (touches.length === 1) {
-        // Lógica para arrastar (pan) com um dedo
-        if (isDragging || Math.abs(touches[0].clientX - dragStartX) > 5 || Math.abs(touches[0].clientY - dragStartY) > 5) {
-            isDragging = true;
-            const dx = touches[0].clientX - dragStartX;
-            const dy = touches[0].clientY - dragStartY;
+        const dx = touches[0].clientX - dragStartX;
+        const dy = touches[0].clientY - dragStartY;
 
+        // Se o movimento for maior que 5px, confirma que é um arrasto.
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+            isDragging = true;
+        }
+
+        if(isDragging) {
             let newOffsetX = offsetX + dx;
             let newOffsetY = offsetY + dy;
 
-            // Aplica os mesmos limites do arraste com o mouse
             if (mapImage && mapImage.complete) {
                 const canvas = event.target;
                 const canvasWidth = canvas.clientWidth;
                 const canvasHeight = canvas.clientHeight;
                 const mapRenderedWidth = mapImage.width * scale;
                 const mapRenderedHeight = mapImage.height * scale;
-
                 const minOffsetX = canvasWidth - mapRenderedWidth;
                 const minOffsetY = canvasHeight - mapRenderedHeight;
-
                 newOffsetX = Math.max(minOffsetX, Math.min(newOffsetX, 0));
                 newOffsetY = Math.max(minOffsetY, Math.min(newOffsetY, 0));
             }
 
             offsetX = newOffsetX;
             offsetY = newOffsetY;
-
-            // Atualiza a posição inicial para o próximo movimento
+            
             dragStartX = touches[0].clientX;
             dragStartY = touches[0].clientY;
-
             drawAllMaps();
         }
-    } else if (touches.length === 2 && initialPinchDistance) {
-        // Lógica para zoom (gesto de pinça) com dois dedos
-        const currentPinchDistance = Math.hypot(
-            touches[0].clientX - touches[1].clientX,
-            touches[0].clientY - touches[1].clientY
-        );
-
-        // Calcula o fator de escala
-        const zoomFactor = currentPinchDistance / initialPinchDistance;
-        const newScale = Math.max(minZoom, Math.min(maxZoom, scale * zoomFactor));
-
-        // Calcula o ponto médio entre os dedos para centralizar o zoom
-        const midX = (touches[0].clientX + touches[1].clientX) / 2;
-        const midY = (touches[0].clientY + touches[1].clientY) / 2;
-
-        // Ajusta o offset para que o zoom pareça vir do centro dos dedos
-        offsetX = midX - (midX - offsetX) * (newScale / scale);
-        offsetY = midY - (midY - offsetY) * (newScale / scale);
-        scale = newScale;
-
-        initialPinchDistance = currentPinchDistance; // Atualiza para o próximo movimento
-        drawAllMaps();
     }
 }
 
 function handleTouchEnd(event) {
-    // Verifica se a ação foi um arraste ou um gesto de pinça
-    const wasDragging = isDragging;
-    const wasPinching = initialPinchDistance;
+    const touchDuration = Date.now() - touchStartTime;
+    
+    // Um clique é um toque rápido que NÃO foi um arrasto e NEM um gesto de pinça.
+    if (!isDragging && !initialPinchDistance && touchDuration < 500) {
+         if (event.changedTouches.length === 1) {
+            const touch = event.changedTouches[0];
+            const fakeMouseEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
 
-    // Reseta as flags para o próximo evento de toque
-    isDragging = false;
-    initialPinchDistance = null;
-
-    // Se foi um arrasto ou pinça, não faz mais nada.
-    if (wasDragging || wasPinching) {
-        return;
-    }
-
-    // Se não foi um arrasto, processa como um possível toque (clique)
-    if (event.changedTouches.length === 1) {
-        const touch = event.changedTouches[0];
-        
-        // Simula um evento de clique com as coordenadas do toque
-        const fakeMouseEvent = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            clientX: touch.clientX,
-            clientY: touch.clientY
-        });
-
-        // Chama a função de clique apropriada para o canvas que recebeu o toque
-        if (event.target.id === 'fairMapCanvas') {
-            handleFairMapClick(fakeMouseEvent);
-        } else if (event.target.id === 'adminMapCanvas') {
-            handleAdminMapClick(fakeMouseEvent);
+            if (event.target.id === 'fairMapCanvas') {
+                handleFairMapClick(fakeMouseEvent);
+            } else if (event.target.id === 'adminMapCanvas') {
+                handleAdminMapClick(fakeMouseEvent);
+            }
         }
     }
+
+    // Reseta o estado para a próxima interação
+    isDragging = false;
+    initialPinchDistance = null;
+    touchStartTime = null;
 }
 
 // Listener para fechar o modal
@@ -1805,8 +1793,7 @@ function loadPublicExpositores() {
                             <img src="${expositor.logoUrl || 'https://placehold.co/100x100/388E3C/FFFFFF?text=Logo&font=Inter'}" alt="[Logo do Expositor]" class="mx-auto mb-3 rounded-full h-24 w-24 object-cover border-2 border-green-500">
                             <h4 class="font-semibold text-lg text-green-600">${expositor.name || 'N/A'}</h4>
                             <p class="text-sm text-gray-500 mb-2">${expositor.category || 'N/A'}</p>
-                            <p class="text-gray-700 text-sm mb-3">${expositor.description || 'Sem descrição.'}</p>
-                            <button class="btn-accent text-sm py-1 px-3 rounded-md">Ver Detalhes</button>
+                            <p class="text-gray-700 text-sm mb-3 text-justify">${expositor.description || 'Sem descrição.'}</p>
                         </div>`;
                     container.innerHTML += expositorCard;
                 });
