@@ -1,7 +1,7 @@
 # 🚜 Projeto AGROPEC 2025 - Aplicativo Web Interativo
 Este é um aplicativo web completo e interativo, desenvolvido para a feira AGROPEC 2025. O sistema serve como um guia digital para os visitantes do evento e uma poderosa ferramenta de gerenciamento de conteúdo para os organizadores, utilizando o Firebase como backend para dados em tempo real.
 
-#🚀 Principais Funcionalidades
+# 🚀 Principais Funcionalidades
 
 O sistema é dividido em duas grandes áreas, com funcionalidades específicas para cada tipo de usuário.
 
