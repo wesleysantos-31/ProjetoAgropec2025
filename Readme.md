@@ -62,5 +62,5 @@ O sistema é dividido em duas grandes áreas, com funcionalidades específicas p
 Para acessar o painel de gerenciamento e testar as funcionalidades de administrador, acesse o site a baixo e utilize as seguintes credenciais na tela de login:
 
 * **🔗 Site:** https://agropec-2025-app.web.app/
-* **📬 E-mail:** contadeteste@gmail.com
-* **🔑 Senha:** contadeteste123
+* **📬 E-mail:** contateste01@gmail.com
+* **🔑 Senha:** 123456
